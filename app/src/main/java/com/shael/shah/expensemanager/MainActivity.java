@@ -33,8 +33,13 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        expenses = getExpensesListFromSharedPreferences();
-        categories = getCategoriesListFromSharedPreferences();
+        getLists();
+
+        Log.d("onCreate - expenses", expenses.toString());
+        Log.d("onCreate - categories", categories.toString());
+
+        //expenses = getExpensesListFromSharedPreferences();
+        //categories = getCategoriesListFromSharedPreferences();
 
         netTextView = (TextView) findViewById(R.id.netTextView);
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
@@ -56,6 +61,8 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.add_item:
                 Intent intent = new Intent(this, AddExpenseActivity.class);
+                //intent.putExtra("expenses", expenses);
+                //intent.putExtra("categories", categories);
                 startActivity(intent);
 
                 return true;
@@ -70,55 +77,52 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (expenses != null) {
-            Log.d("onPause - expenses", expenses.toString());
-            setSharedPreferences(expenses, "expenses");
-        }
-        if (categories != null) {
-            Log.d("onPause - categories", categories.toString());
-            setSharedPreferences(categories, "categories");
-        }
+        setLists();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        getLists();
 
-        expenses = getExpensesListFromSharedPreferences();
-        categories = getCategoriesListFromSharedPreferences();
+        Log.d("onStart - expenses", expenses.toString());
+        Log.d("onStart - categories", categories.toString());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        getLists();
 
-        expenses = getExpensesListFromSharedPreferences();
-        categories = getCategoriesListFromSharedPreferences();
+        Log.d("onResume - expenses", expenses.toString());
+        Log.d("onResume - categories", categories.toString());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (expenses != null) {
-            setSharedPreferences(expenses, "expenses");
-        }
-        if (categories != null) {
-            setSharedPreferences(categories, "categories");
-        }
+        setLists();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        setLists();
+    }
 
-        if (expenses != null) {
+    private void getLists() {
+        expenses = Singleton.getInstance(this).getExpenses();
+        categories = Singleton.getInstance(this).getCategories();
+    }
+
+    private void setLists() {
+        Singleton.getInstance(this).saveLists();
+        /*if (expenses != null) {
             setSharedPreferences(expenses, "expenses");
         }
         if (categories != null) {
             setSharedPreferences(categories, "categories");
-        }
+        }*/
     }
 
     public Boolean addCategory(String category) {

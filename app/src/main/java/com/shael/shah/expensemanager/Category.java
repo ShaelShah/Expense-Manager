@@ -1,6 +1,8 @@
 package com.shael.shah.expensemanager;
 
-public class Category {
+import java.io.Serializable;
+
+public class Category implements Serializable {
 
     private String type;
 
@@ -14,5 +16,10 @@ public class Category {
 
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "Category " + type;
     }
 }
