@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,26 +12,33 @@
     android:paddingLeft="16dp"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
+    <Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme">
+    </Toolbar>
 
-    <TextView
-        android:id="@+id/amountTextView"
+    <EditText
+        android:id="@+id/amountEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/toolbar"
         android:paddingBottom="5dp"
         android:gravity="center_vertical"
         android:textSize="20sp"
-        android:text="Enter an Amount"
-
-        android:onClick="goBackToHomeScreen"/>
+        android:inputType="date"
+        android:text="Enter an Amount" />
 
     <TextView
         android:id="@+id/categoryLabelTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/amountTextView"
+        android:layout_below="@+id/amountEditText"
         android:text="Category" />
 
     <View
@@ -43,6 +52,9 @@
         android:id="@+id/categoryScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fillViewport="true"
         android:layout_below="@+id/categoryLabelTextView">
 
         <LinearLayout
@@ -87,7 +99,8 @@
             android:id="@+id/dateEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"/>
+            android:layout_weight="3"
+            android:focusable="false"/>
 
     </LinearLayout>
 
@@ -136,6 +149,24 @@
             android:layout_weight="3"/>
 
     </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/incomeCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Income"
+        android:layout_below="@+id/noteLinearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <CheckBox
+        android:id="@+id/recurringCheckbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/incomeCheckbox"
+        android:text="Recurring"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

@@ -1,40 +1,91 @@
 package com.shael.shah.expensemanager;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AddExpenseActivity extends Activity {
 
-    private TextView amountTextview;
+    private Toolbar toolbar;
+
+    private EditText amountEditText;
+    private EditText dateEditText;
+    private EditText locationEditText;
+    private EditText noteEditText;
+    private CheckBox incomeCheckbox;
+    private CheckBox recurringCheckbox;
     private ScrollView categoryScrollView;
 
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
+
+    private Calendar calendar = Calendar.getInstance();
+    private int year = calendar.get(Calendar.YEAR);
+    private int month = calendar.get(Calendar.MONTH);
+    private int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
-        amountTextview = (TextView) findViewById(R.id.amountTextView);
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
+        amountEditText = (EditText) findViewById(R.id.amountEditText);
+        dateEditText = (EditText) findViewById(R.id.dateEditText);
+        locationEditText = (EditText) findViewById(R.id.locationEditText);
+        noteEditText = (EditText) findViewById(R.id.noteEditText);
+        incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
+        recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
+
+        dateEditText.setText(sdf.format(calendar.getTime()));
+        dateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                                dateEditText.setText(sdf.format(calendar.getTime()));
+                            }
+
+                }, year, month, day);
+
+                datePickerDialog.setTitle("Select Date");
+                datePickerDialog.show();
+            }
+        });
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setActionBar(toolbar);
 
         categories = Singleton.getInstance(this).getCategories();
         categoryRadioButtons = new ArrayList<>();
@@ -42,26 +93,77 @@ public class AddExpenseActivity extends Activity {
         createCategoryRows();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_expense, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        switch (item.getItemId()) {
+            case R.id.cancel_label:
+                startActivity(intent);
+                return true;
+
+            case R.id.save_label:
+                try{
+                    saveExpense();
+                    startActivity(intent);
+                } catch (ParseException e) {
+
+                } catch (IllegalArgumentException e) {
+
+                }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void saveExpense() throws ParseException, IllegalArgumentException {
+        Double amount = Double.parseDouble(amountEditText.getText().toString());
+        Date date = sdf.parse(dateEditText.getText().toString());
+        String location = locationEditText.getText().toString();
+        String note = noteEditText.getText().toString();
+        Boolean income = incomeCheckbox.isSelected();
+        Boolean recurring = recurringCheckbox.isSelected();
+
+        Category category = null;
+        for (RadioButton rb : categoryRadioButtons) {
+            if (rb.isSelected()) {
+                category = new Category(rb.getText().toString());
+            }
+        }
+        Expense expense = new Expense(date, amount, category, location, note, income, recurring);
+        Singleton.getInstance(this).addExpense(expense);
+    }
+
     private void createCategoryRows() {
-        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
         int i = 0;
         for (Category c : categories) {
             LinearLayout linearLayout = new LinearLayout(this);
+            //ViewGroup.LayoutParams params = scrollLinearLayout.getLayoutParams();
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            linearLayout.setLayoutParams(params);
             linearLayout.setId(i++);
 
-            //View item = layoutInflater.inflate(R.layout.category_row_layout, null, false);
             View item = View.inflate(this, R.layout.category_row_layout, null);
 
             View colorBox = item.findViewById(R.id.colorView);
             colorBox.setBackgroundColor(Color.RED);
 
-            TextView categoryNameTextView = (TextView) item.findViewById(R.id.categoryNameTextView);
-            categoryNameTextView.setText(c.getType());
+            //TextView categoryNameTextView = (TextView) item.findViewById(R.id.categoryNameTextView);
+            //categoryNameTextView.setText(c.getType());
 
             RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
+            categoryRadioButton.setText(c.getType());
             categoryRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -75,17 +177,5 @@ public class AddExpenseActivity extends Activity {
             linearLayout.addView(item);
             scrollLinearLayout.addView(linearLayout);
         }
-    }
-
-    public void goBackToHomeScreen(View view) {
-        Date date = new Date();
-        Category category = new Category("Sports");
-        Expense expense = new Expense(date, 23.45, category, "ACC", "", false, false);
-
-        Singleton.getInstance(this).addExpense(expense);
-        Singleton.getInstance(this).addCategory("Sports");
-
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 }

@@ -23,6 +23,10 @@ public class Expense implements Serializable {
         this.income = income;
     }
 
+    public Expense(Date date, double amount, String category, String location, String note, boolean recurring, boolean income) {
+        this(date, amount, new Category(category), location, note, recurring, income);
+    }
+
     public Date getDate() {
         return date;
     }

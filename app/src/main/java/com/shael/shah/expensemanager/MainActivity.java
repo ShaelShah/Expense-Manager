@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,6 +46,8 @@ public class MainActivity extends Activity {
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
         expensesTextView = (TextView) findViewById(R.id.expensesTextView);
 
+        populateMoneyTextViews();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
     }
@@ -61,8 +64,6 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.add_item:
                 Intent intent = new Intent(this, AddExpenseActivity.class);
-                //intent.putExtra("expenses", expenses);
-                //intent.putExtra("categories", categories);
                 startActivity(intent);
 
                 return true;
@@ -108,6 +109,27 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         setLists();
+    }
+
+    private void populateMoneyTextViews() {
+        double income = 0;
+        double outcome = 0;
+        for (Expense e : expenses) {
+            if (e.isIncome())
+                income += e.getAmount();
+            else
+                outcome += e.getAmount();
+        }
+
+        double netcome = income - outcome;
+        incomeTexView.setText("$" + income);
+        expensesTextView.setText("$" + outcome);
+        netTextView.setText("$" + netcome);
+
+        if (netcome >= 0)
+            netTextView.setTextColor(Color.GREEN);
+        else
+            netTextView.setTextColor(Color.RED);
     }
 
     private void getLists() {
