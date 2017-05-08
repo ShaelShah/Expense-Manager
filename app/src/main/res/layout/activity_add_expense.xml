@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:paddingRight="16dp"
-    android:paddingLeft="16dp"
+    android:orientation="vertical"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
     <Toolbar
         android:id="@+id/toolbar"
+        android:contentInsetLeft="0dp"
+        android:contentInsetStart="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/actionBarSize"
@@ -21,152 +20,158 @@
         android:theme="@style/AppTheme">
     </Toolbar>
 
-    <EditText
-        android:id="@+id/amountEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/toolbar"
-        android:paddingBottom="5dp"
-        android:gravity="center_vertical"
-        android:textSize="20sp"
-        android:inputType="date"
-        android:text="Enter an Amount" />
-
-    <TextView
-        android:id="@+id/categoryLabelTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/amountEditText"
-        android:text="Category" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:paddingBottom="5dp"
-        android:layout_below="@+id/categoryLabelTextView"/>
-
-    <ScrollView
-        android:id="@+id/categoryScrollView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:fillViewport="true"
-        android:layout_below="@+id/categoryLabelTextView">
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp">
 
-        <LinearLayout
-            android:id="@+id/scrollLinearLayout"
+        <EditText
+            android:id="@+id/amountEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </ScrollView>
-
-    <TextView
-        android:id="@+id/additionalInfoLabelTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/categoryScrollView"
-        android:text="Additional Info" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:paddingBottom="5dp"
-        android:layout_below="@+id/additionalInfoLabelTextView"/>
-
-    <LinearLayout
-        android:id="@+id/dateLinearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/additionalInfoLabelTextView">
+            android:layout_gravity="end"
+            android:textAlignment="viewEnd"
+            android:textSize="20sp"
+            android:inputType="date"
+            android:hint="Enter an Amount" />
 
         <TextView
-            android:id="@+id/dateLabelTextView"
-            android:layout_width="0dp"
+            android:id="@+id/categoryLabelTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="start|bottom"
-            android:text="Date"/>
+            android:text="Category" />
 
-        <EditText
-            android:id="@+id/dateEditText"
-            android:layout_width="0dp"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <ScrollView
+            android:id="@+id/categoryScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/scrollLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/additionalInfoLabelTextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:focusable="false"/>
+            android:text="Additional Info" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
+
+        <LinearLayout
+            android:id="@+id/dateLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dateLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start|bottom"
+                android:text="Date"/>
+
+            <EditText
+                android:id="@+id/dateEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:focusable="false"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/locationLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/locationLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start|bottom"
+                android:text="Location"/>
+
+            <EditText
+                android:id="@+id/locationEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/noteLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/noteLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start|bottom"
+                android:text="Note"/>
+
+            <EditText
+                android:id="@+id/noteEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/incomeCheckbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Income"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/recurringCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:onClick="enableSpinner"
+                android:text="Recurring" />
+
+            <Spinner
+                android:id="@+id/recurringSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:clickable="false">
+            </Spinner>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/locationLinearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/dateLinearLayout">
-
-        <TextView
-            android:id="@+id/locationLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="start|bottom"
-            android:text="Location"/>
-
-        <EditText
-            android:id="@+id/locationEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/noteLinearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/locationLinearLayout">
-
-        <TextView
-            android:id="@+id/noteLabelTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="start|bottom"
-            android:text="Note"/>
-
-        <EditText
-            android:id="@+id/noteEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"/>
-
-    </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/incomeCheckbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Income"
-        android:layout_below="@+id/noteLinearLayout"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
-
-    <CheckBox
-        android:id="@+id/recurringCheckbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/incomeCheckbox"
-        android:text="Recurring"
-        android:layout_alignParentEnd="true" />
-
-
-</RelativeLayout>
+</LinearLayout>

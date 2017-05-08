@@ -9,12 +9,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -61,6 +64,17 @@ public class AddExpenseActivity extends Activity {
         incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
 
+        recurringCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+                if (isChecked)
+                    recurringSpinner.setClickable(true);
+                else
+                    recurringSpinner.setClickable(false);
+            }
+        });
+
         dateEditText.setText(sdf.format(calendar.getTime()));
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +105,7 @@ public class AddExpenseActivity extends Activity {
         categoryRadioButtons = new ArrayList<>();
 
         createCategoryRows();
+        createSpinnerRows();
     }
 
     @Override
@@ -177,5 +192,20 @@ public class AddExpenseActivity extends Activity {
             linearLayout.addView(item);
             scrollLinearLayout.addView(linearLayout);
         }
+    }
+
+    public void enableSpinner(View view) {
+        Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+
+
+    }
+
+    private void createSpinnerRows() {
+        Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+
+        String items[] = new String[] {"Daily", "Weekly", "Monthly", "Yearly"};
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        recurringSpinner.setAdapter(spinnerAdapter);
     }
 }

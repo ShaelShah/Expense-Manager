@@ -36,12 +36,6 @@ public class MainActivity extends Activity {
 
         getLists();
 
-        Log.d("onCreate - expenses", expenses.toString());
-        Log.d("onCreate - categories", categories.toString());
-
-        //expenses = getExpensesListFromSharedPreferences();
-        //categories = getCategoriesListFromSharedPreferences();
-
         netTextView = (TextView) findViewById(R.id.netTextView);
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
         expensesTextView = (TextView) findViewById(R.id.expensesTextView);
@@ -85,18 +79,12 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         getLists();
-
-        Log.d("onStart - expenses", expenses.toString());
-        Log.d("onStart - categories", categories.toString());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         getLists();
-
-        Log.d("onResume - expenses", expenses.toString());
-        Log.d("onResume - categories", categories.toString());
     }
 
     @Override

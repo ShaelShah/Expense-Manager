@@ -103,4 +103,12 @@ public class Singleton {
         prefEditor.putString(tag, json);
         prefEditor.apply();
     }
+
+    private void removeAllCategories() {
+        categories.clear();
+    }
+
+    private void removeAllExpenses() {
+        expenses.clear();
+    }
 }
