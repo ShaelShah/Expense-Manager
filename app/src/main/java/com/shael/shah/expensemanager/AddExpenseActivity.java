@@ -75,6 +75,7 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
+        // TODO: shael is a butt
         dateEditText.setText(sdf.format(calendar.getTime()));
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
