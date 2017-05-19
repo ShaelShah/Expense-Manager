@@ -11,14 +11,17 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: Figure out this warning
 public class Singleton {
 
+    //TODO: Figure out this warning
     private static Singleton instance;
     private Context context;
 
     private List<Expense> expenses;
     private List<Category> categories;
 
+    //TODO: Figure out this warning
     public static Singleton getInstance(Context context) {
         if (instance == null) {
             instance = new Singleton(context);
@@ -33,14 +36,17 @@ public class Singleton {
         categories = getCategoriesListFromSharedPreferences();
     }
 
+    //TODO: Figure out this warning
     public List<Expense> getExpenses() {
         return expenses;
     }
 
+    //TODO: Figure out this warning
     public List<Category> getCategories() {
         return categories;
     }
 
+    //TODO: Figure out this warning
     public void addExpense(Expense expense) {
         expenses.add(expense);
     }
@@ -56,6 +62,7 @@ public class Singleton {
         return true;
     }
 
+    //TODO: Figure out this warning
     public void saveLists() {
         setSharedPreferences(expenses, "expenses");
         setSharedPreferences(categories, "categories");

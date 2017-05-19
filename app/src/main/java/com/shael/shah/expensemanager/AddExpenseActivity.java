@@ -30,7 +30,9 @@ import java.util.Locale;
 
 public class AddExpenseActivity extends Activity {
 
-    private Toolbar toolbar;
+    /*****************************************************************
+     * Private Variables
+     ******************************************************************/
 
     private EditText amountEditText;
     private EditText dateEditText;
@@ -44,18 +46,28 @@ public class AddExpenseActivity extends Activity {
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
 
+    //TODO: May be beneficial to move away from Java Date class
     private Calendar calendar = Calendar.getInstance();
     private int year = calendar.get(Calendar.YEAR);
     private int month = calendar.get(Calendar.MONTH);
     private int day = calendar.get(Calendar.DAY_OF_MONTH);
-
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+
+    /*****************************************************************
+     * Lifecycle Methods
+     *****************************************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
+        //Setup toolbar
+        Toolbar toolbar;
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(toolbar);
+
+        //Find views to work with during add expense activity
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
         dateEditText = (EditText) findViewById(R.id.dateEditText);
@@ -65,6 +77,7 @@ public class AddExpenseActivity extends Activity {
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
         recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
+        //Action Listeners
         recurringCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -76,7 +89,7 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
-        // TODO: shael is a butt
+        //TODO: May be beneficial to move away from Java Date class
         dateEditText.setText(sdf.format(calendar.getTime()));
         dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,16 +112,17 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setActionBar(toolbar);
-
         categories = Singleton.getInstance(this).getCategories();
         categoryRadioButtons = new ArrayList<>();
 
+        //Helper functions
         createCategoryRows();
         createSpinnerRows();
     }
+
+    /*****************************************************************
+     * Menu Methods
+     *****************************************************************/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,70 +132,74 @@ public class AddExpenseActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        //TODO: Better handling/controlling of activities
         Intent intent = new Intent(this, MainActivity.class);
         switch (item.getItemId()) {
             case R.id.cancel_label:
                 startActivity(intent);
                 return true;
-
             case R.id.save_label:
                 try {
                     saveExpense();
                     startActivity(intent);
                 } catch (ParseException e) {
-
+                    //TODO: Implement better exception handling
+                    Log.d("onOptionsItemSelected", "Issue");
+                    //TODO: Figure out this warning
                 } catch (IllegalArgumentException e) {
-
+                    //TODO: Implement better exception handling
+                    Log.d("onOptionsItemSelected", "Issue");
                 }
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    //Helper function used to convert user input to an expense object
     private void saveExpense() throws ParseException, IllegalArgumentException {
-        Double amount = Double.parseDouble(amountEditText.getText().toString());
-        Date date = sdf.parse(dateEditText.getText().toString());
-        String location = locationEditText.getText().toString();
-        String note = noteEditText.getText().toString();
-        Boolean income = incomeCheckbox.isChecked();
-        Boolean recurring = recurringCheckbox.isChecked();
-        String recurringPeriod = recurringSpinner.getSelectedItem().toString();
+        //TODO: Implement boundary checking on input variables
+        Double amount           = Double.parseDouble(amountEditText.getText().toString());
+        Date date               = sdf.parse(dateEditText.getText().toString());
+        String location         = locationEditText.getText().toString();
+        String note             = noteEditText.getText().toString();
+        Boolean income          = incomeCheckbox.isChecked();
+        Boolean recurring       = recurringCheckbox.isChecked();
+        String recurringPeriod  = recurringSpinner.getSelectedItem().toString();
 
-        //TODO: category is currently being created as null and staying null. The current method of getting the category is wrong conceptually.
         Category category = null;
         for (RadioButton rb : categoryRadioButtons) {
-            if (rb.isSelected()) {
+            if (rb.isChecked()) {
+                //TODO: Category should not be created every time an expense is created, rather return already existing category
                 category = new Category(rb.getText().toString());
-                Log.d("saveExpense", rb.getText().toString());
                 break;
             }
         }
+
+        if (category == null) {
+            //TODO: ParseException has not been implemented correctly
+            throw new ParseException("Parse Exception", -1);
+        }
+
         Expense expense = new Expense(date, amount, category, location, note, recurring, income, recurringPeriod);
         Singleton.getInstance(this).addExpense(expense);
     }
 
+    /*****************************************************************
+     * Helper Methods
+     *****************************************************************/
+
+    //Iterates through all categories and inflates a layout for each
     private void createCategoryRows() {
         LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        int i = 0;
         for (Category c : categories) {
-            //TODO: The category rows are not currently expanding completely inside the scrollView.
-            LinearLayout linearLayout = new LinearLayout(this);
-            //ViewGroup.LayoutParams params = scrollLinearLayout.getLayoutParams();
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            linearLayout.setLayoutParams(params);
-            linearLayout.setId(i++);
-
+            //TODO: Look into View.inflate method (specifically the 3rd parameter)
             View item = View.inflate(this, R.layout.category_row_layout, null);
 
+            //TODO: Color should be set dynamically and uniquely for each category
             View colorBox = item.findViewById(R.id.colorView);
             colorBox.setBackgroundColor(Color.RED);
-
-            //TextView categoryNameTextView = (TextView) item.findViewById(R.id.categoryNameTextView);
-            //categoryNameTextView.setText(c.getType());
 
             RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
@@ -196,14 +214,14 @@ public class AddExpenseActivity extends Activity {
                 }
             });
 
-            linearLayout.addView(item);
-            scrollLinearLayout.addView(linearLayout);
+            scrollLinearLayout.addView(item);
         }
     }
 
+    //onClick method for recurring checkbox
     public void enableSpinner(View view) {
+        //TODO: Should this be implemented using onClick or action listener?
         CheckBox recurringCheckBox = (CheckBox) view;
-        //Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
         if (recurringCheckBox.isChecked()) {
             recurringSpinner.setEnabled(true);
@@ -212,11 +230,10 @@ public class AddExpenseActivity extends Activity {
             recurringSpinner.setEnabled(false);
             recurringSpinner.setClickable(false);
         }
-
     }
 
+    //Helper function used to populate recurring spinner
     private void createSpinnerRows() {
-        //Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
         recurringSpinner.setEnabled(false);
         recurringSpinner.setClickable(false);
 

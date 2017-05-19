@@ -10,6 +10,7 @@ public class Category implements Serializable {
         this.type = type;
     }
 
+    //TODO: Is this setter required? Will a category ever be changed?
     public void setType(String type) {
         this.type = type;
     }

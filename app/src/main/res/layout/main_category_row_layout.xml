@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="14dp"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
+    android:paddingBottom="14dp">
+
+    <View
+        android:id="@+id/mainColorView"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:background="@color/colorAccent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="3dp">
+
+        <TextView
+            android:id="@+id/categoryRowTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="textStart"
+            android:text="Health"/>
+
+        <TextView
+            android:id="@+id/categryRowAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$300.67"/>
+
+    </LinearLayout>
+
+</LinearLayout>

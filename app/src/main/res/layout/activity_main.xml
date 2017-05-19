@@ -65,11 +65,13 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/mainCategoryScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5" >
 
         <LinearLayout
+            android:id="@+id/mainScrollLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

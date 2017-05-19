@@ -2,26 +2,24 @@ package com.shael.shah.expensemanager;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity {
+
+    /*****************************************************************
+    * Private Variables
+    ******************************************************************/
 
     private List<Expense> expenses;
     private List<Category> categories;
@@ -30,47 +28,36 @@ public class MainActivity extends Activity {
     private TextView netTextView;
     private TextView incomeTexView;
     private TextView expensesTextView;
+    private ScrollView mainCategoryScrollView;
+
+    /*****************************************************************
+     * Lifecycle Methods
+     *****************************************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getLists();
-        //Singleton.getInstance(this).removeAllExpenses();
-        createRecurringExpenses();
+        //Setup toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(toolbar);
 
+        //Find views to work with during main activity
         netTextView = (TextView) findViewById(R.id.netTextView);
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
         expensesTextView = (TextView) findViewById(R.id.expensesTextView);
+        mainCategoryScrollView = (ScrollView) findViewById(R.id.mainCategoryScrollView);
 
+        //Helper functions
+        getLists();
+        createRecurringExpenses();
         populateMoneyTextViews();
+        createMainCategoryRows();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.add_item:
-                Intent intent = new Intent(this, AddExpenseActivity.class);
-                startActivity(intent);
-
-                return true;
-            case R.id.open_menu:
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        //Workaround to delete all expenses/categories programmatically
+        //Singleton.getInstance(this).removeAllExpenses();
+        //Singleton.getInstance(this).removeAllCategories();
     }
 
     @Override
@@ -103,29 +90,68 @@ public class MainActivity extends Activity {
         setLists();
     }
 
+    /*****************************************************************
+     * Menu Methods
+     *****************************************************************/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.add_item:
+                Intent intent = new Intent(this, AddExpenseActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.open_menu:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /*****************************************************************
+     * Helper Methods
+     *****************************************************************/
+
+    //Iterates through all expenses to calculate income and money spent
     private void populateMoneyTextViews() {
+        //TODO: double needs to be changed to BigDecimal
         double income = 0;
         double outcome = 0;
+        double netcome = 0;
+
         for (Expense e : expenses) {
-            if (e.isIncome())
+            if (e.isIncome()) {
                 income += e.getAmount();
-            else
+            } else {
                 outcome += e.getAmount();
+            }
         }
 
-        double netcome = income - outcome;
+        netcome = income - outcome;
+
+        //TODO: Concatenations should not be used with setText
         incomeTexView.setText("$" + income);
         expensesTextView.setText("$" + outcome);
         netTextView.setText("$" + netcome);
 
-        if (netcome >= 0)
+        incomeTexView.setTextColor(Color.GREEN);
+        expensesTextView.setTextColor(Color.RED);
+        if (netcome >= 0) {
             netTextView.setTextColor(Color.GREEN);
-        else
+        } else {
             netTextView.setTextColor(Color.RED);
+        }
     }
 
-    //TODO: This function needs to be tested. There is probably a better way to implement this function. Check out the Joda-Time library.
+    //Iterates through all expenses to create new expenses if recurring = true
     private void createRecurringExpenses() {
+        //TODO: This function needs to be tested. There is probably a better way to implement this function. Check out the Joda-Time library.
         Calendar calendar = Calendar.getInstance();
 
         for (Expense e : expenses) {
@@ -156,72 +182,46 @@ public class MainActivity extends Activity {
         }
     }
 
+    //Iterates through categories and inflates a layout for each category with expenses totalling more than 0
+    private void createMainCategoryRows() {
+        LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
+
+        for (Category c : categories) {
+            //TODO: Look into View.inflate method (specifically the 3rd parameter)
+            View item = View.inflate(this, R.layout.main_category_row_layout, null);
+
+            //TODO: Color should be set dynamically and uniquely for each category
+            View colorBox = item.findViewById(R.id.mainColorView);
+            colorBox.setBackgroundColor(Color.RED);
+
+            String title = c.getType();
+            TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
+            categoryRowTitle.setText(title);
+
+            double amount = 0;
+            TextView categoryRowAmount = (TextView) item.findViewById(R.id.categryRowAmount);
+            for (Expense e : expenses) {
+                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                    amount += e.getAmount();
+                }
+            }
+
+            if (amount > 0) {
+                //TODO: Concatenations should not be used with setText
+                categoryRowAmount.setText("$" + amount);
+                scrollLinearLayout.addView(item);
+            }
+        }
+    }
+
+    //Retrieves all expenses and categories
     private void getLists() {
         expenses = Singleton.getInstance(this).getExpenses();
         categories = Singleton.getInstance(this).getCategories();
     }
 
+    //Sets all expenses and categories
     private void setLists() {
         Singleton.getInstance(this).saveLists();
-        /*if (expenses != null) {
-            setSharedPreferences(expenses, "expenses");
-        }
-        if (categories != null) {
-            setSharedPreferences(categories, "categories");
-        }*/
-    }
-
-    public Boolean addCategory(String category) {
-        for (Category c : categories) {
-            if (c.getType().equals(category)) {
-                return false;
-            }
-        }
-
-        categories.add(new Category(category));
-        return true;
-    }
-
-    public void setSharedPreferences(List<?> list, String tag) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-
-        prefEditor.putString(tag, json);
-        prefEditor.apply();
-    }
-
-    public List<Expense> getExpensesListFromSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("expenses", "");
-
-        Type type = new TypeToken<List<Expense>>() {}.getType();
-        List<Expense> expenses = gson.fromJson(json, type);
-
-        if (expenses == null || expenses.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return expenses;
-    }
-
-    public List<Category> getCategoriesListFromSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("categories", "");
-
-        Type type = new TypeToken<List<Category>>() {}.getType();
-        List<Category> categories = gson.fromJson(json, type);
-
-        if (categories == null || categories.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return categories;
     }
 }

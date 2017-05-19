@@ -36,7 +36,8 @@
             android:layout_gravity="end"
             android:textAlignment="viewEnd"
             android:textSize="20sp"
-            android:inputType="date"
+            android:inputType="numberDecimal"
+            android:backgroundTint="@null"
             android:hint="Enter an Amount" />
 
         <TextView
