@@ -17,6 +17,8 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -35,6 +37,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         getLists();
+        //Singleton.getInstance(this).removeAllExpenses();
+        createRecurringExpenses();
 
         netTextView = (TextView) findViewById(R.id.netTextView);
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
@@ -118,6 +122,38 @@ public class MainActivity extends Activity {
             netTextView.setTextColor(Color.GREEN);
         else
             netTextView.setTextColor(Color.RED);
+    }
+
+    //TODO: This function needs to be tested. There is probably a better way to implement this function. Check out the Joda-Time library.
+    private void createRecurringExpenses() {
+        Calendar calendar = Calendar.getInstance();
+
+        for (Expense e : expenses) {
+            if (e.isRecurring()) {
+                calendar.setTime(e.getDate());
+
+                switch (e.getRecurringPeriod()) {
+                    case "Daily":
+                        calendar.add(Calendar.DATE, 1);
+                        break;
+                    case "Weekly":
+                        calendar.add(Calendar.DATE, 7);
+                        break;
+                    case "Monthly":
+                        calendar.add(Calendar.MONTH, 1);
+                        break;
+                    case "Yearly":
+                        calendar.add(Calendar.YEAR, 1);
+                        break;
+                }
+
+                if (calendar.getTime().compareTo(e.getDate()) < 0) {
+                    Expense newExpense = new Expense(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation(), e.getNote(), true, e.isIncome(), e.getRecurringPeriod());
+                    Singleton.getInstance(this).addExpense(newExpense);
+                    e.setRecurring(false);
+                }
+            }
+        }
     }
 
     private void getLists() {

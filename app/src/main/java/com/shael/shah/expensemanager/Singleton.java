@@ -104,11 +104,11 @@ public class Singleton {
         prefEditor.apply();
     }
 
-    private void removeAllCategories() {
+    public void removeAllCategories() {
         categories.clear();
     }
 
-    private void removeAllExpenses() {
+    public void removeAllExpenses() {
         expenses.clear();
     }
 }

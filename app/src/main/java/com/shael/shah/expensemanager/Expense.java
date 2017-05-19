@@ -6,14 +6,17 @@ import java.util.Date;
 public class Expense implements Serializable {
 
     private Date date;
+    //TODO: Amount should be represented by a BigDecimal to ensure precision and accuracy.
     private double amount;
     private Category category;
     private String location;
     private String note;
     private boolean recurring;
     private boolean income;
+    private String recurringPeriod;
 
-    public Expense(Date date, double amount, Category category, String location, String note, boolean recurring, boolean income) {
+    //TODO: Use a builder instead of the classical constructor.
+    public Expense(Date date, double amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
         this.date = date;
         this.amount = amount;
         this.category = category;
@@ -21,10 +24,11 @@ public class Expense implements Serializable {
         this.note = note;
         this.recurring = recurring;
         this.income = income;
+        this.recurringPeriod = recurringPeriod;
     }
 
-    public Expense(Date date, double amount, String category, String location, String note, boolean recurring, boolean income) {
-        this(date, amount, new Category(category), location, note, recurring, income);
+    public Expense(Date date, double amount, String category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
+        this(date, amount, new Category(category), location, note, recurring, income, recurringPeriod);
     }
 
     public Date getDate() {
@@ -83,8 +87,20 @@ public class Expense implements Serializable {
         this.note = note;
     }
 
+    public String getRecurringPeriod() {
+        return recurringPeriod;
+    }
+
+    public void setRecurringPeriod(String recurringPeriod) {
+        this.recurringPeriod = recurringPeriod;
+    }
+
     @Override
     public String toString() {
-        return "Spent " + amount + " at " + location + " on " + date.toString();
+        //TODO: toString is ugly, probably shouldn't be using it.
+        if (income)
+            return "Earned " + amount + " at " + location + " on " + date.toString();
+        else
+            return "Spent " + amount + " at " + location + " on " + date.toString();
     }
 }

@@ -5,10 +5,10 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toolbar;
 
 import java.text.ParseException;
@@ -40,6 +39,7 @@ public class AddExpenseActivity extends Activity {
     private CheckBox incomeCheckbox;
     private CheckBox recurringCheckbox;
     private ScrollView categoryScrollView;
+    private Spinner recurringSpinner;
 
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
@@ -63,6 +63,7 @@ public class AddExpenseActivity extends Activity {
         noteEditText = (EditText) findViewById(R.id.noteEditText);
         incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
+        recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
         recurringCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -124,7 +125,7 @@ public class AddExpenseActivity extends Activity {
                 return true;
 
             case R.id.save_label:
-                try{
+                try {
                     saveExpense();
                     startActivity(intent);
                 } catch (ParseException e) {
@@ -144,16 +145,20 @@ public class AddExpenseActivity extends Activity {
         Date date = sdf.parse(dateEditText.getText().toString());
         String location = locationEditText.getText().toString();
         String note = noteEditText.getText().toString();
-        Boolean income = incomeCheckbox.isSelected();
-        Boolean recurring = recurringCheckbox.isSelected();
+        Boolean income = incomeCheckbox.isChecked();
+        Boolean recurring = recurringCheckbox.isChecked();
+        String recurringPeriod = recurringSpinner.getSelectedItem().toString();
 
+        //TODO: category is currently being created as null and staying null. The current method of getting the category is wrong conceptually.
         Category category = null;
         for (RadioButton rb : categoryRadioButtons) {
             if (rb.isSelected()) {
                 category = new Category(rb.getText().toString());
+                Log.d("saveExpense", rb.getText().toString());
+                break;
             }
         }
-        Expense expense = new Expense(date, amount, category, location, note, income, recurring);
+        Expense expense = new Expense(date, amount, category, location, note, recurring, income, recurringPeriod);
         Singleton.getInstance(this).addExpense(expense);
     }
 
@@ -162,9 +167,10 @@ public class AddExpenseActivity extends Activity {
 
         int i = 0;
         for (Category c : categories) {
+            //TODO: The category rows are not currently expanding completely inside the scrollView.
             LinearLayout linearLayout = new LinearLayout(this);
             //ViewGroup.LayoutParams params = scrollLinearLayout.getLayoutParams();
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             linearLayout.setLayoutParams(params);
             linearLayout.setId(i++);
 
@@ -195,13 +201,23 @@ public class AddExpenseActivity extends Activity {
     }
 
     public void enableSpinner(View view) {
-        Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        CheckBox recurringCheckBox = (CheckBox) view;
+        //Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
+        if (recurringCheckBox.isChecked()) {
+            recurringSpinner.setEnabled(true);
+            recurringSpinner.setClickable(true);
+        } else {
+            recurringSpinner.setEnabled(false);
+            recurringSpinner.setClickable(false);
+        }
 
     }
 
     private void createSpinnerRows() {
-        Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        //Spinner recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        recurringSpinner.setEnabled(false);
+        recurringSpinner.setClickable(false);
 
         String items[] = new String[] {"Daily", "Weekly", "Monthly", "Yearly"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
