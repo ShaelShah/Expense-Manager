@@ -2,6 +2,7 @@ package com.shael.shah.expensemanager;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -18,8 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ public class AddExpenseActivity extends Activity {
      ******************************************************************/
 
     private EditText amountEditText;
+    private TextView categoryLabelTextView;
     private EditText dateEditText;
     private EditText locationEditText;
     private EditText noteEditText;
@@ -70,12 +76,17 @@ public class AddExpenseActivity extends Activity {
         //Find views to work with during add expense activity
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
+        categoryLabelTextView = (TextView) findViewById(R.id.categoryLabelTextView);
         dateEditText = (EditText) findViewById(R.id.dateEditText);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
         noteEditText = (EditText) findViewById(R.id.noteEditText);
         incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
         recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+
+        categoryLabelTextView.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(amountEditText.getWindowToken(), 0);
 
         //Action Listeners
         recurringCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -159,7 +170,7 @@ public class AddExpenseActivity extends Activity {
     //Helper function used to convert user input to an expense object
     private void saveExpense() throws ParseException, IllegalArgumentException {
         //TODO: Implement boundary checking on input variables
-        Double amount           = Double.parseDouble(amountEditText.getText().toString());
+        BigDecimal amount       = new BigDecimal(amountEditText.getText().toString());
         Date date               = sdf.parse(dateEditText.getText().toString());
         String location         = locationEditText.getText().toString();
         String note             = noteEditText.getText().toString();
@@ -193,7 +204,7 @@ public class AddExpenseActivity extends Activity {
     private void createCategoryRows() {
         LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        for (Category c : categories) {
+        for (int i = 0; i < categories.size(); i++) {
             //TODO: Look into View.inflate method (specifically the 3rd parameter)
             View item = View.inflate(this, R.layout.category_row_layout, null);
 
@@ -203,7 +214,7 @@ public class AddExpenseActivity extends Activity {
 
             RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
-            categoryRadioButton.setText(c.getType());
+            categoryRadioButton.setText(categories.get(i).getType());
             categoryRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -215,6 +226,13 @@ public class AddExpenseActivity extends Activity {
             });
 
             scrollLinearLayout.addView(item);
+
+            if (i != categories.size() - 1) {
+                View line = new View(this);
+                line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+                line.setBackgroundColor(Color.LTGRAY);
+                scrollLinearLayout.addView(line);
+            }
         }
     }
 

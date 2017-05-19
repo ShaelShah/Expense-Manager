@@ -12,6 +12,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
 
@@ -120,20 +121,20 @@ public class MainActivity extends Activity {
 
     //Iterates through all expenses to calculate income and money spent
     private void populateMoneyTextViews() {
-        //TODO: double needs to be changed to BigDecimal
-        double income = 0;
-        double outcome = 0;
-        double netcome = 0;
+        BigDecimal income = new BigDecimal(0);
+        BigDecimal outcome = new BigDecimal(0);
+        BigDecimal netcome;
 
         for (Expense e : expenses) {
             if (e.isIncome()) {
-                income += e.getAmount();
+                income = income.add(e.getAmount());
             } else {
-                outcome += e.getAmount();
+                outcome = outcome.add(e.getAmount());
             }
         }
 
-        netcome = income - outcome;
+        //TODO: There should be a better way to do this
+        netcome = (income.subtract(outcome)).abs();
 
         //TODO: Concatenations should not be used with setText
         incomeTexView.setText("$" + income);
@@ -142,7 +143,7 @@ public class MainActivity extends Activity {
 
         incomeTexView.setTextColor(Color.GREEN);
         expensesTextView.setTextColor(Color.RED);
-        if (netcome >= 0) {
+        if (netcome.signum() > 0) {
             netTextView.setTextColor(Color.GREEN);
         } else {
             netTextView.setTextColor(Color.RED);
@@ -198,15 +199,15 @@ public class MainActivity extends Activity {
             TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
             categoryRowTitle.setText(title);
 
-            double amount = 0;
+            BigDecimal amount = new BigDecimal(0);
             TextView categoryRowAmount = (TextView) item.findViewById(R.id.categryRowAmount);
             for (Expense e : expenses) {
                 if (!e.isIncome() && e.getCategory().getType().equals(title)) {
-                    amount += e.getAmount();
+                    amount = amount.add(e.getAmount());
                 }
             }
 
-            if (amount > 0) {
+            if (amount.signum() > 0) {
                 //TODO: Concatenations should not be used with setText
                 categoryRowAmount.setText("$" + amount);
                 scrollLinearLayout.addView(item);

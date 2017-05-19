@@ -1,13 +1,13 @@
 package com.shael.shah.expensemanager;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Expense implements Serializable {
 
     private Date date;
-    //TODO: Amount should be represented by a BigDecimal to ensure precision and accuracy.
-    private double amount;
+    private BigDecimal amount;
     private Category category;
     private String location;
     private String note;
@@ -16,7 +16,7 @@ public class Expense implements Serializable {
     private String recurringPeriod;
 
     //TODO: Use a builder instead of the classical constructor.
-    public Expense(Date date, double amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
+    public Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
         this.date = date;
         this.amount = amount;
         this.category = category;
@@ -27,7 +27,7 @@ public class Expense implements Serializable {
         this.recurringPeriod = recurringPeriod;
     }
 
-    public Expense(Date date, double amount, String category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
+    public Expense(Date date, BigDecimal amount, String category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
         this(date, amount, new Category(category), location, note, recurring, income, recurringPeriod);
     }
 
@@ -39,7 +39,7 @@ public class Expense implements Serializable {
         this.date = date;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
@@ -59,7 +59,7 @@ public class Expense implements Serializable {
         this.income = income;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

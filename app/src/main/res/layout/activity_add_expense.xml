@@ -36,14 +36,15 @@
             android:layout_gravity="end"
             android:textAlignment="viewEnd"
             android:textSize="20sp"
+            android:textStyle="bold"
             android:inputType="numberDecimal"
-            android:backgroundTint="@null"
             android:hint="Enter an Amount" />
 
         <TextView
             android:id="@+id/categoryLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="Category" />
 
         <View
@@ -53,10 +54,11 @@
 
         <ScrollView
             android:id="@+id/categoryScrollView"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true">
+            android:layout_weight="1">
 
             <LinearLayout
                 android:id="@+id/scrollLinearLayout"
@@ -70,6 +72,7 @@
             android:id="@+id/additionalInfoLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="Additional Info" />
 
         <View
@@ -89,6 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start|bottom"
+                android:textStyle="bold"
                 android:text="Date"/>
 
             <EditText
@@ -96,7 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:focusable="false"/>
+                android:gravity="center"/>
 
         </LinearLayout>
 
@@ -112,13 +116,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start|bottom"
+                android:textStyle="bold"
                 android:text="Location"/>
 
             <EditText
                 android:id="@+id/locationEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"/>
+                android:layout_weight="3"
+                android:gravity="center"/>
 
         </LinearLayout>
 
@@ -134,13 +140,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="start|bottom"
+                android:textStyle="bold"
                 android:text="Note"/>
 
             <EditText
                 android:id="@+id/noteEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"/>
+                android:layout_weight="3"
+                android:gravity="center"/>
 
         </LinearLayout>
 
@@ -148,6 +156,8 @@
             android:id="@+id/incomeCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="-7dp"
+            android:textStyle="bold"
             android:text="Income"/>
 
         <LinearLayout
@@ -161,6 +171,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:onClick="enableSpinner"
+                android:layout_marginStart="-7dp"
+                android:textStyle="bold"
                 android:text="Recurring" />
 
             <Spinner

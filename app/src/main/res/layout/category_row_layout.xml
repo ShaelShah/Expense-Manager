@@ -3,29 +3,16 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="14dp"
-    android:paddingLeft="14dp"
-    android:paddingRight="14dp"
-    android:paddingBottom="14dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
 
     <View
         android:id="@+id/colorView"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:background="@color/colorAccent"/>
-
-    <!--
-    <TextView
-        android:id="@+id/categoryNameTextView"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textSize="20sp"
-        android:gravity="center_vertical"
-        android:text="Health"/>
-        -->
 
     <RadioButton
         android:id="@+id/categoryRadioButton"
