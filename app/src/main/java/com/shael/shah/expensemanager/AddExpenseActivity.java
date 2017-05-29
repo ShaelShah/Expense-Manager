@@ -6,13 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -39,6 +42,7 @@ public class AddExpenseActivity extends Activity {
      * Private Variables
      ******************************************************************/
 
+    private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
     private TextView categoryLabelTextView;
     private EditText dateEditText;
@@ -51,6 +55,7 @@ public class AddExpenseActivity extends Activity {
 
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
+    private ArrayAdapter<String> spinnerAdapter;
 
     //TODO: May be beneficial to move away from Java Date class
     private Calendar calendar = Calendar.getInstance();
@@ -69,11 +74,12 @@ public class AddExpenseActivity extends Activity {
         setContentView(R.layout.activity_add_expense);
 
         //Setup toolbar
-        Toolbar toolbar;
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(toolbar);
+        //Toolbar toolbar;
+        //toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setActionBar(toolbar);
 
         //Find views to work with during add expense activity
+        toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
         categoryLabelTextView = (TextView) findViewById(R.id.categoryLabelTextView);
@@ -100,35 +106,74 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
-        //TODO: May be beneficial to move away from Java Date class
-        dateEditText.setText(sdf.format(calendar.getTime()));
-        dateEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                calendar.set(Calendar.YEAR, year);
-                                calendar.set(Calendar.MONTH, month);
-                                calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                                dateEditText.setText(sdf.format(calendar.getTime()));
-                            }
-
-                }, year, month, day);
-
-                datePickerDialog.setTitle("Select Date");
-                datePickerDialog.show();
-            }
-        });
-
         categories = Singleton.getInstance(this).getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
         createSpinnerRows();
+
+        Button delete = createToolbarButtons("Delete");
+        Button cancel = createToolbarButtons("Cancel");
+        Button save = createToolbarButtons("Save");
+
+        View lineOne = createDividerView();
+        View lineTwo = createDividerView();
+
+        //Set fields based on context
+        if (!getIntent().hasExtra("ExpenseObject")) {
+            toolbarLinearLayout.addView(cancel);
+            toolbarLinearLayout.addView(lineOne);
+            toolbarLinearLayout.addView(save);
+
+            //TODO: May be beneficial to move away from Java Date class
+            dateEditText.setText(sdf.format(calendar.getTime()));
+            dateEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
+                            new DatePickerDialog.OnDateSetListener() {
+
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    calendar.set(Calendar.YEAR, year);
+                                    calendar.set(Calendar.MONTH, month);
+                                    calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                                    dateEditText.setText(sdf.format(calendar.getTime()));
+                                }
+
+                            }, year, month, day);
+
+                    datePickerDialog.setTitle("Select Date");
+                    datePickerDialog.show();
+                }
+            });
+        } else {
+            toolbarLinearLayout.addView(delete);
+            toolbarLinearLayout.addView(lineOne);
+            toolbarLinearLayout.addView(cancel);
+            toolbarLinearLayout.addView(lineTwo);
+            toolbarLinearLayout.addView(save);
+
+            Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+            amountEditText.setText("$" + expense.getAmount());
+            dateEditText.setText(sdf.format(expense.getDate()));
+            locationEditText.setText(expense.getLocation());
+            noteEditText.setText(expense.getNote());
+            incomeCheckbox.setChecked(expense.isIncome());
+            recurringCheckbox.setChecked(expense.isRecurring());
+
+            int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
+            recurringSpinner.setSelection(position);
+
+            String categoryTitle = expense.getCategory().getType();
+            for (RadioButton rb : categoryRadioButtons) {
+                if (rb.getText().toString().equals(categoryTitle)) {
+                    rb.setChecked(true);
+                    break;
+                }
+            }
+        }
     }
 
     /*****************************************************************
@@ -266,8 +311,37 @@ public class AddExpenseActivity extends Activity {
         recurringSpinner.setClickable(false);
 
         String items[] = new String[] {"Daily", "Weekly", "Monthly", "Yearly"};
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recurringSpinner.setAdapter(spinnerAdapter);
+    }
+
+    private Button createToolbarButtons(String title) {
+        Button button = new Button(new ContextThemeWrapper(this, android.R.style.Widget_Material_Light_Button_Borderless));
+        button.setBackgroundColor(Color.LTGRAY);
+        button.setText(title);
+        button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performButtonClickAction(v);
+            }
+        });
+
+        return button;
+    }
+
+    private View createDividerView() {
+        View divider = new View(this);
+        divider.setLayoutParams(new LinearLayout.LayoutParams(1, ViewGroup.LayoutParams.MATCH_PARENT));
+        divider.setBackgroundColor(Color.BLACK);
+
+        return divider;
+    }
+
+    private void performButtonClickAction(View v) {
+        //TODO
     }
 }

@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -37,12 +38,17 @@ public class CategoryExpenses extends Activity {
 
         categoryTitleTextView.setText(categoryTitle);
 
+        Log.d("Category Title Prior", categoryTitle);
+
         BigDecimal amount = new BigDecimal(0);
         for (Expense e : expenses) {
+            Log.d("Expense Category Title", e.getCategory().getType());
             if (e.getCategory().getType().equals(categoryTitle)) {
-                amount.add(e.getAmount());
+                Log.d("Expense Amount", e.getAmount().toString());
+                amount = amount.add(e.getAmount());
             }
         }
+        Log.d("Amount", amount.toString());
         amountCategoryTextView.setText("$" + amount);
 
         populateScrollView(categoryTitle);
@@ -53,6 +59,7 @@ public class CategoryExpenses extends Activity {
 
         for (Expense e : expenses) {
             if (e.getCategory().getType().equals(categoryTitle)) {
+                final Expense expense = e;
                 View item = View.inflate(this, R.layout.category_expenses_row_layout, null);
 
                 TextView dateTextView = (TextView) item.findViewById(R.id.categoryDateTextView);
@@ -69,7 +76,9 @@ public class CategoryExpenses extends Activity {
                 item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO
+                        Intent intent = new Intent(CategoryExpenses.this, AddExpenseActivity.class);
+                        intent.putExtra("ExpenseObject", expense);
+                        startActivity(intent);
                     }
                 });
             }

@@ -18,7 +18,11 @@
         </activity>
 
         <activity android:name=".AddExpenseActivity">
+            android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden"
+        </activity>
+
+        <activity android:name=".CategoryExpenses">
         </activity>
 
     </application>

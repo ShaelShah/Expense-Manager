@@ -9,6 +9,7 @@
     android:orientation="vertical"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
+    <!--
     <Toolbar
         android:id="@+id/toolbar"
         android:contentInsetLeft="0dp"
@@ -19,6 +20,13 @@
         android:elevation="4dp"
         android:theme="@style/AppTheme">
     </Toolbar>
+    -->
+
+    <LinearLayout
+        android:id="@+id/toolbarLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
