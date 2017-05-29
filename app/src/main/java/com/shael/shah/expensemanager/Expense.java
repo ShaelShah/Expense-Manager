@@ -1,5 +1,7 @@
 package com.shael.shah.expensemanager;
 
+import android.graphics.Color;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,7 +17,7 @@ public class Expense implements Serializable {
     private boolean income;
     private String recurringPeriod;
 
-    //TODO: Use a builder instead of the classical constructor.
+    //TODO: Use a builder instead of the classical constructor
     public Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
         this.date = date;
         this.amount = amount;
@@ -27,8 +29,10 @@ public class Expense implements Serializable {
         this.recurringPeriod = recurringPeriod;
     }
 
+    //TODO: Is this constructor even required?
     public Expense(Date date, BigDecimal amount, String category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
-        this(date, amount, new Category(category), location, note, recurring, income, recurringPeriod);
+        //TODO: Passes Color.RED everytime, rather should be setting the color dynamically
+        this(date, amount, new Category(category, Color.RED), location, note, recurring, income, recurringPeriod);
     }
 
     public Date getDate() {

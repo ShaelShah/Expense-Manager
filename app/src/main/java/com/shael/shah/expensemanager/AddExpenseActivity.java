@@ -179,10 +179,20 @@ public class AddExpenseActivity extends Activity {
         String recurringPeriod  = recurringSpinner.getSelectedItem().toString();
 
         Category category = null;
+        boolean found = false;
         for (RadioButton rb : categoryRadioButtons) {
             if (rb.isChecked()) {
-                //TODO: Category should not be created every time an expense is created, rather return already existing category
-                category = new Category(rb.getText().toString());
+                String categoryName = rb.getText().toString();
+                for (Category c : categories) {
+                    if (c.getType().equals(categoryName)) {
+                        category = c;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (found) {
                 break;
             }
         }

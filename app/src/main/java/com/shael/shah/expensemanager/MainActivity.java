@@ -193,7 +193,7 @@ public class MainActivity extends Activity {
 
             //TODO: Color should be set dynamically and uniquely for each category
             View colorBox = item.findViewById(R.id.mainColorView);
-            colorBox.setBackgroundColor(Color.RED);
+            colorBox.setBackgroundColor(c.getColor());
 
             String title = c.getType();
             TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
@@ -211,6 +211,16 @@ public class MainActivity extends Activity {
                 //TODO: Concatenations should not be used with setText
                 categoryRowAmount.setText("$" + amount);
                 scrollLinearLayout.addView(item);
+
+                item.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String categoryTitle = ((TextView) v.findViewById(R.id.categoryRowTitle)).getText().toString();
+                        Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                        intent.putExtra("CategoryTitle", categoryTitle);
+                        startActivity(intent);
+                    }
+                });
             }
         }
     }
