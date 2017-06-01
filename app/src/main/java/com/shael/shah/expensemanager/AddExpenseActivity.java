@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -124,6 +123,27 @@ public class AddExpenseActivity extends Activity {
             toolbarLinearLayout.addView(lineOne);
             toolbarLinearLayout.addView(save);
 
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        saveExpense();
+                    } catch (ParseException e) {
+                        //TODO: Handle this parseException
+                    }
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
             //TODO: May be beneficial to move away from Java Date class
             dateEditText.setText(sdf.format(calendar.getTime()));
             dateEditText.setOnClickListener(new View.OnClickListener() {
@@ -152,6 +172,41 @@ public class AddExpenseActivity extends Activity {
             toolbarLinearLayout.addView(cancel);
             toolbarLinearLayout.addView(lineTwo);
             toolbarLinearLayout.addView(save);
+
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+
+                        Singleton.getInstance(null).removeExpense(expense);
+                        saveExpense();
+                    } catch (ParseException e) {
+                        //TODO: Handle this parseException
+                    }
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Singleton.getInstance(null).removeExpense(expense);
+
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
 
             Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
             amountEditText.setText("$" + expense.getAmount());
@@ -198,11 +253,9 @@ public class AddExpenseActivity extends Activity {
                     startActivity(intent);
                 } catch (ParseException e) {
                     //TODO: Implement better exception handling
-                    Log.d("onOptionsItemSelected", "Issue");
                     //TODO: Figure out this warning
                 } catch (IllegalArgumentException e) {
                     //TODO: Implement better exception handling
-                    Log.d("onOptionsItemSelected", "Issue");
                 }
                 return true;
             default:

@@ -100,6 +100,53 @@ public class Expense implements Serializable {
     }
 
     @Override
+    public boolean equals(Object exp) {
+        if (this == exp) {
+            return true;
+        }
+
+        if (this.getClass() != exp.getClass()) {
+            return false;
+        }
+
+        Expense expense = (Expense) exp;
+
+        if (this.getDate().compareTo(expense.getDate()) != 0) {
+            return false;
+        }
+
+        if (this.getAmount().compareTo(expense.getAmount()) != 0) {
+            return false;
+        }
+
+        if (this.isRecurring() != expense.isRecurring()) {
+            return false;
+        }
+
+        if (this.isIncome() != expense.isRecurring()) {
+            return false;
+        }
+
+        if (!this.getCategory().equals(expense.getCategory())) {
+            return false;
+        }
+
+        if (!this.getLocation().equals(expense.getLocation())) {
+            return false;
+        }
+
+        if (!this.getNote().equals(expense.getNote())) {
+            return false;
+        }
+
+        if (!this.getRecurringPeriod().equals(expense.getRecurringPeriod())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public String toString() {
         //TODO: toString is ugly, probably shouldn't be using it.
         if (income)

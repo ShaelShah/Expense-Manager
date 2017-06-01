@@ -31,6 +31,29 @@ public class Category implements Serializable {
     }
 
     @Override
+    public boolean equals(Object cat) {
+        if (this == cat) {
+            return true;
+        }
+
+        if (this.getClass() != cat.getClass()) {
+            return false;
+        }
+
+        Category category = (Category) cat;
+
+        if (!this.getType().equals(category.getType())) {
+            return false;
+        }
+
+        if (this.getColor() != category.getColor()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Category " + type;
     }

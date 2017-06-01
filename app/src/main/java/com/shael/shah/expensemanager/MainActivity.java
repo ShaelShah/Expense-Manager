@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
 
         //Helper functions
         getLists();
+        setActionListeners();
         createRecurringExpenses();
         populateMoneyTextViews();
         createMainCategoryRows();
@@ -59,6 +60,11 @@ public class MainActivity extends Activity {
         //Workaround to delete all expenses/categories programmatically
         //Singleton.getInstance(this).removeAllExpenses();
         //Singleton.getInstance(this).removeAllCategories();
+
+        //Workaround to add categories programmatically
+        //Singleton.getInstance(this).addCategory("Food");
+        //Singleton.getInstance(this).addCategory("Transportation");
+        //Singleton.getInstance(this).addCategory("Entertainment");
     }
 
     @Override
@@ -134,12 +140,12 @@ public class MainActivity extends Activity {
         }
 
         //TODO: There should be a better way to do this
-        netcome = (income.subtract(outcome)).abs();
+        netcome = income.subtract(outcome);
 
         //TODO: Concatenations should not be used with setText
         incomeTexView.setText("$" + income);
         expensesTextView.setText("$" + outcome);
-        netTextView.setText("$" + netcome);
+        netTextView.setText("$" + netcome.abs());
 
         incomeTexView.setTextColor(Color.GREEN);
         expensesTextView.setTextColor(Color.RED);
@@ -148,6 +154,36 @@ public class MainActivity extends Activity {
         } else {
             netTextView.setTextColor(Color.RED);
         }
+    }
+
+    private void setActionListeners() {
+        incomeTexView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                intent.putExtra("CategoryTitle", "Income");
+                startActivity(intent);
+            }
+        });
+
+        expensesTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                intent.putExtra("CategoryTitle", "Expenses");
+                startActivity(intent);
+            }
+        });
+
+        netTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                intent.putExtra("CategoryTitle", "Net Total");
+
+                startActivity(intent);
+            }
+        });
     }
 
     //Iterates through all expenses to create new expenses if recurring = true

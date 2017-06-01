@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,6 +56,19 @@ public class Singleton {
     //TODO: Figure out this warning
     public void addExpense(Expense expense) {
         expenses.add(expense);
+    }
+
+    public void removeExpense(Expense expense) {
+        for (Expense e : expenses) {
+            Log.d("singleton", e.toString());
+            if (e.equals(expense)) {
+
+                Log.d("Remove Expense", expense.toString() + " was removed");
+
+                expenses.remove(expense);
+                break;
+            }
+        }
     }
 
     public Boolean addCategory(String category) {
