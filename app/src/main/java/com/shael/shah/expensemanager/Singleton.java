@@ -94,7 +94,8 @@ public class Singleton {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("expenses", "");
 
-        Type type = new TypeToken<List<Expense>>() {}.getType();
+        Type type = new TypeToken<List<Expense>>() {
+        }.getType();
         List<Expense> expenses = gson.fromJson(json, type);
 
         if (expenses == null || expenses.isEmpty()) {
@@ -110,7 +111,8 @@ public class Singleton {
         Gson gson = new Gson();
         String json = sharedPreferences.getString("categories", "");
 
-        Type type = new TypeToken<List<Category>>() {}.getType();
+        Type type = new TypeToken<List<Category>>() {
+        }.getType();
         List<Category> categories = gson.fromJson(json, type);
 
         if (categories == null || categories.isEmpty()) {

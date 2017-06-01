@@ -123,7 +123,7 @@ public class Expense implements Serializable {
             return false;
         }
 
-        if (this.isIncome() != expense.isRecurring()) {
+        if (this.isIncome() != expense.isIncome()) {
             return false;
         }
 

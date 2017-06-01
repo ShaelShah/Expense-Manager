@@ -108,124 +108,6 @@ public class AddExpenseActivity extends Activity {
         createCategoryRows();
         createSpinnerRows();
         populateInfoFields();
-
-        Button delete = createToolbarButtons("Delete");
-        Button cancel = createToolbarButtons("Cancel");
-        Button save = createToolbarButtons("Save");
-
-        View lineOne = createDividerView();
-        View lineTwo = createDividerView();
-
-        //Set fields based on context
-        if (!getIntent().hasExtra("ExpenseObject")) {
-            toolbarLinearLayout.addView(cancel);
-            toolbarLinearLayout.addView(lineOne);
-            toolbarLinearLayout.addView(save);
-
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            save.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        saveExpense();
-                    } catch (ParseException e) {
-                        //TODO: Handle this parseException
-                    }
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            //TODO: May be beneficial to move away from Java Date class
-            dateEditText.setText(sdf.format(calendar.getTime()));
-            dateEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
-
-                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                    calendar.set(Calendar.YEAR, year);
-                                    calendar.set(Calendar.MONTH, month);
-                                    calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                                    dateEditText.setText(sdf.format(calendar.getTime()));
-                                }
-
-                            }, year, month, day);
-
-                    datePickerDialog.setTitle("Select Date");
-                    datePickerDialog.show();
-                }
-            });
-        } else {
-            toolbarLinearLayout.addView(delete);
-            toolbarLinearLayout.addView(lineOne);
-            toolbarLinearLayout.addView(cancel);
-            toolbarLinearLayout.addView(lineTwo);
-            toolbarLinearLayout.addView(save);
-
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            save.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
-
-                        Singleton.getInstance(null).removeExpense(expense);
-                        saveExpense();
-                    } catch (ParseException e) {
-                        //TODO: Handle this parseException
-                    }
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
-                    Singleton.getInstance(null).removeExpense(expense);
-
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
-            amountEditText.setText("$" + expense.getAmount());
-            dateEditText.setText(sdf.format(expense.getDate()));
-            locationEditText.setText(expense.getLocation());
-            noteEditText.setText(expense.getNote());
-            incomeCheckbox.setChecked(expense.isIncome());
-            recurringCheckbox.setChecked(expense.isRecurring());
-
-            int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
-            recurringSpinner.setSelection(position);
-
-            String categoryTitle = expense.getCategory().getType();
-            for (RadioButton rb : categoryRadioButtons) {
-                if (rb.getText().toString().equals(categoryTitle)) {
-                    rb.setChecked(true);
-                    break;
-                }
-            }
-        }
     }
 
     /*****************************************************************
@@ -386,6 +268,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });
@@ -400,6 +283,7 @@ public class AddExpenseActivity extends Activity {
                         //TODO: Handle this parseException
                     }
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });
@@ -445,6 +329,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });
@@ -462,6 +347,7 @@ public class AddExpenseActivity extends Activity {
                         //TODO: Handle this parseException
                     }
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });
@@ -474,6 +360,7 @@ public class AddExpenseActivity extends Activity {
                     Singleton.getInstance(null).removeExpense(expense);
 
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
             });
