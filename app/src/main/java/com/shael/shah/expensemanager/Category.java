@@ -30,6 +30,8 @@ public class Category implements Serializable {
         return color;
     }
 
+    //TODO: There could be a better way to implement this function
+    //TODO: HashCode should also be overridden
     @Override
     public boolean equals(Object cat) {
         if (this == cat) {
@@ -53,6 +55,7 @@ public class Category implements Serializable {
         return true;
     }
 
+    //TODO: toString is ugly and probably should not be used
     @Override
     public String toString() {
         return "Category " + type;

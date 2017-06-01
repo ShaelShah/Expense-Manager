@@ -39,8 +39,10 @@ public class AddExpenseActivity extends Activity {
      * Private Variables
      ******************************************************************/
 
+    //TODO: Maybe this should be a local variable
     private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
+    //TODO: Maybe this should be a local variable
     private TextView categoryLabelTextView;
     private EditText dateEditText;
     private EditText locationEditText;
@@ -70,11 +72,6 @@ public class AddExpenseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
-        //Setup toolbar
-        //Toolbar toolbar;
-        //toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setActionBar(toolbar);
-
         //Find views to work with during add expense activity
         toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
@@ -87,6 +84,7 @@ public class AddExpenseActivity extends Activity {
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
         recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
+        //TODO: Find method to hide keyboard by default
         categoryLabelTextView.requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(amountEditText.getWindowToken(), 0);
@@ -103,12 +101,13 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
-        categories = Singleton.getInstance(this).getCategories();
+        categories = Singleton.getInstance(null).getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
         createSpinnerRows();
+        populateInfoFields();
 
         Button delete = createToolbarButtons("Delete");
         Button cancel = createToolbarButtons("Cancel");
@@ -367,6 +366,141 @@ public class AddExpenseActivity extends Activity {
         recurringSpinner.setAdapter(spinnerAdapter);
     }
 
+    //TODO: Function is messy, refractor
+    //Helper function used to de-clutter onCreate method
+    private void populateInfoFields() {
+
+        if (!getIntent().hasExtra("ExpenseObject")) {
+
+            Button cancel = createToolbarButtons("Cancel");
+            Button save = createToolbarButtons("Save");
+
+            View lineOne = createDividerView();
+
+            toolbarLinearLayout.addView(cancel);
+            toolbarLinearLayout.addView(lineOne);
+            toolbarLinearLayout.addView(save);
+
+            //TODO: There might be a better way to do this
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //TODO: There might be a better way to do this
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        saveExpense();
+                    } catch (ParseException e) {
+                        //TODO: Handle this parseException
+                    }
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //TODO: May be beneficial to move away from Java Date class
+            dateEditText.setText(sdf.format(calendar.getTime()));
+            dateEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
+                            new DatePickerDialog.OnDateSetListener() {
+
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    calendar.set(Calendar.YEAR, year);
+                                    calendar.set(Calendar.MONTH, month);
+                                    calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                                    dateEditText.setText(sdf.format(calendar.getTime()));
+                                }
+
+                            }, year, month, day);
+
+                    datePickerDialog.setTitle("Select Date");
+                    datePickerDialog.show();
+                }
+            });
+        } else {
+            Button delete = createToolbarButtons("Delete");
+            Button cancel = createToolbarButtons("Cancel");
+            Button save = createToolbarButtons("Save");
+
+            View lineOne = createDividerView();
+            View lineTwo = createDividerView();
+
+            toolbarLinearLayout.addView(delete);
+            toolbarLinearLayout.addView(lineOne);
+            toolbarLinearLayout.addView(cancel);
+            toolbarLinearLayout.addView(lineTwo);
+            toolbarLinearLayout.addView(save);
+
+            //TODO: There might be a better way to do this
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //TODO: There might be a better way to do this
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+
+                        Singleton.getInstance(null).removeExpense(expense);
+                        saveExpense();
+                    } catch (ParseException e) {
+                        //TODO: Handle this parseException
+                    }
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            //TODO: There might be a better way to do this
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Singleton.getInstance(null).removeExpense(expense);
+
+                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+            //TODO: Do not concatenate with setText
+            amountEditText.setText("$" + expense.getAmount());
+            dateEditText.setText(sdf.format(expense.getDate()));
+            locationEditText.setText(expense.getLocation());
+            noteEditText.setText(expense.getNote());
+            incomeCheckbox.setChecked(expense.isIncome());
+            recurringCheckbox.setChecked(expense.isRecurring());
+
+            int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
+            recurringSpinner.setSelection(position);
+
+            String categoryTitle = expense.getCategory().getType();
+            for (RadioButton rb : categoryRadioButtons) {
+                if (rb.getText().toString().equals(categoryTitle)) {
+                    rb.setChecked(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    //Helper function to create toolbar buttons
     private Button createToolbarButtons(String title) {
         Button button = new Button(new ContextThemeWrapper(this, android.R.style.Widget_Material_Light_Button_Borderless));
         button.setBackgroundColor(Color.LTGRAY);
@@ -374,25 +508,15 @@ public class AddExpenseActivity extends Activity {
         button.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performButtonClickAction(v);
-            }
-        });
-
         return button;
     }
 
+    //Helper function to create dividers used in toolbar
     private View createDividerView() {
         View divider = new View(this);
         divider.setLayoutParams(new LinearLayout.LayoutParams(1, ViewGroup.LayoutParams.MATCH_PARENT));
         divider.setBackgroundColor(Color.BLACK);
 
         return divider;
-    }
-
-    private void performButtonClickAction(View v) {
-        //TODO
     }
 }

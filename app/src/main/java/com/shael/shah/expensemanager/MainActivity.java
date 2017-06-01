@@ -129,7 +129,7 @@ public class MainActivity extends Activity {
     private void populateMoneyTextViews() {
         BigDecimal income = new BigDecimal(0);
         BigDecimal outcome = new BigDecimal(0);
-        BigDecimal netcome;
+        BigDecimal net;
 
         for (Expense e : expenses) {
             if (e.isIncome()) {
@@ -140,16 +140,16 @@ public class MainActivity extends Activity {
         }
 
         //TODO: There should be a better way to do this
-        netcome = income.subtract(outcome);
+        net = income.subtract(outcome);
 
         //TODO: Concatenations should not be used with setText
         incomeTexView.setText("$" + income);
         expensesTextView.setText("$" + outcome);
-        netTextView.setText("$" + netcome.abs());
+        netTextView.setText("$" + net.abs());
 
         incomeTexView.setTextColor(Color.GREEN);
         expensesTextView.setTextColor(Color.RED);
-        if (netcome.signum() > 0) {
+        if (net.signum() > 0) {
             netTextView.setTextColor(Color.GREEN);
         } else {
             netTextView.setTextColor(Color.RED);
@@ -161,6 +161,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
                 intent.putExtra("CategoryTitle", "Income");
                 startActivity(intent);
             }
@@ -170,6 +171,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
                 intent.putExtra("CategoryTitle", "Expenses");
                 startActivity(intent);
             }
@@ -179,8 +181,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
                 intent.putExtra("CategoryTitle", "Net Total");
-
                 startActivity(intent);
             }
         });
@@ -188,7 +190,9 @@ public class MainActivity extends Activity {
 
     //Iterates through all expenses to create new expenses if recurring = true
     private void createRecurringExpenses() {
-        //TODO: This function needs to be tested. There is probably a better way to implement this function. Check out the Joda-Time library.
+        //TODO: This function needs to be tested.
+        //TODO: There is probably a better way to implement this function.
+        //TODO: Check out the Joda-Time library.
         Calendar calendar = Calendar.getInstance();
 
         for (Expense e : expenses) {
@@ -224,19 +228,9 @@ public class MainActivity extends Activity {
         LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
 
         for (Category c : categories) {
-            //TODO: Look into View.inflate method (specifically the 3rd parameter)
-            View item = View.inflate(this, R.layout.main_category_row_layout, null);
-
-            //TODO: Color should be set dynamically and uniquely for each category
-            View colorBox = item.findViewById(R.id.mainColorView);
-            colorBox.setBackgroundColor(c.getColor());
 
             String title = c.getType();
-            TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
-            categoryRowTitle.setText(title);
-
             BigDecimal amount = new BigDecimal(0);
-            TextView categoryRowAmount = (TextView) item.findViewById(R.id.categryRowAmount);
             for (Expense e : expenses) {
                 if (!e.isIncome() && e.getCategory().getType().equals(title)) {
                     amount = amount.add(e.getAmount());
@@ -244,6 +238,19 @@ public class MainActivity extends Activity {
             }
 
             if (amount.signum() > 0) {
+                //TODO: Look into View.inflate method (specifically the 3rd parameter)
+                View item = View.inflate(this, R.layout.main_category_row_layout, null);
+
+                //TODO: Color should be set dynamically and uniquely for each category
+                View colorBox = item.findViewById(R.id.mainColorView);
+                colorBox.setBackgroundColor(c.getColor());
+
+                TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
+                categoryRowTitle.setText(title);
+
+                TextView categoryRowAmount = (TextView) item.findViewById(R.id.categryRowAmount);
+
+
                 //TODO: Concatenations should not be used with setText
                 categoryRowAmount.setText("$" + amount);
                 scrollLinearLayout.addView(item);
