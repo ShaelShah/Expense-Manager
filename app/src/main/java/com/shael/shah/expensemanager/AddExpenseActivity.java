@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,7 +48,6 @@ public class AddExpenseActivity extends Activity {
     private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
     //TODO: Maybe this should be a local variable
-    private TextView categoryLabelTextView;
     private EditText dateEditText;
     private EditText locationEditText;
     private EditText noteEditText;
@@ -75,22 +76,18 @@ public class AddExpenseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         //Find views to work with during add expense activity
         toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
         amountEditText = (EditText) findViewById(R.id.amountEditText);
-        categoryLabelTextView = (TextView) findViewById(R.id.categoryLabelTextView);
         dateEditText = (EditText) findViewById(R.id.dateEditText);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
         noteEditText = (EditText) findViewById(R.id.noteEditText);
         incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
         recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
         recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
-
-        //TODO: Find method to hide keyboard by default
-        categoryLabelTextView.requestFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(amountEditText.getWindowToken(), 0);
 
         //Action Listeners
         recurringCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -203,26 +200,6 @@ public class AddExpenseActivity extends Activity {
         scrollLinearLayout.addView(addCategoryTextView);
     }
 
-    private void redrawCategoryRows() {
-        LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
-        scrollLinearLayout.removeAllViews();
-
-        for (int i = 0; i < categories.size(); i++) {
-            Log.d("redrawCategoryRows", categories.get(i).getType());
-            //TODO: Look into View.inflate method (specifically the 3rd parameter)
-            View item = inflateRow(i);
-            scrollLinearLayout.addView(item);
-
-            View line = new View(this);
-            line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-            line.setBackgroundColor(Color.LTGRAY);
-            scrollLinearLayout.addView(line);
-        }
-
-        TextView addCategoryTextView = (TextView) createAddCategoryActionListener();
-        scrollLinearLayout.addView(addCategoryTextView);
-    }
-
     private View inflateRow(int index) {
         //TODO: Look into View.inflate method (specifically the 3rd parameter)
         View item = View.inflate(this, R.layout.category_row_layout, null);
@@ -260,8 +237,6 @@ public class AddExpenseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 LayoutInflater inflater = LayoutInflater.from(AddExpenseActivity.this);
-                final View layout = inflater.inflate(R.layout.add_category_dialog_layout, null);
-                final EditText categoryNameEditText = (EditText) layout.findViewById(R.id.categoryNameEditText);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(AddExpenseActivity.this);
                 builder.setView(inflater.inflate(R.layout.add_category_dialog_layout, null));
@@ -269,12 +244,15 @@ public class AddExpenseActivity extends Activity {
                 builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Dialog categoryDialog = (Dialog) dialog;
+                        EditText categoryNameEditText = (EditText) categoryDialog.findViewById(R.id.categoryNameEditText);
                         Log.d("createAddCategoryAL", categoryNameEditText.getText().toString());
                         if (Singleton.getInstance(null).addCategory(categoryNameEditText.getText().toString())) {
-                            Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG);
-                            redrawCategoryRows();
+                            LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
+                            scrollLinearLayout.addView(addNewCategoryRow(), scrollLinearLayout.getChildCount() - 1);
+                            Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(AddExpenseActivity.this, "Category Already Exists", Toast.LENGTH_LONG);
+                            Toast.makeText(AddExpenseActivity.this, "Category Already Exists", Toast.LENGTH_LONG).show();
                         }
 
                         dialog.dismiss();
@@ -287,6 +265,29 @@ public class AddExpenseActivity extends Activity {
         });
 
         return addCategoryTextView;
+    }
+
+    private View addNewCategoryRow() {
+        //TODO: Look into View.inflate method (specifically the 3rd parameter)
+        View item = View.inflate(this, R.layout.category_row_layout, null);
+
+        View colorBox = item.findViewById(R.id.colorView);
+        colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColor());
+
+        RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
+        categoryRadioButtons.add(categoryRadioButton);
+        categoryRadioButton.setText(categories.get(categories.size() - 1).getType());
+        categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RadioButton rb : categoryRadioButtons) {
+                    if (rb != v)
+                        rb.setChecked(false);
+                }
+            }
+        });
+
+        return item;
     }
 
     //onClick method for recurring checkbox
