@@ -1,14 +1,17 @@
 package com.shael.shah.expensemanager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -23,6 +26,7 @@ import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -37,9 +41,8 @@ public class AddExpenseActivity extends Activity {
 
     /*****************************************************************
      * Private Variables
-     ******************************************************************/
+     *****************************************************************/
 
-    //TODO: Maybe this should be a local variable
     private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
     //TODO: Maybe this should be a local variable
@@ -106,85 +109,79 @@ public class AddExpenseActivity extends Activity {
 
         //Helper functions
         createCategoryRows();
+        createAddCategoryActionListener();
         createSpinnerRows();
         populateInfoFields();
     }
 
     /*****************************************************************
-     * Menu Methods
+     * Functionality Methods
      *****************************************************************/
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_add_expense, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //TODO: Better handling/controlling of activities
-        Intent intent = new Intent(this, MainActivity.class);
-        switch (item.getItemId()) {
-            case R.id.cancel_label:
-                startActivity(intent);
-                return true;
-            case R.id.save_label:
-                try {
-                    saveExpense();
-                    startActivity(intent);
-                } catch (ParseException e) {
-                    //TODO: Implement better exception handling
-                    //TODO: Figure out this warning
-                } catch (IllegalArgumentException e) {
-                    //TODO: Implement better exception handling
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     //Helper function used to convert user input to an expense object
-    private void saveExpense() throws ParseException, IllegalArgumentException {
-        //TODO: Implement boundary checking on input variables
-        BigDecimal amount       = new BigDecimal(amountEditText.getText().toString());
-        Date date               = sdf.parse(dateEditText.getText().toString());
-        String location         = locationEditText.getText().toString();
-        String note             = noteEditText.getText().toString();
-        Boolean income          = incomeCheckbox.isChecked();
-        Boolean recurring       = recurringCheckbox.isChecked();
-        String recurringPeriod  = recurringSpinner.getSelectedItem().toString();
+    private boolean saveExpense() {
 
+        BigDecimal amount = null;
+        Date date = null;
         Category category = null;
-        boolean found = false;
+
+
+        String amountString = amountEditText.getText().toString().replaceAll("[^\\d.]", "");
+        try {
+            amount = new BigDecimal(amountString);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        try {
+            date = sdf.parse(dateEditText.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        if (locationEditText.getText().length() == 0) {
+            Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String location = locationEditText.getText().toString();
+        String note = noteEditText.getText().toString();
+        Boolean income = incomeCheckbox.isChecked();
+        Boolean recurring = recurringCheckbox.isChecked();
+        String recurringPeriod = recurringSpinner.getSelectedItem().toString();
+
+        foundCategory:
         for (RadioButton rb : categoryRadioButtons) {
             if (rb.isChecked()) {
                 String categoryName = rb.getText().toString();
                 for (Category c : categories) {
                     if (c.getType().equals(categoryName)) {
                         category = c;
-                        found = true;
-                        break;
+                        break foundCategory;
                     }
                 }
-            }
-
-            if (found) {
-                break;
             }
         }
 
         if (category == null) {
-            //TODO: ParseException has not been implemented correctly
-            throw new ParseException("Parse Exception", -1);
+            if (!income) {
+                Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
+                return false;
+            }
         }
 
         Expense expense = new Expense(date, amount, category, location, note, recurring, income, recurringPeriod);
         Singleton.getInstance(this).addExpense(expense);
+
+        return true;
     }
 
     /*****************************************************************
-     * Helper Methods
+     * GUI Setup Methods
      *****************************************************************/
 
     //Iterates through all categories and inflates a layout for each
@@ -193,38 +190,107 @@ public class AddExpenseActivity extends Activity {
 
         for (int i = 0; i < categories.size(); i++) {
             //TODO: Look into View.inflate method (specifically the 3rd parameter)
-            View item = View.inflate(this, R.layout.category_row_layout, null);
-
-            //TODO: Color should be set dynamically and uniquely for each category
-            View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(Color.RED);
-
-            RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
-            categoryRadioButtons.add(categoryRadioButton);
-            categoryRadioButton.setText(categories.get(i).getType());
-            categoryRadioButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (RadioButton rb : categoryRadioButtons) {
-                        if (rb != v)
-                            rb.setChecked(false);
-                    }
-                }
-            });
-
+            View item = inflateRow(i);
             scrollLinearLayout.addView(item);
 
-            if (i != categories.size() - 1) {
-                View line = new View(this);
-                line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-                line.setBackgroundColor(Color.LTGRAY);
-                scrollLinearLayout.addView(line);
-            }
+            View line = new View(this);
+            line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            line.setBackgroundColor(Color.LTGRAY);
+            scrollLinearLayout.addView(line);
         }
+
+        TextView addCategoryTextView = (TextView) createAddCategoryActionListener();
+        scrollLinearLayout.addView(addCategoryTextView);
+    }
+
+    private void redrawCategoryRows() {
+        LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
+        scrollLinearLayout.removeAllViews();
+
+        for (int i = 0; i < categories.size(); i++) {
+            Log.d("redrawCategoryRows", categories.get(i).getType());
+            //TODO: Look into View.inflate method (specifically the 3rd parameter)
+            View item = inflateRow(i);
+            scrollLinearLayout.addView(item);
+
+            View line = new View(this);
+            line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            line.setBackgroundColor(Color.LTGRAY);
+            scrollLinearLayout.addView(line);
+        }
+
+        TextView addCategoryTextView = (TextView) createAddCategoryActionListener();
+        scrollLinearLayout.addView(addCategoryTextView);
+    }
+
+    private View inflateRow(int index) {
+        //TODO: Look into View.inflate method (specifically the 3rd parameter)
+        View item = View.inflate(this, R.layout.category_row_layout, null);
+
+        View colorBox = item.findViewById(R.id.colorView);
+        colorBox.setBackgroundColor(categories.get(index).getColor());
+
+        RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
+        categoryRadioButtons.add(categoryRadioButton);
+        categoryRadioButton.setText(categories.get(index).getType());
+        categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (RadioButton rb : categoryRadioButtons) {
+                    if (rb != v)
+                        rb.setChecked(false);
+                }
+            }
+        });
+
+        return item;
+    }
+
+    private View createAddCategoryActionListener() {
+        int paddingDP = (int) (10 * getResources().getDisplayMetrics().density + 0.5f);
+
+        TextView addCategoryTextView = new TextView(this);
+        addCategoryTextView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addCategoryTextView.setText("Add Category...");
+        addCategoryTextView.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        addCategoryTextView.setTypeface(null, Typeface.ITALIC);
+        addCategoryTextView.setPadding(paddingDP, paddingDP, paddingDP, paddingDP);
+
+        addCategoryTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater inflater = LayoutInflater.from(AddExpenseActivity.this);
+                final View layout = inflater.inflate(R.layout.add_category_dialog_layout, null);
+                final EditText categoryNameEditText = (EditText) layout.findViewById(R.id.categoryNameEditText);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddExpenseActivity.this);
+                builder.setView(inflater.inflate(R.layout.add_category_dialog_layout, null));
+
+                builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d("createAddCategoryAL", categoryNameEditText.getText().toString());
+                        if (Singleton.getInstance(null).addCategory(categoryNameEditText.getText().toString())) {
+                            Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG);
+                            redrawCategoryRows();
+                        } else {
+                            Toast.makeText(AddExpenseActivity.this, "Category Already Exists", Toast.LENGTH_LONG);
+                        }
+
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+        return addCategoryTextView;
     }
 
     //onClick method for recurring checkbox
-    public void enableSpinner(View view) {
+    private void enableSpinner(View view) {
         //TODO: Should this be implemented using onClick or action listener?
         CheckBox recurringCheckBox = (CheckBox) view;
 
@@ -277,14 +343,11 @@ public class AddExpenseActivity extends Activity {
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        saveExpense();
-                    } catch (ParseException e) {
-                        //TODO: Handle this parseException
+                    if (saveExpense()) {
+                        Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 }
             });
 
@@ -338,17 +401,14 @@ public class AddExpenseActivity extends Activity {
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Singleton.getInstance(null).removeExpense(expense);
 
-                        Singleton.getInstance(null).removeExpense(expense);
-                        saveExpense();
-                    } catch (ParseException e) {
-                        //TODO: Handle this parseException
+                    if (saveExpense()) {
+                        Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
                     }
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
                 }
             });
 
@@ -377,11 +437,13 @@ public class AddExpenseActivity extends Activity {
             int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
             recurringSpinner.setSelection(position);
 
-            String categoryTitle = expense.getCategory().getType();
-            for (RadioButton rb : categoryRadioButtons) {
-                if (rb.getText().toString().equals(categoryTitle)) {
-                    rb.setChecked(true);
-                    break;
+            if (expense.getCategory() != null) {
+                String categoryTitle = expense.getCategory().getType();
+                for (RadioButton rb : categoryRadioButtons) {
+                    if (rb.getText().toString().equals(categoryTitle)) {
+                        rb.setChecked(true);
+                        break;
+                    }
                 }
             }
         }

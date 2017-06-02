@@ -2,7 +2,6 @@ package com.shael.shah.expensemanager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -11,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //TODO: Figure out this warning
@@ -26,7 +24,8 @@ public class Singleton {
 
     //TODO: Colors should be defined? dynamically and should theoretically be limitless
     private static int currentColor = 0;
-    private List<Integer> colors = new ArrayList<>(Arrays.asList(Color.RED, Color.BLUE, Color.CYAN, Color.GRAY, Color.YELLOW, Color.GREEN, Color.MAGENTA));
+    private int[] colors;
+
 
     //TODO: Figure out this warning
     public static Singleton getInstance(Context context) {
@@ -41,6 +40,7 @@ public class Singleton {
 
         expenses = getExpensesListFromSharedPreferences();
         categories = getCategoriesListFromSharedPreferences();
+        colors = context.getResources().getIntArray(R.array.categoryColors);
     }
 
     //TODO: Figure out this warning
@@ -78,7 +78,7 @@ public class Singleton {
             }
         }
 
-        categories.add(new Category(category, colors.get(currentColor++)));
+        categories.add(new Category(category, colors[currentColor++]));
         return true;
     }
 

@@ -127,8 +127,14 @@ public class Expense implements Serializable {
             return false;
         }
 
-        if (!this.getCategory().equals(expense.getCategory())) {
+        if (this.getCategory() == null && expense.getCategory() != null) {
             return false;
+        }
+
+        if (this.getCategory() != null) {
+            if (!this.getCategory().equals(expense.getCategory())) {
+                return false;
+            }
         }
 
         if (!this.getLocation().equals(expense.getLocation())) {
@@ -139,11 +145,8 @@ public class Expense implements Serializable {
             return false;
         }
 
-        if (!this.getRecurringPeriod().equals(expense.getRecurringPeriod())) {
-            return false;
-        }
+        return this.getRecurringPeriod().equals(expense.getRecurringPeriod());
 
-        return true;
     }
 
     @Override

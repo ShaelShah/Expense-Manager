@@ -2,7 +2,6 @@ package com.shael.shah.expensemanager;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -122,70 +121,18 @@ public class MainActivity extends Activity {
     }
 
     /*****************************************************************
-     * Helper Methods
+     * Functionality Methods
      *****************************************************************/
 
-    //Iterates through all expenses to calculate income and money spent
-    private void populateMoneyTextViews() {
-        BigDecimal income = new BigDecimal(0);
-        BigDecimal outcome = new BigDecimal(0);
-        BigDecimal net;
-
-        for (Expense e : expenses) {
-            if (e.isIncome()) {
-                income = income.add(e.getAmount());
-            } else {
-                outcome = outcome.add(e.getAmount());
-            }
-        }
-
-        //TODO: There should be a better way to do this
-        net = income.subtract(outcome);
-
-        //TODO: Concatenations should not be used with setText
-        incomeTexView.setText("$" + income);
-        expensesTextView.setText("$" + outcome);
-        netTextView.setText("$" + net.abs());
-
-        incomeTexView.setTextColor(Color.GREEN);
-        expensesTextView.setTextColor(Color.RED);
-        if (net.signum() > 0) {
-            netTextView.setTextColor(Color.GREEN);
-        } else {
-            netTextView.setTextColor(Color.RED);
-        }
+    //Retrieves all expenses and categories
+    private void getLists() {
+        expenses = Singleton.getInstance(this).getExpenses();
+        categories = Singleton.getInstance(this).getCategories();
     }
 
-    private void setActionListeners() {
-        incomeTexView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Income");
-                startActivity(intent);
-            }
-        });
-
-        expensesTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Expenses");
-                startActivity(intent);
-            }
-        });
-
-        netTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Net Total");
-                startActivity(intent);
-            }
-        });
+    //Sets all expenses and categories
+    private void setLists() {
+        Singleton.getInstance(this).saveLists();
     }
 
     //Iterates through all expenses to create new expenses if recurring = true
@@ -220,6 +167,40 @@ public class MainActivity extends Activity {
                     e.setRecurring(false);
                 }
             }
+        }
+    }
+
+    /*****************************************************************
+     * GUI Setup Methods
+     *****************************************************************/
+
+    //Iterates through all expenses to calculate income and money spent
+    private void populateMoneyTextViews() {
+        BigDecimal income = new BigDecimal(0);
+        BigDecimal outcome = new BigDecimal(0);
+        BigDecimal net;
+
+        for (Expense e : expenses) {
+            if (e.isIncome()) {
+                income = income.add(e.getAmount());
+            } else {
+                outcome = outcome.add(e.getAmount());
+            }
+        }
+
+        //TODO: There should be a better way to do this
+        net = income.subtract(outcome);
+
+        //TODO: Concatenations should not be used with setText
+        incomeTexView.setText("$" + income);
+        expensesTextView.setText("$" + outcome);
+        netTextView.setText("$" + net.abs());
+
+        if (net.signum() > 0) {
+            //TODO: use new non-deprecated getColor methods
+            netTextView.setTextColor(getResources().getColor(R.color.green));
+        } else {
+            netTextView.setTextColor(getResources().getColor(R.color.red));
         }
     }
 
@@ -268,14 +249,39 @@ public class MainActivity extends Activity {
         }
     }
 
-    //Retrieves all expenses and categories
-    private void getLists() {
-        expenses = Singleton.getInstance(this).getExpenses();
-        categories = Singleton.getInstance(this).getCategories();
-    }
+    /*****************************************************************
+     * Setup ActionListeners Methods
+     *****************************************************************/
 
-    //Sets all expenses and categories
-    private void setLists() {
-        Singleton.getInstance(this).saveLists();
+    private void setActionListeners() {
+        incomeTexView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
+                intent.putExtra("CategoryTitle", "Income");
+                startActivity(intent);
+            }
+        });
+
+        expensesTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
+                intent.putExtra("CategoryTitle", "Expenses");
+                startActivity(intent);
+            }
+        });
+
+        netTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
+                //TODO: putExtra key is not up to Android Coding standard
+                intent.putExtra("CategoryTitle", "Net Total");
+                startActivity(intent);
+            }
+        });
     }
 }

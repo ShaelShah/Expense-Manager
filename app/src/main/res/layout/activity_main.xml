@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/lightGrey"
     tools:context="com.shael.shah.expensemanager.MainActivity">
 
     <Toolbar
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?android:attr/actionBarSize"
         android:elevation="4dp"
+        android:background="@color/blue"
         android:theme="@style/AppTheme">
     </Toolbar>
 
@@ -34,6 +36,7 @@
         android:layout_weight="1"
         android:textAlignment="center"
         android:textSize="30sp"
+        android:textStyle="bold"
         android:gravity="center_vertical"
         android:text="$1734.90" />
 
@@ -50,6 +53,8 @@
             android:textAlignment="center"
             android:gravity="center_vertical"
             android:textSize="20sp"
+            android:textColor="@color/green"
+            android:textStyle="bold"
             android:text="$2734.90" />
 
         <TextView
@@ -60,6 +65,8 @@
             android:textAlignment="center"
             android:gravity="center_vertical"
             android:textSize="20sp"
+            android:textColor="@color/red"
+            android:textStyle="bold"
             android:text="$1000.90" />
 
     </LinearLayout>
