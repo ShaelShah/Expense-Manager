@@ -166,15 +166,15 @@ public class AddExpenseActivity extends Activity {
             }
         }
 
+        String expenseType = getIntent().getStringExtra("ExpenseType");
         if (category == null) {
-            //if (!income) {
+            if (!expenseType.equals("Income")) {
                 Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
                 return false;
-            //}
+            }
         }
 
         Expense expense = null;
-        String expenseType = getIntent().getStringExtra("ExpenseType");
         String recurringPeriod;
         switch (expenseType) {
             case "Normal":

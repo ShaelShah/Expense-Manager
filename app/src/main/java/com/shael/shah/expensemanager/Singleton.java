@@ -16,23 +16,13 @@ public class Singleton {
 
     //TODO: Figure out this warning
     private static Singleton instance;
-    private Context context;
-
-    private List<Expense> expenses;
-    private List<Category> categories;
-
     //TODO: Colors should be defined? dynamically and should theoretically be limitless
     private static int currentColor = 0;
+    private Context context;
+    private List<Expense> expenses;
+    private List<Category> categories;
     private int[] colors;
 
-
-    //TODO: Figure out this warning
-    public static Singleton getInstance(Context context) {
-        if (instance == null) {
-            instance = new Singleton(context);
-        }
-        return instance;
-    }
 
     private Singleton(Context context) {
         this.context = context;
@@ -41,6 +31,14 @@ public class Singleton {
         categories = getCategoriesListFromSharedPreferences();
         colors = context.getResources().getIntArray(R.array.categoryColors);
         currentColor = getColorFromSharedPreferences();
+    }
+
+    //TODO: Figure out this warning
+    public static Singleton getInstance(Context context) {
+        if (instance == null) {
+            instance = new Singleton(context);
+        }
+        return instance;
     }
 
     //TODO: Figure out this warning
@@ -121,7 +119,7 @@ public class Singleton {
 
     private int getColorFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt("Color", 0);
+        return sharedPreferences.getInt("color", 0);
     }
 
     private void setSharedPreferences(List<?> list, String tag) {

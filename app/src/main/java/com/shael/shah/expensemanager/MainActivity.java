@@ -14,7 +14,6 @@ import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.math.BigDecimal;
@@ -75,7 +74,7 @@ public class MainActivity extends Activity {
         populateMainCategoryRows(expenses);
 
         //Workaround to delete all expenses/categories programmatically
-        //Singleton.getInstance(this).reset()
+        //Singleton.getInstance(this).reset();
 
         //Workaround to add categories programmatically
         //Singleton.getInstance(this).addCategory("Food");
@@ -317,11 +316,11 @@ public class MainActivity extends Activity {
         expensesTextView.setText("$" + outcome);
         netTextView.setText("$" + net.abs());
 
-        if (net.signum() > 0) {
+        if (net.signum() < 0) {
             //TODO: use new non-deprecated getColor methods
-            netTextView.setTextColor(getResources().getColor(R.color.green));
-        } else {
             netTextView.setTextColor(getResources().getColor(R.color.red));
+        } else if (net.signum() > 0) {
+            netTextView.setTextColor(getResources().getColor(R.color.green));
         }
     }
 

@@ -123,6 +123,17 @@ public class CategoryExpenses extends Activity {
                 public void onClick(View v) {
                     Intent intent = new Intent(CategoryExpenses.this, AddExpenseActivity.class);
                     intent.putExtra("ExpenseObject", expense);
+
+                    if (expense.isRecurring()) {
+                        if (expense.isIncome()) {
+                            intent.putExtra("ExpenseType", "Income");
+                        } else {
+                            intent.putExtra("ExpenseType", "Recurring");
+                        }
+                    } else {
+                        intent.putExtra("ExpenseType", "Normal");
+                    }
+
                     startActivity(intent);
                 }
             });
