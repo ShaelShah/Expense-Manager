@@ -1,7 +1,5 @@
 package com.shael.shah.expensemanager;
 
-import android.graphics.Color;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -29,18 +27,8 @@ public class Expense implements Serializable {
         this.recurringPeriod = recurringPeriod;
     }
 
-    //TODO: Is this constructor even required?
-    public Expense(Date date, BigDecimal amount, String category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
-        //TODO: Passes Color.RED everytime, rather should be setting the color dynamically
-        this(date, amount, new Category(category, Color.RED), location, note, recurring, income, recurringPeriod);
-    }
-
     public Date getDate() {
         return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public BigDecimal getAmount() {
@@ -59,44 +47,20 @@ public class Expense implements Serializable {
         return income;
     }
 
-    public void setIncome(boolean income) {
-        this.income = income;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public Category getCategory() {
         return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public String getNote() {
         return note;
     }
 
-    public void setNote(String note) {
-        this.note = note;
-    }
-
     public String getRecurringPeriod() {
         return recurringPeriod;
-    }
-
-    public void setRecurringPeriod(String recurringPeriod) {
-        this.recurringPeriod = recurringPeriod;
     }
 
     @Override

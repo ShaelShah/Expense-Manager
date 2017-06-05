@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="3dp">
+        android:paddingTop="1dp">
 
         <TextView
             android:id="@+id/categoryRowTitle"
@@ -26,12 +26,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="textStart"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Health"/>
 
         <TextView
-            android:id="@+id/categryRowAmount"
+            android:id="@+id/categoryRowAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="$300.67"/>
 
     </LinearLayout>

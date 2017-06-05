@@ -3,7 +3,6 @@ package com.shael.shah.expensemanager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,6 +40,7 @@ public class Singleton {
         expenses = getExpensesListFromSharedPreferences();
         categories = getCategoriesListFromSharedPreferences();
         colors = context.getResources().getIntArray(R.array.categoryColors);
+        currentColor = getColorFromSharedPreferences();
     }
 
     //TODO: Figure out this warning
@@ -60,11 +60,7 @@ public class Singleton {
 
     public void removeExpense(Expense expense) {
         for (Expense e : expenses) {
-            Log.d("singleton", e.toString());
             if (e.equals(expense)) {
-
-                Log.d("Remove Expense", expense.toString() + " was removed");
-
                 expenses.remove(expense);
                 break;
             }
@@ -86,6 +82,7 @@ public class Singleton {
     public void saveLists() {
         setSharedPreferences(expenses, "expenses");
         setSharedPreferences(categories, "categories");
+        setSharedPreferenceColor(currentColor);
     }
 
     private List<Expense> getExpensesListFromSharedPreferences() {
@@ -122,6 +119,11 @@ public class Singleton {
         return categories;
     }
 
+    private int getColorFromSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getInt("Color", 0);
+    }
+
     private void setSharedPreferences(List<?> list, String tag) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefEditor = sharedPreferences.edit();
@@ -133,11 +135,25 @@ public class Singleton {
         prefEditor.apply();
     }
 
-    public void removeAllCategories() {
+    private void setSharedPreferenceColor(int stopColor) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+
+        prefEditor.putInt("color", stopColor);
+        prefEditor.apply();
+    }
+
+    public void reset() {
+        removeAllCategories();
+        removeAllExpenses();
+        currentColor = 0;
+    }
+
+    private void removeAllCategories() {
         categories.clear();
     }
 
-    public void removeAllExpenses() {
+    private void removeAllExpenses() {
         expenses.clear();
     }
 }

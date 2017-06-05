@@ -12,18 +12,8 @@ public class Category implements Serializable {
         this.color = color;
     }
 
-    //TODO: Is this setter required? Will a category ever be changed?
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getType() {
         return type;
-    }
-
-    //TODO: Is this setter required? Will the color ever be changed?
-    public void setColor(int color) {
-        this.color = color;
     }
 
     public int getColor() {
@@ -48,11 +38,8 @@ public class Category implements Serializable {
             return false;
         }
 
-        if (this.getColor() != category.getColor()) {
-            return false;
-        }
+        return this.getColor() == category.getColor();
 
-        return true;
     }
 
     //TODO: toString is ugly and probably should not be used

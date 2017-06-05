@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/lightGrey"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
     <LinearLayout
@@ -25,25 +26,27 @@
             android:id="@+id/amountEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+
             android:textAlignment="viewEnd"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:textSize="40sp"
+            android:fontFamily="sans-serif"
+
+            android:background="@android:color/transparent"
             android:inputType="numberDecimal"
-            style="@android:style/Widget.TextView"
-            android:hint="Enter an Amount" />
+            android:hint="$$$" />
 
         <TextView
-            android:id="@+id/categoryLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Category" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+            android:layout_height="2dp"
+            android:background="@color/blueGrey" />
 
         <ScrollView
             android:id="@+id/categoryScrollView"
@@ -63,21 +66,21 @@
         </ScrollView>
 
         <TextView
-            android:id="@+id/additionalInfoLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif-smallcaps"
             android:text="Additional Info" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
+            android:layout_height="2dp"
+            android:background="@color/blueGrey" />
 
         <LinearLayout
             android:id="@+id/dateLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -85,8 +88,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="start|bottom"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="Date"/>
 
             <EditText
@@ -94,6 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
+                android:focusable="false"
                 android:gravity="center"/>
 
         </LinearLayout>
@@ -109,8 +112,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="start|bottom"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="Location"/>
 
             <EditText
@@ -133,8 +135,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="start|bottom"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="Note"/>
 
             <EditText
@@ -146,12 +147,13 @@
 
         </LinearLayout>
 
+        <!--
         <CheckBox
             android:id="@+id/incomeCheckbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="-7dp"
-            android:textStyle="bold"
+            android:paddingTop="10dp"
             android:text="Income"/>
 
         <LinearLayout
@@ -166,7 +168,6 @@
                 android:layout_weight="3"
                 android:onClick="enableSpinner"
                 android:layout_marginStart="-7dp"
-                android:textStyle="bold"
                 android:text="Recurring" />
 
             <Spinner
@@ -178,6 +179,7 @@
             </Spinner>
 
         </LinearLayout>
+        -->
 
     </LinearLayout>
 

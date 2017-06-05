@@ -30,17 +30,24 @@ public class CategoryExpenses extends Activity {
      * Lifecycle Methods
      *****************************************************************/
 
+    /*
+     *  Initial method called by the system during activity startup.
+     *  Responsible for getting a copy of all expenses.
+     *  Also responsible for setting up of the initial GUI.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_category_expenses);
 
+        //Find views to work with during this activity
         categoryTitleTextView = (TextView) findViewById(R.id.categoryTitleTextView);
         amountCategoryTextView = (TextView) findViewById(R.id.amountCategoryTextView);
         categoryTitleScrollView = (ScrollView) findViewById(R.id.categoryTitleScrollView);
 
         expenses = Singleton.getInstance(this).getExpenses();
 
+        //Get extra from intent to determine which expenses to display
         Intent intent = getIntent();
         String categoryTitle = intent.getStringExtra("CategoryTitle");
         categoryTitleTextView.setText(categoryTitle);
@@ -52,9 +59,14 @@ public class CategoryExpenses extends Activity {
      * GUI Setup Methods
      *****************************************************************/
 
+    /*
+     *  Iterates through all expenses to check which expenses were requested to
+     *  be displayed.
+     */
     private void populateScrollView(String categoryTitle) {
         LinearLayout scrollLinearLayout = (LinearLayout) categoryTitleScrollView.findViewById(R.id.categoryScrollViewLinearLayout);
 
+        //Create a temp List<Expense> of all expenses to be displayed
         List<Expense> tempExpenses = new ArrayList<>();
         switch (categoryTitle) {
             case "Net Total":
@@ -85,11 +97,12 @@ public class CategoryExpenses extends Activity {
                 break;
         }
 
+        //Inflate a category_expense_row_layout for each expense
         BigDecimal amount = new BigDecimal(0);
         for (Expense e : tempExpenses) {
             final Expense expense = e;
             //TODO: Figure out what this third parameter is for
-            View item = View.inflate(this, R.layout.category_expenses_row_layout, null);
+            View item = View.inflate(this, R.layout.expenses_row_layout, null);
 
             TextView dateTextView = (TextView) item.findViewById(R.id.categoryDateTextView);
             TextView locationTextView = (TextView) item.findViewById(R.id.categoryLocationTextView);
