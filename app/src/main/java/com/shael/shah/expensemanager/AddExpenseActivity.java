@@ -13,12 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -48,11 +50,11 @@ public class AddExpenseActivity extends Activity {
     private ScrollView categoryScrollView;
     //private CheckBox incomeCheckbox;
     //private CheckBox recurringCheckbox;
-    //private Spinner recurringSpinner;
+    private Spinner recurringSpinner;
 
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
-    //private ArrayAdapter<String> spinnerAdapter;
+    private ArrayAdapter<String> spinnerAdapter;
 
     //TODO: May be beneficial to move away from Java Date class
     private Calendar calendar = Calendar.getInstance();
@@ -73,7 +75,12 @@ public class AddExpenseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_expense);
+
+        String expenseType = getIntent().getStringExtra("ExpenseType");
+        if (expenseType.equals("Normal"))
+            setContentView(R.layout.activity_add_expense);
+        else
+            setContentView(R.layout.activity_add_expense_recurring);
 
         //Disables keyboard from automatically popping up when this activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -87,14 +94,16 @@ public class AddExpenseActivity extends Activity {
         noteEditText = (EditText) findViewById(R.id.noteEditText);
         //incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
         //recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
-        //recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        if (!expenseType.equals("Normal"))
+            recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
         categories = Singleton.getInstance(null).getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
-        //createSpinnerRows();
+        if (!expenseType.equals("Normal"))
+            createSpinnerRows();
         populateInfoFields();
     }
 
@@ -143,7 +152,6 @@ public class AddExpenseActivity extends Activity {
         String note = noteEditText.getText().toString();
         //Boolean income = incomeCheckbox.isChecked();
         //Boolean recurring = recurringCheckbox.isChecked();
-        //String recurringPeriod = recurringSpinner.getSelectedItem().toString();
 
         foundCategory:
         for (RadioButton rb : categoryRadioButtons) {
@@ -165,10 +173,26 @@ public class AddExpenseActivity extends Activity {
             //}
         }
 
-        //Expense expense = new Expense(date, amount, category, location, note, recurring, income, recurringPeriod);
-        Expense expense = new Expense(date, amount, category, location, note, false, false, "");
-        Singleton.getInstance(this).addExpense(expense);
+        Expense expense = null;
+        String expenseType = getIntent().getStringExtra("ExpenseType");
+        String recurringPeriod;
+        switch (expenseType) {
+            case "Normal":
+            expense = new Expense(date, amount, category, location, note, false, false, "");
+                break;
 
+            case "Income":
+                recurringPeriod = recurringSpinner.getSelectedItem().toString();
+                expense = new Expense(date, amount, category, location, note, true, true, recurringPeriod);
+                break;
+
+            case "Recurring":
+                recurringPeriod = recurringSpinner.getSelectedItem().toString();
+                expense = new Expense(date, amount, category, location, note, true, false, recurringPeriod);
+                break;
+        }
+
+        Singleton.getInstance(this).addExpense(expense);
         return true;
     }
 
@@ -297,8 +321,10 @@ public class AddExpenseActivity extends Activity {
             //incomeCheckbox.setChecked(expense.isIncome());
             //recurringCheckbox.setChecked(expense.isRecurring());
 
-            //int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
-            //recurringSpinner.setSelection(position);
+            if (!getIntent().getStringExtra("ExpenseType").equals("Normal")) {
+                int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
+                recurringSpinner.setSelection(position);
+            }
 
             if (expense.getCategory() != null) {
                 String categoryTitle = expense.getCategory().getType();
@@ -431,17 +457,12 @@ public class AddExpenseActivity extends Activity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    /*
     private void createSpinnerRows() {
-        recurringSpinner.setEnabled(false);
-        recurringSpinner.setClickable(false);
-
         String items[] = new String[] {"Daily", "Weekly", "Monthly", "Yearly"};
         spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recurringSpinner.setAdapter(spinnerAdapter);
     }
-    */
 
     /*
      *  Helper function to create toolbar buttons.

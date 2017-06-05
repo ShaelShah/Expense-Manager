@@ -6,6 +6,25 @@
         android:icon="@drawable/ic_add_black_24dp"
         android:showAsAction="ifRoom"
         android:title="Add Item">
+
+        <!--
+        <menu>
+
+            <item
+                android:id="@+id/add_normal"
+                android:title="Add Expense"/>
+
+            <item
+                android:id="@+id/add_income"
+                android:title="Add Income"/>
+
+            <item
+                android:id="@+id/add_recurring"
+                android:title="Add Recurring Expense"/>
+
+        </menu>
+        -->
+
     </item>
 
     <item

@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import java.math.BigDecimal;
@@ -120,6 +123,67 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        /*
+        View v = new View(this);
+        v.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //Your long click listener callback logic goes here
+                Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+        });
+        menu.getItem(0).setActionView(v); // add long press to first item
+        */
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                final View view = findViewById(R.id.add_item);
+
+                if (view != null) {
+                    /*
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getApplicationContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    */
+                    view.setOnLongClickListener(new View.OnLongClickListener() {
+
+                        @Override
+                        public boolean onLongClick(View v) {
+
+                            PopupMenu popupMenu = new PopupMenu(MainActivity.this, v);
+                            popupMenu.inflate(R.menu.add_expense_popup_menu);
+
+                            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
+                                    if (item.getTitle().equals("Add Income")) {
+                                        intent.putExtra("ExpenseType", "Income");
+                                        startActivity(intent);
+                                    } else {
+                                        intent.putExtra("ExpenseType", "Recurring");
+                                        startActivity(intent);
+                                    }
+                                    return true;
+                                }
+                            });
+
+                            popupMenu.show();
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+
         return true;
     }
 
@@ -128,13 +192,34 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.add_item:
                 Intent intent = new Intent(this, AddExpenseActivity.class);
+                intent.putExtra("ExpenseType", "Normal");
                 startActivity(intent);
                 return true;
+
             case R.id.open_menu:
                 return true;
+
+            /*
+            case R.id.add_normal:
+                intent.putExtra("ExpenseType", "Normal");
+                //startActivity(intent);
+                return true;
+
+            case R.id.add_income:
+                intent.putExtra("ExpenseType", "Income");
+                //startActivity(intent);
+                return true;
+
+            case R.id.add_recurring:
+                intent.putExtra("ExpenseType", "Recurring");
+                //startActivity(intent);
+                return true;
+            */
+
             default:
                 return super.onOptionsItemSelected(item);
         }
