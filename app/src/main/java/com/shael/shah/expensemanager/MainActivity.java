@@ -194,13 +194,17 @@ public class MainActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.add_item:
-                Intent intent = new Intent(this, AddExpenseActivity.class);
-                intent.putExtra("ExpenseType", "Normal");
-                startActivity(intent);
+                Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
+                addExpenseIntent.putExtra("ExpenseType", "Normal");
+                startActivity(addExpenseIntent);
                 return true;
 
             case R.id.open_menu:
                 return true;
+
+            case R.id.open_settings:
+                Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(openSettingsIntent);
 
             /*
             case R.id.add_normal:

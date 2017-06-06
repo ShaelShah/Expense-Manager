@@ -32,6 +32,13 @@
         android:icon="@drawable/ic_menu_black_24dp"
         android:showAsAction="ifRoom|withText"
         android:title="Open Menu">
+
+        <menu>
+            <item
+                android:id="@+id/open_settings"
+                android:title="Settings" />
+        </menu>
+
     </item>
 
 </menu>

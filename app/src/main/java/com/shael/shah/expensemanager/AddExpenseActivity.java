@@ -420,7 +420,12 @@ public class AddExpenseActivity extends Activity {
                         }
                     });
 
+                    View line = new View(AddExpenseActivity.this);
+                    line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+                    line.setBackgroundColor(Color.LTGRAY);
+
                     scrollLinearLayout.addView(item, scrollLinearLayout.getChildCount() - 1);
+                    scrollLinearLayout.addView(line, scrollLinearLayout.getChildCount() - 1);
 
                     Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG).show();
                 } else {
