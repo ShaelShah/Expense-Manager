@@ -1,5 +1,6 @@
 package com.shael.shah.expensemanager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -11,18 +12,19 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: Figure out this warning
-public class Singleton {
+class Singleton {
 
-    //TODO: Figure out this warning
+    private static final String SHAREDPREF_EXPENSES = "com.shael.shah.expensemanager.SHAREDPREF_EXPENSES";
+    private static final String SHAREDPREF_CATEGORIES = "com.shael.shah.expensemanager.SHAREDPREF_CATEGORIES";
+    private static final String SHAREDPREF_COLORS = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
+
+    @SuppressLint("StaticFieldLeak")
     private static Singleton instance;
-    //TODO: Colors should be defined? dynamically and should theoretically be limitless
     private static int currentColor = 0;
     private Context context;
     private List<Expense> expenses;
     private List<Category> categories;
     private int[] colors;
-
 
     private Singleton(Context context) {
         this.context = context;
@@ -33,39 +35,37 @@ public class Singleton {
         currentColor = getColorFromSharedPreferences();
     }
 
-    //TODO: Figure out this warning
-    public static Singleton getInstance(Context context) {
+    static Singleton getInstance(Context context) {
         if (instance == null) {
-            instance = new Singleton(context);
+            instance = new Singleton(context.getApplicationContext());
         }
         return instance;
     }
 
-    //TODO: Figure out this warning
-    public List<Expense> getExpenses() {
+    List<Expense> getExpenses() {
         return expenses;
     }
 
-    //TODO: Figure out this warning
-    public List<Category> getCategories() {
+    List<Category> getCategories() {
         return categories;
     }
 
-    //TODO: Figure out this warning
-    public void addExpense(Expense expense) {
+    void addExpense(Expense expense) {
         expenses.add(expense);
     }
 
-    public void removeExpense(Expense expense) {
+    boolean removeExpense(Expense expense) {
         for (Expense e : expenses) {
             if (e.equals(expense)) {
                 expenses.remove(expense);
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 
-    public Boolean addCategory(String category) {
+    Boolean addCategory(String category) {
         for (Category c : categories) {
             if (c.getType().equals(category)) {
                 return false;
@@ -76,18 +76,23 @@ public class Singleton {
         return true;
     }
 
-    //TODO: Figure out this warning
-    public void saveLists() {
-        setSharedPreferences(expenses, "expenses");
-        setSharedPreferences(categories, "categories");
+    void saveLists() {
+        setSharedPreferences(expenses, SHAREDPREF_EXPENSES);
+        setSharedPreferences(categories, SHAREDPREF_CATEGORIES);
         setSharedPreferenceColor(currentColor);
+    }
+
+    void reset() {
+        removeAllCategories();
+        removeAllExpenses();
+        currentColor = 0;
     }
 
     private List<Expense> getExpensesListFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("expenses", "");
+        String json = sharedPreferences.getString(SHAREDPREF_EXPENSES, "");
 
         Type type = new TypeToken<List<Expense>>() {
         }.getType();
@@ -104,7 +109,7 @@ public class Singleton {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("categories", "");
+        String json = sharedPreferences.getString(SHAREDPREF_CATEGORIES, "");
 
         Type type = new TypeToken<List<Category>>() {
         }.getType();
@@ -119,7 +124,7 @@ public class Singleton {
 
     private int getColorFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt("color", 0);
+        return sharedPreferences.getInt(SHAREDPREF_COLORS, 0);
     }
 
     private void setSharedPreferences(List<?> list, String tag) {
@@ -137,14 +142,8 @@ public class Singleton {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefEditor = sharedPreferences.edit();
 
-        prefEditor.putInt("color", stopColor);
+        prefEditor.putInt(SHAREDPREF_COLORS, stopColor);
         prefEditor.apply();
-    }
-
-    public void reset() {
-        removeAllCategories();
-        removeAllExpenses();
-        currentColor = 0;
     }
 
     private void removeAllCategories() {

@@ -42,6 +42,9 @@ public class AddExpenseActivity extends Activity {
      * Private Variables
      *****************************************************************/
 
+    private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
+    private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
+
     private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
     private EditText dateEditText;
@@ -76,7 +79,7 @@ public class AddExpenseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String expenseType = getIntent().getStringExtra("ExpenseType");
+        String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
         if (expenseType.equals("Normal"))
             setContentView(R.layout.activity_add_expense);
         else
@@ -166,7 +169,7 @@ public class AddExpenseActivity extends Activity {
             }
         }
 
-        String expenseType = getIntent().getStringExtra("ExpenseType");
+        String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
         if (category == null) {
             if (!expenseType.equals("Income")) {
                 Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
@@ -207,29 +210,26 @@ public class AddExpenseActivity extends Activity {
      *  an old expense. To support this, the intent that created this activity is checked for
      *  an extra and the GUI is set up appropriately.
      */
-    //TODO: Function is messy, refractor
     private void populateInfoFields() {
         Button cancel = createToolbarButtons("Cancel");
         Button save = createToolbarButtons("Save");
         View lineOne = createDividerView();
 
-        if (!getIntent().hasExtra("ExpenseObject")) {
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
+        if (!getIntent().hasExtra(EXTRA_EXPENSE_TYPE)) {
 
             toolbarLinearLayout.addView(cancel);
             toolbarLinearLayout.addView(lineOne);
             toolbarLinearLayout.addView(save);
 
-            //TODO: There might be a better way to do this
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
-            });
-
-            //TODO: There might be a better way to do this
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -242,8 +242,7 @@ public class AddExpenseActivity extends Activity {
             });
 
             //TODO: May be beneficial to move away from Java Date class
-            //TODO: Don't use string literals in setText
-            dateEditText.setText("Today");
+            dateEditText.setText(R.string.today);
             dateEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -274,21 +273,10 @@ public class AddExpenseActivity extends Activity {
             toolbarLinearLayout.addView(lineTwo);
             toolbarLinearLayout.addView(save);
 
-            //TODO: There might be a better way to do this
-            cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
-            });
-
-            //TODO: There might be a better way to do this
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
                     Singleton.getInstance(null).removeExpense(expense);
 
                     if (saveExpense()) {
@@ -299,11 +287,10 @@ public class AddExpenseActivity extends Activity {
                 }
             });
 
-            //TODO: There might be a better way to do this
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
+                    Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
                     Singleton.getInstance(null).removeExpense(expense);
 
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
@@ -312,16 +299,15 @@ public class AddExpenseActivity extends Activity {
                 }
             });
 
-            Expense expense = (Expense) getIntent().getSerializableExtra("ExpenseObject");
-            //TODO: Do not concatenate with setText
-            amountEditText.setText("$" + expense.getAmount());
+            Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+            amountEditText.setText(getString(R.string.currency, expense.getAmount()));
             dateEditText.setText(sdf.format(expense.getDate()));
             locationEditText.setText(expense.getLocation());
             noteEditText.setText(expense.getNote());
             //incomeCheckbox.setChecked(expense.isIncome());
             //recurringCheckbox.setChecked(expense.isRecurring());
 
-            if (!getIntent().getStringExtra("ExpenseType").equals("Normal")) {
+            if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal")) {
                 int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
                 recurringSpinner.setSelection(position);
             }

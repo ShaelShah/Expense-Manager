@@ -29,11 +29,12 @@ public class MainActivity extends Activity {
     * Private Variables
     ******************************************************************/
 
+    private static final String EXTRA_CATEGORY_TITLE = "com.shael.shah.expensemanager.EXTRA_CATEGORY_TITLE";
+    private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
+
     private List<Expense> expenses;
     private List<Category> categories;
 
-    //TODO: Maybe this should be a local variable
-    private Toolbar toolbar;
     private TextView timePeriodTextView;
     private TextView netTextView;
     private TextView incomeTexView;
@@ -56,7 +57,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Setup toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(toolbar);
 
         //Find views to work with during this activity
@@ -165,10 +166,10 @@ public class MainActivity extends Activity {
                                 public boolean onMenuItemClick(MenuItem item) {
                                     Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
                                     if (item.getTitle().equals("Add Income")) {
-                                        intent.putExtra("ExpenseType", "Income");
+                                        intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                                         startActivity(intent);
                                     } else {
-                                        intent.putExtra("ExpenseType", "Recurring");
+                                        intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                                         startActivity(intent);
                                     }
                                     return true;
@@ -195,7 +196,7 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.add_item:
                 Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
-                addExpenseIntent.putExtra("ExpenseType", "Normal");
+                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
                 startActivity(addExpenseIntent);
                 return true;
 
@@ -208,17 +209,17 @@ public class MainActivity extends Activity {
 
             /*
             case R.id.add_normal:
-                intent.putExtra("ExpenseType", "Normal");
+                intent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
                 //startActivity(intent);
                 return true;
 
             case R.id.add_income:
-                intent.putExtra("ExpenseType", "Income");
+                intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                 //startActivity(intent);
                 return true;
 
             case R.id.add_recurring:
-                intent.putExtra("ExpenseType", "Recurring");
+                intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                 //startActivity(intent);
                 return true;
             */
@@ -305,25 +306,23 @@ public class MainActivity extends Activity {
         BigDecimal net;
 
         for (Expense e : expenses) {
-            if (e.isIncome()) {
+            if (e.isIncome())
                 income = income.add(e.getAmount());
-            } else {
+            else
                 outcome = outcome.add(e.getAmount());
-            }
         }
 
-        //TODO: There should be a better way to do this
-        net = income.subtract(outcome);
+        net = (income.subtract(outcome)).abs();
 
-        //TODO: Concatenations should not be used with setText
-        incomeTexView.setText("$" + income);
-        expensesTextView.setText("$" + outcome);
-        netTextView.setText("$" + net.abs());
+        incomeTexView.setText(getString(R.string.currency, income));
+        expensesTextView.setText(getString(R.string.currency, outcome));
+        netTextView.setText(getString(R.string.currency, net));
 
         if (net.signum() < 0) {
-            //TODO: use new non-deprecated getColor methods
+            //noinspection deprecation
             netTextView.setTextColor(getResources().getColor(R.color.red));
         } else if (net.signum() > 0) {
+            //noinspection deprecation
             netTextView.setTextColor(getResources().getColor(R.color.green));
         }
     }
@@ -356,7 +355,6 @@ public class MainActivity extends Activity {
                 //TODO: Look into View.inflate method (specifically the 3rd parameter)
                 View item = View.inflate(this, R.layout.category_display_row_layout, null);
 
-                //TODO: Color should be set dynamically and uniquely for each category
                 View colorBox = item.findViewById(R.id.mainColorView);
                 colorBox.setBackgroundColor(c.getColor());
 
@@ -367,8 +365,7 @@ public class MainActivity extends Activity {
                 TextView categoryRowAmount = (TextView) item.findViewById(R.id.categoryRowAmount);
                 categoryRowAmount.setTextColor(c.getColor());
 
-                //TODO: Concatenations should not be used with setText
-                categoryRowAmount.setText("$" + amount);
+                categoryRowAmount.setText(getString(R.string.currency, amount));
                 scrollLinearLayout.addView(item);
 
                 item.setOnClickListener(new View.OnClickListener() {
@@ -376,7 +373,7 @@ public class MainActivity extends Activity {
                     public void onClick(View v) {
                         String categoryTitle = ((TextView) v.findViewById(R.id.categoryRowTitle)).getText().toString();
                         Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                        intent.putExtra("CategoryTitle", categoryTitle);
+                        intent.putExtra(EXTRA_CATEGORY_TITLE, categoryTitle);
                         startActivity(intent);
                     }
                 });
@@ -396,8 +393,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Income");
+                intent.putExtra(EXTRA_CATEGORY_TITLE, "Income");
                 startActivity(intent);
             }
         });
@@ -406,8 +402,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Expenses");
+                intent.putExtra(EXTRA_CATEGORY_TITLE, "Expenses");
                 startActivity(intent);
             }
         });
@@ -416,8 +411,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                //TODO: putExtra key is not up to Android Coding standard
-                intent.putExtra("CategoryTitle", "Net Total");
+                intent.putExtra(EXTRA_CATEGORY_TITLE, "Net Total");
                 startActivity(intent);
             }
         });
@@ -458,7 +452,7 @@ public class MainActivity extends Activity {
                                         }
                                     }
                                 }
-                                timePeriodTextView.setText("Today");
+                                timePeriodTextView.setText(R.string.today);
                                 break;
 
                             case R.id.weeklyRadioButton:
@@ -470,7 +464,7 @@ public class MainActivity extends Activity {
                                         }
                                     }
                                 }
-                                timePeriodTextView.setText("Weekly");
+                                timePeriodTextView.setText(R.string.weekly);
                                 break;
 
                             case R.id.monthlyRadioButton:
@@ -497,12 +491,13 @@ public class MainActivity extends Activity {
 
                             default:
                                 tempExpenses = expenses;
-                                timePeriodTextView.setText("All");
+                                timePeriodTextView.setText(R.string.all);
                                 break;
                         }
 
                         populateMainCategoryRows(tempExpenses);
                         populateMoneyTextViews(tempExpenses);
+                        //TODO: Is a final okay here?
                         dialog.dismiss();
                     }
                 });

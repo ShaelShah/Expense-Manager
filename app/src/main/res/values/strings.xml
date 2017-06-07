@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">Expense Manager</string>
+    <string name="title_activty_main">Main</string>
+    <string name="title_activity_add_expense">Add Expense</string>
+    <string name="title_activity_category_expenses">Category Expenses</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Strings related to Main Activity -->
+    <string name="currency">$%1$s</string>
+    <string name="today">Today</string>
+    <string name="weekly">Weekly</string>
+    <string name="all">All</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

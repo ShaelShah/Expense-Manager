@@ -20,6 +20,8 @@ public class CategoryExpenses extends Activity {
      * Private Variables
      *****************************************************************/
 
+    private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
+
     private List<Expense> expenses;
 
     private TextView categoryTitleTextView;
@@ -111,8 +113,7 @@ public class CategoryExpenses extends Activity {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
             dateTextView.setText(sdf.format(e.getDate()));
             locationTextView.setText(e.getLocation());
-            //TODO: Don't concatenate in setText
-            amountTextView.setText("$" + e.getAmount());
+            amountTextView.setText(getString(R.string.currency, e.getAmount()));
             amount = amount.add(e.getAmount());
 
             scrollLinearLayout.addView(item);
@@ -122,7 +123,7 @@ public class CategoryExpenses extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(CategoryExpenses.this, AddExpenseActivity.class);
-                    intent.putExtra("ExpenseObject", expense);
+                    intent.putExtra(EXTRA_EXPENSE_OBJECT, expense);
 
                     if (expense.isRecurring()) {
                         if (expense.isIncome()) {
@@ -139,7 +140,6 @@ public class CategoryExpenses extends Activity {
             });
         }
 
-        //TODO: Don't concatenate in setText
-        amountCategoryTextView.setText("$" + amount);
+        amountCategoryTextView.setText(getString(R.string.currency, amount));
     }
 }

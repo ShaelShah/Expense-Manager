@@ -3,8 +3,9 @@ package com.shael.shah.expensemanager;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Objects;
 
-public class Expense implements Serializable {
+class Expense implements Serializable {
 
     private Date date;
     private BigDecimal amount;
@@ -16,7 +17,7 @@ public class Expense implements Serializable {
     private String recurringPeriod;
 
     //TODO: Use a builder instead of the classical constructor
-    public Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
+    Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
         this.date = date;
         this.amount = amount;
         this.category = category;
@@ -27,98 +28,69 @@ public class Expense implements Serializable {
         this.recurringPeriod = recurringPeriod;
     }
 
-    public Date getDate() {
+    Date getDate() {
         return date;
     }
 
-    public BigDecimal getAmount() {
+    BigDecimal getAmount() {
         return amount;
     }
 
-    public boolean isRecurring() {
+    boolean isRecurring() {
         return recurring;
     }
 
-    public void setRecurring(boolean recurring) {
+    void setRecurring(boolean recurring) {
         this.recurring = recurring;
     }
 
-    public boolean isIncome() {
+    boolean isIncome() {
         return income;
     }
 
-    public Category getCategory() {
+    Category getCategory() {
         return category;
     }
 
-    public String getLocation() {
+    String getLocation() {
         return location;
     }
 
-    public String getNote() {
+    String getNote() {
         return note;
     }
 
-    public String getRecurringPeriod() {
+    String getRecurringPeriod() {
         return recurringPeriod;
     }
 
     @Override
     public boolean equals(Object exp) {
-        if (this == exp) {
+        if (this == exp)
             return true;
-        }
 
-        if (this.getClass() != exp.getClass()) {
+        if (this.getClass() != exp.getClass())
             return false;
-        }
 
         Expense expense = (Expense) exp;
-
-        if (this.getDate().compareTo(expense.getDate()) != 0) {
+        if (this.getCategory() == null && expense.getCategory() != null)
             return false;
-        }
 
-        if (this.getAmount().compareTo(expense.getAmount()) != 0) {
-            return false;
-        }
-
-        if (this.isRecurring() != expense.isRecurring()) {
-            return false;
-        }
-
-        if (this.isIncome() != expense.isIncome()) {
-            return false;
-        }
-
-        if (this.getCategory() == null && expense.getCategory() != null) {
-            return false;
-        }
-
-        if (this.getCategory() != null) {
-            if (!this.getCategory().equals(expense.getCategory())) {
+        if (this.getCategory() != null)
+            if (!this.getCategory().equals(expense.getCategory()))
                 return false;
-            }
-        }
 
-        if (!this.getLocation().equals(expense.getLocation())) {
-            return false;
-        }
-
-        if (!this.getNote().equals(expense.getNote())) {
-            return false;
-        }
-
-        return this.getRecurringPeriod().equals(expense.getRecurringPeriod());
-
+        return (this.getDate().compareTo(expense.getDate()) == 0
+                && this.getAmount().compareTo(expense.getAmount()) == 0
+                && this.isRecurring() == expense.isRecurring()
+                && this.isIncome() == expense.isIncome()
+                && this.getLocation().equals(expense.getLocation())
+                && this.getNote().equals(expense.getNote())
+                && this.getRecurringPeriod().equals(expense.getRecurringPeriod()));
     }
 
     @Override
-    public String toString() {
-        //TODO: toString is ugly, probably shouldn't be using it.
-        if (income)
-            return "Earned " + amount + " at " + location + " on " + date.toString();
-        else
-            return "Spent " + amount + " at " + location + " on " + date.toString();
+    public int hashCode() {
+        return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod);
     }
 }
