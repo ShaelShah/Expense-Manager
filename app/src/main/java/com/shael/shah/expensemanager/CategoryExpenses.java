@@ -20,6 +20,8 @@ public class CategoryExpenses extends Activity {
      * Private Variables
      *****************************************************************/
 
+    private static final String EXTRA_CATEGORY_TITLE = "com.shael.shah.expensemanager.EXTRA_CATEGORY_TITLE";
+    private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
 
     private List<Expense> expenses;
@@ -51,7 +53,7 @@ public class CategoryExpenses extends Activity {
 
         //Get extra from intent to determine which expenses to display
         Intent intent = getIntent();
-        String categoryTitle = intent.getStringExtra("CategoryTitle");
+        String categoryTitle = intent.getStringExtra(EXTRA_CATEGORY_TITLE);
         categoryTitleTextView.setText(categoryTitle);
 
         populateScrollView(categoryTitle);
@@ -127,12 +129,12 @@ public class CategoryExpenses extends Activity {
 
                     if (expense.isRecurring()) {
                         if (expense.isIncome()) {
-                            intent.putExtra("ExpenseType", "Income");
+                            intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                         } else {
-                            intent.putExtra("ExpenseType", "Recurring");
+                            intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                         }
                     } else {
-                        intent.putExtra("ExpenseType", "Normal");
+                        intent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
                     }
 
                     startActivity(intent);

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/lightGrey"
+    android:orientation="vertical"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
     <LinearLayout
@@ -17,25 +17,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="16dp"
         android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingLeft="16dp">
+        android:paddingTop="16dp">
 
         <EditText
             android:id="@+id/amountEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-
-            android:textAlignment="viewEnd"
-            android:textSize="40sp"
+            android:background="@android:color/transparent"
             android:fontFamily="sans-serif"
 
-            android:background="@android:color/transparent"
+            android:hint="$$$"
             android:inputType="numberDecimal"
-            android:hint="$$$" />
+            android:paddingBottom="10dp"
+
+            android:paddingTop="10dp"
+            android:textAlignment="viewEnd"
+            android:textSize="40sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,17 +50,18 @@
 
         <ScrollView
             android:id="@+id/categoryScrollView"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             android:fillViewport="true"
-            android:layout_weight="1">
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
 
             <LinearLayout
                 android:id="@+id/scrollLinearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:orientation="vertical" />
 
         </ScrollView>
@@ -80,8 +81,8 @@
             android:id="@+id/dateLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/dateLabelTextView"

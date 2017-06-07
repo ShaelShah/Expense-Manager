@@ -224,7 +224,7 @@ public class AddExpenseActivity extends Activity {
             }
         });
 
-        if (!getIntent().hasExtra(EXTRA_EXPENSE_TYPE)) {
+        if (!getIntent().hasExtra(EXTRA_EXPENSE_OBJECT)) {
 
             toolbarLinearLayout.addView(cancel);
             toolbarLinearLayout.addView(lineOne);

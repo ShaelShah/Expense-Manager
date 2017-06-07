@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioGroup;
@@ -31,7 +33,9 @@ public class MainActivity extends Activity {
 
     private static final String EXTRA_CATEGORY_TITLE = "com.shael.shah.expensemanager.EXTRA_CATEGORY_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
-
+    TimePeriod timePeriod = TimePeriod.MONTHLY;
+    //TODO: Temporary solution
+    List<View> colorBoxViews = new ArrayList<>();
     private List<Expense> expenses;
     private List<Category> categories;
 
@@ -111,6 +115,17 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         setLists();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (hasFocus) {
+            if (!colorBoxViews.isEmpty()) {
+                for (View v : colorBoxViews) {
+                    scaleView(v, 0f, 1f);
+                }
+            }
+        }
     }
 
     /*****************************************************************
@@ -305,26 +320,95 @@ public class MainActivity extends Activity {
         BigDecimal outcome = new BigDecimal(0);
         BigDecimal net;
 
-        for (Expense e : expenses) {
-            if (e.isIncome())
-                income = income.add(e.getAmount());
-            else
-                outcome = outcome.add(e.getAmount());
+        //TODO: The majority of this function can be refractored, this code is also used elsewhere
+        Calendar currentCal = Calendar.getInstance();
+        Calendar oldCal = Calendar.getInstance();
+
+        switch (timePeriod) {
+            case DAILY:
+                for (Expense e : expenses) {
+                    oldCal.setTime(e.getDate());
+                    if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                        if (currentCal.get(Calendar.MONTH) == oldCal.get(Calendar.MONTH)) {
+                            if (currentCal.get(Calendar.DAY_OF_MONTH) == oldCal.get(Calendar.DAY_OF_MONTH)) {
+                                if (e.isIncome())
+                                    income = income.add(e.getAmount());
+                                else
+                                    outcome = outcome.add(e.getAmount());
+                            }
+                        }
+                    }
+                }
+                timePeriodTextView.setText(R.string.today);
+                break;
+
+            case WEEKLY:
+                timePeriod = TimePeriod.WEEKLY;
+                for (Expense e : expenses) {
+                    oldCal.setTime(e.getDate());
+                    if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                        if (currentCal.get(Calendar.WEEK_OF_YEAR) == oldCal.get(Calendar.WEEK_OF_YEAR)) {
+                            if (e.isIncome())
+                                income = income.add(e.getAmount());
+                            else
+                                outcome = outcome.add(e.getAmount());
+                        }
+                    }
+                }
+                timePeriodTextView.setText(R.string.weekly);
+                break;
+
+            case MONTHLY:
+                timePeriod = TimePeriod.MONTHLY;
+                for (Expense e : expenses) {
+                    oldCal.setTime(e.getDate());
+                    if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                        if (currentCal.get(Calendar.MONTH) == oldCal.get(Calendar.MONTH)) {
+                            if (e.isIncome())
+                                income = income.add(e.getAmount());
+                            else
+                                outcome = outcome.add(e.getAmount());
+                        }
+                    }
+                }
+                timePeriodTextView.setText(new SimpleDateFormat("MMMM", Locale.CANADA).format(currentCal.getTime()));
+                break;
+
+            case YEARLY:
+                timePeriod = TimePeriod.YEARLY;
+                for (Expense e : expenses) {
+                    oldCal.setTime(e.getDate());
+                    if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                        if (e.isIncome())
+                            income = income.add(e.getAmount());
+                        else
+                            outcome = outcome.add(e.getAmount());
+                    }
+                }
+                timePeriodTextView.setText(new SimpleDateFormat("YYYY", Locale.CANADA).format(currentCal.getTime()));
+                break;
+
+            default:
+                timePeriod = TimePeriod.ALL;
+                for (Expense e : expenses) {
+                    if (e.isIncome())
+                        income = income.add(e.getAmount());
+                    else
+                        outcome = outcome.add(e.getAmount());
+                }
+                timePeriodTextView.setText(R.string.all);
+                break;
         }
 
-        net = (income.subtract(outcome)).abs();
+        net = income.subtract(outcome);
 
         incomeTexView.setText(getString(R.string.currency, income));
         expensesTextView.setText(getString(R.string.currency, outcome));
-        netTextView.setText(getString(R.string.currency, net));
+        netTextView.setText(getString(R.string.currency, net.abs()));
 
-        if (net.signum() < 0) {
-            //noinspection deprecation
-            netTextView.setTextColor(getResources().getColor(R.color.red));
-        } else if (net.signum() > 0) {
-            //noinspection deprecation
-            netTextView.setTextColor(getResources().getColor(R.color.green));
-        }
+        //noinspection deprecation
+        int color = net.signum() > 0 ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red);
+        netTextView.setTextColor(color);
     }
 
     /*
@@ -335,6 +419,7 @@ public class MainActivity extends Activity {
      *  Initially removes all child views from the parent.
      */
     private void populateMainCategoryRows(List<Expense> expenses) {
+        //TODO: This function can be better optimized, instead of looping through all expenses for each category, loop through the expenses once and assign temporary lists for each category
         LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
 
         if (scrollLinearLayout.getChildCount() > 0) {
@@ -345,10 +430,80 @@ public class MainActivity extends Activity {
 
             String title = c.getType();
             BigDecimal amount = new BigDecimal(0);
-            for (Expense e : expenses) {
-                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
-                    amount = amount.add(e.getAmount());
-                }
+
+            //TODO: The majority of this function can be refractored, this code is also used elsewhere
+            Calendar currentCal = Calendar.getInstance();
+            Calendar oldCal = Calendar.getInstance();
+
+            switch (timePeriod) {
+                case DAILY:
+                    for (Expense e : expenses) {
+                        oldCal.setTime(e.getDate());
+                        if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                            if (currentCal.get(Calendar.MONTH) == oldCal.get(Calendar.MONTH)) {
+                                if (currentCal.get(Calendar.DAY_OF_MONTH) == oldCal.get(Calendar.DAY_OF_MONTH)) {
+                                    if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                                        amount = amount.add(e.getAmount());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    timePeriodTextView.setText(R.string.today);
+                    break;
+
+                case WEEKLY:
+                    timePeriod = TimePeriod.WEEKLY;
+                    for (Expense e : expenses) {
+                        oldCal.setTime(e.getDate());
+                        if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                            if (currentCal.get(Calendar.WEEK_OF_YEAR) == oldCal.get(Calendar.WEEK_OF_YEAR)) {
+                                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                                    amount = amount.add(e.getAmount());
+                                }
+                            }
+                        }
+                    }
+                    timePeriodTextView.setText(R.string.weekly);
+                    break;
+
+                case MONTHLY:
+                    timePeriod = TimePeriod.MONTHLY;
+                    for (Expense e : expenses) {
+                        oldCal.setTime(e.getDate());
+                        if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                            if (currentCal.get(Calendar.MONTH) == oldCal.get(Calendar.MONTH)) {
+                                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                                    amount = amount.add(e.getAmount());
+                                }
+                            }
+                        }
+                    }
+                    timePeriodTextView.setText(new SimpleDateFormat("MMMM", Locale.CANADA).format(currentCal.getTime()));
+                    break;
+
+                case YEARLY:
+                    timePeriod = TimePeriod.YEARLY;
+                    for (Expense e : expenses) {
+                        oldCal.setTime(e.getDate());
+                        if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
+                            if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                                amount = amount.add(e.getAmount());
+                            }
+                        }
+                    }
+                    timePeriodTextView.setText(new SimpleDateFormat("YYYY", Locale.CANADA).format(currentCal.getTime()));
+                    break;
+
+                default:
+                    timePeriod = TimePeriod.ALL;
+                    for (Expense e : expenses) {
+                        if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                            amount = amount.add(e.getAmount());
+                        }
+                    }
+                    timePeriodTextView.setText(R.string.all);
+                    break;
             }
 
             if (amount.signum() > 0) {
@@ -357,6 +512,15 @@ public class MainActivity extends Activity {
 
                 View colorBox = item.findViewById(R.id.mainColorView);
                 colorBox.setBackgroundColor(c.getColor());
+                colorBoxViews.add(colorBox);
+
+                //expand(colorBox);
+                //colorBox.setOnClickListener(new View.OnClickListener() {
+                //    @Override
+                //    public void onClick(View v) {
+                //        scaleView(v, 0f, 1f);
+                //    }
+                //});
 
                 TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
                 categoryRowTitle.setText(title);
@@ -380,6 +544,45 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+    public void scaleView(View v, float startScale, float endScale) {
+        //Animation anim = new ScaleAnimation(startScale, endScale, 1f, 1f, Animation.RELATIVE_TO_SELF, 1f, Animation.RELATIVE_TO_SELF, 1f);
+        Animation anim = new ScaleAnimation(startScale, endScale, 1f, 1f);
+        anim.setFillAfter(true);
+        anim.setDuration(2000);
+        v.startAnimation(anim);
+    }
+
+    /*
+    //Animation attempt #1
+    public static void expand(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+    */
 
     /*****************************************************************
      * Setup ActionListeners Methods
@@ -442,6 +645,7 @@ public class MainActivity extends Activity {
 
                         switch (checkedId) {
                             case R.id.dailyRadioButton:
+                                timePeriod = TimePeriod.DAILY;
                                 for (Expense e : expenses) {
                                     oldCal.setTime(e.getDate());
                                     if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
@@ -456,6 +660,7 @@ public class MainActivity extends Activity {
                                 break;
 
                             case R.id.weeklyRadioButton:
+                                timePeriod = TimePeriod.WEEKLY;
                                 for (Expense e : expenses) {
                                     oldCal.setTime(e.getDate());
                                     if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
@@ -468,6 +673,7 @@ public class MainActivity extends Activity {
                                 break;
 
                             case R.id.monthlyRadioButton:
+                                timePeriod = TimePeriod.MONTHLY;
                                 for (Expense e : expenses) {
                                     oldCal.setTime(e.getDate());
                                     if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
@@ -480,6 +686,7 @@ public class MainActivity extends Activity {
                                 break;
 
                             case R.id.yearlyRadioButton:
+                                timePeriod = TimePeriod.YEARLY;
                                 for (Expense e : expenses) {
                                     oldCal.setTime(e.getDate());
                                     if (currentCal.get(Calendar.YEAR) == oldCal.get(Calendar.YEAR)) {
@@ -490,6 +697,7 @@ public class MainActivity extends Activity {
                                 break;
 
                             default:
+                                timePeriod = TimePeriod.ALL;
                                 tempExpenses = expenses;
                                 timePeriodTextView.setText(R.string.all);
                                 break;
@@ -503,5 +711,9 @@ public class MainActivity extends Activity {
                 });
             }
         });
+    }
+
+    private enum TimePeriod {
+        DAILY, WEEKLY, MONTHLY, YEARLY, ALL
     }
 }
