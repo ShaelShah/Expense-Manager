@@ -14,21 +14,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CategoryExpenses extends Activity {
+public class DisplayExpensesActivity extends Activity {
 
     /*****************************************************************
      * Private Variables
      *****************************************************************/
 
-    private static final String EXTRA_CATEGORY_TITLE = "com.shael.shah.expensemanager.EXTRA_CATEGORY_TITLE";
+    private static final String EXTRA_EXPENSES_DISPLAY = "com.shael.shah.expensemanager.EXTRA_EXPENSES_DISPLAY";
+    private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
 
     private List<Expense> expenses;
 
-    private TextView categoryTitleTextView;
-    private TextView amountCategoryTextView;
-    private ScrollView categoryTitleScrollView;
+    private TextView expensesTitleTextView;
+    private TextView amountExpensesTextView;
+    private ScrollView expensesTitleScrollView;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -42,21 +43,15 @@ public class CategoryExpenses extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_category_expenses);
+        setContentView(R.layout.activity_show_expenses);
 
         //Find views to work with during this activity
-        categoryTitleTextView = (TextView) findViewById(R.id.categoryTitleTextView);
-        amountCategoryTextView = (TextView) findViewById(R.id.amountCategoryTextView);
-        categoryTitleScrollView = (ScrollView) findViewById(R.id.categoryTitleScrollView);
+        expensesTitleTextView = (TextView) findViewById(R.id.expensesTitleTextView);
+        amountExpensesTextView = (TextView) findViewById(R.id.amountExpensesTextView);
+        expensesTitleScrollView = (ScrollView) findViewById(R.id.expensesTitleScrollView);
 
-        expenses = Singleton.getInstance(this).getExpenses();
-
-        //Get extra from intent to determine which expenses to display
-        Intent intent = getIntent();
-        String categoryTitle = intent.getStringExtra(EXTRA_CATEGORY_TITLE);
-        categoryTitleTextView.setText(categoryTitle);
-
-        populateScrollView(categoryTitle);
+        //expenses = Singleton.getInstance(this).getExpenses();
+        populateScrollView();
     }
 
     /*****************************************************************
@@ -67,50 +62,29 @@ public class CategoryExpenses extends Activity {
      *  Iterates through all expenses to check which expenses were requested to
      *  be displayed.
      */
-    private void populateScrollView(String categoryTitle) {
-        LinearLayout scrollLinearLayout = (LinearLayout) categoryTitleScrollView.findViewById(R.id.categoryScrollViewLinearLayout);
+    private void populateScrollView() {
+        //Get extra from intent to determine which expenses to display
+        Intent intent = getIntent();
+        //TODO: Check this warning
+        ArrayList<Expense> expensesToDisplay = (ArrayList<Expense>) intent.getSerializableExtra(EXTRA_EXPENSES_DISPLAY);
+        String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
+        expensesTitleTextView.setText(title);
 
-        //Create a temp List<Expense> of all expenses to be displayed
-        List<Expense> tempExpenses = new ArrayList<>();
-        switch (categoryTitle) {
-            case "Net Total":
-                tempExpenses = expenses;
-                break;
-            case "Income":
-                for (Expense e : expenses) {
-                    if (e.isIncome()) {
-                        tempExpenses.add(e);
-                    }
-                }
-                break;
-            case "Expenses":
-                for (Expense e : expenses) {
-                    if (!e.isIncome()) {
-                        tempExpenses.add(e);
-                    }
-                }
-                break;
-            default:
-                for (Expense e : expenses) {
-                    if (e.getCategory() != null) {
-                        if (e.getCategory().getType().equals(categoryTitle)) {
-                            tempExpenses.add(e);
-                        }
-                    }
-                }
-                break;
-        }
+        LinearLayout scrollLinearLayout = (LinearLayout) expensesTitleScrollView.findViewById(R.id.expensesScrollViewLinearLayout);
 
         //Inflate a category_expense_row_layout for each expense
         BigDecimal amount = new BigDecimal(0);
-        for (Expense e : tempExpenses) {
+        for (Expense e : expensesToDisplay) {
             final Expense expense = e;
             //TODO: Figure out what this third parameter is for
-            View item = View.inflate(this, R.layout.expenses_row_layout, null);
+            View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
 
-            TextView dateTextView = (TextView) item.findViewById(R.id.categoryDateTextView);
-            TextView locationTextView = (TextView) item.findViewById(R.id.categoryLocationTextView);
-            TextView amountTextView = (TextView) item.findViewById(R.id.categoryAmountTextView);
+            View view = item.findViewById(R.id.categoryColorView);
+            view.setBackgroundColor(e.getCategory().getColor());
+
+            TextView dateTextView = (TextView) item.findViewById(R.id.expenseDateTextView);
+            TextView locationTextView = (TextView) item.findViewById(R.id.expenseLocationTextView);
+            TextView amountTextView = (TextView) item.findViewById(R.id.expensesAmountTextView);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
             dateTextView.setText(sdf.format(e.getDate()));
@@ -124,15 +98,14 @@ public class CategoryExpenses extends Activity {
             item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(CategoryExpenses.this, AddExpenseActivity.class);
+                    Intent intent = new Intent(DisplayExpensesActivity.this, AddExpenseActivity.class);
                     intent.putExtra(EXTRA_EXPENSE_OBJECT, expense);
 
                     if (expense.isRecurring()) {
-                        if (expense.isIncome()) {
+                        if (expense.isIncome())
                             intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
-                        } else {
+                        else
                             intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
-                        }
                     } else {
                         intent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
                     }
@@ -142,6 +115,6 @@ public class CategoryExpenses extends Activity {
             });
         }
 
-        amountCategoryTextView.setText(getString(R.string.currency, amount));
+        amountExpensesTextView.setText(getString(R.string.currency, amount));
     }
 }

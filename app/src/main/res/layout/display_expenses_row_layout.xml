@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <View
+        android:id="@+id/categoryColorView"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:background="@color/amber"/>
 
     <TextView
-        android:id="@+id/categoryDateTextView"
+        android:id="@+id/expenseDateTextView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingStart="6dp"
+        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="JUN 08/17"/>
+
+    <TextView
+        android:id="@+id/expenseLocationTextView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:textAlignment="textStart"
-        android:text="14/12/2017"/>
-
-    <TextView
-        android:id="@+id/categoryLocationTextView"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-smallcaps"
         android:text="Amazon"/>
 
     <TextView
-        android:id="@+id/categoryAmountTextView"
+        android:id="@+id/expensesAmountTextView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:textAlignment="textEnd"
+        android:textSize="14sp"
+        android:fontFamily="sans-serif-smallcaps"
         android:text="$44.67"/>
 
 </LinearLayout>

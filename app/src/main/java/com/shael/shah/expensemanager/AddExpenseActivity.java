@@ -307,6 +307,27 @@ public class AddExpenseActivity extends Activity {
             //incomeCheckbox.setChecked(expense.isIncome());
             //recurringCheckbox.setChecked(expense.isRecurring());
 
+            dateEditText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
+                            new DatePickerDialog.OnDateSetListener() {
+
+                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                    calendar.set(Calendar.YEAR, year);
+                                    calendar.set(Calendar.MONTH, month);
+                                    calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                                    dateEditText.setText(sdf.format(calendar.getTime()));
+                                }
+
+                            }, year, month, day);
+
+                    datePickerDialog.setTitle("Select Date");
+                    datePickerDialog.show();
+                }
+            });
+
             if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal")) {
                 int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
                 recurringSpinner.setSelection(position);

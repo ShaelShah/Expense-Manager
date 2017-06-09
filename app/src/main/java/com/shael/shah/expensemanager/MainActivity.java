@@ -32,11 +32,12 @@ public class MainActivity extends Activity {
     * Private Variables
     ******************************************************************/
 
-    private static final String EXTRA_CATEGORY_TITLE = "com.shael.shah.expensemanager.EXTRA_CATEGORY_TITLE";
+    private static final String EXTRA_EXPENSES_DISPLAY = "com.shael.shah.expensemanager.EXTRA_EXPENSES_DISPLAY";
+    private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
+
     TimePeriod timePeriod = TimePeriod.MONTHLY;
-    //TODO: Temporary solution
-    List<View> colorBoxViews = new ArrayList<>();
+
     private List<Expense> expenses;
     private List<Category> categories;
 
@@ -478,7 +479,7 @@ public class MainActivity extends Activity {
         setDateRangeTextView();
         List<Expense> tempExpenses = getDateRangeExpenses();
 
-        for (Category c : categories) {
+        for (final Category c : categories) {
 
             String title = c.getType();
             BigDecimal amount = new BigDecimal(0);
@@ -495,7 +496,6 @@ public class MainActivity extends Activity {
 
                 View colorBox = item.findViewById(R.id.mainColorView);
                 colorBox.setBackgroundColor(c.getColor());
-                colorBoxViews.add(colorBox);
 
                 TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
                 categoryRowTitle.setText(title);
@@ -511,8 +511,18 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         String categoryTitle = ((TextView) v.findViewById(R.id.categoryRowTitle)).getText().toString();
-                        Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                        intent.putExtra(EXTRA_CATEGORY_TITLE, categoryTitle);
+
+                        List<Expense> dateRangeExpenses = getDateRangeExpenses();
+                        //TODO: ArrayList used instead of List due to List not being instantiable
+                        ArrayList<Expense> tempExpenses = new ArrayList<>();
+                        for (Expense e : dateRangeExpenses) {
+                            if (e.getCategory().getType().equals(categoryTitle))
+                                tempExpenses.add(e);
+                        }
+
+                        Intent intent = new Intent(MainActivity.this, DisplayExpensesActivity.class);
+                        intent.putExtra(EXTRA_EXPENSES_DISPLAY, tempExpenses);
+                        intent.putExtra(EXTRA_EXPENSES_TITLE, c.getType());
                         startActivity(intent);
                     }
                 });
@@ -531,8 +541,17 @@ public class MainActivity extends Activity {
         incomeTexView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                intent.putExtra(EXTRA_CATEGORY_TITLE, "Income");
+                List<Expense> dateRangeExpenses = getDateRangeExpenses();
+                //TODO: ArrayList used instead of List due to List not being instantiable
+                ArrayList<Expense> tempExpenses = new ArrayList<>();
+                for (Expense e : dateRangeExpenses) {
+                    if (e.isIncome())
+                        tempExpenses.add(e);
+                }
+
+                Intent intent = new Intent(MainActivity.this, DisplayExpensesActivity.class);
+                intent.putExtra(EXTRA_EXPENSES_DISPLAY, tempExpenses);
+                intent.putExtra(EXTRA_EXPENSES_TITLE, "Income");
                 startActivity(intent);
             }
         });
@@ -540,8 +559,17 @@ public class MainActivity extends Activity {
         expensesTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                intent.putExtra(EXTRA_CATEGORY_TITLE, "Expenses");
+                List<Expense> dateRangeExpenses = getDateRangeExpenses();
+                //TODO: ArrayList used instead of List due to List not being instantiable
+                ArrayList<Expense> tempExpenses = new ArrayList<>();
+                for (Expense e : dateRangeExpenses) {
+                    if (!e.isIncome())
+                        tempExpenses.add(e);
+                }
+
+                Intent intent = new Intent(MainActivity.this, DisplayExpensesActivity.class);
+                intent.putExtra(EXTRA_EXPENSES_DISPLAY, tempExpenses);
+                intent.putExtra(EXTRA_EXPENSES_TITLE, "Expenses");
                 startActivity(intent);
             }
         });
@@ -549,8 +577,9 @@ public class MainActivity extends Activity {
         netTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CategoryExpenses.class);
-                intent.putExtra(EXTRA_CATEGORY_TITLE, "Net Total");
+                Intent intent = new Intent(MainActivity.this, DisplayExpensesActivity.class);
+                intent.putExtra(EXTRA_EXPENSES_DISPLAY, (ArrayList<Expense>) getDateRangeExpenses());
+                intent.putExtra(EXTRA_EXPENSES_TITLE, "All Transactions");
                 startActivity(intent);
             }
         });

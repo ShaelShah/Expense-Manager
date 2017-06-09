@@ -9,43 +9,45 @@
     android:paddingBottom="14dp">
 
     <TextView
-        android:id="@+id/categoryTitleTextView"
+        android:id="@+id/expensesTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
         android:textAlignment="center"
-        android:textSize="20sp"
+        android:textSize="48sp"
+        android:fontFamily="sans-serif-smallcaps"
         android:text="Title" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="2dp"
+        android:background="@color/blueGrey" />
 
     <TextView
-        android:id="@+id/amountCategoryTextView"
+        android:id="@+id/amountExpensesTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textAlignment="textEnd"
-        android:textSize="16sp"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-smallcaps"
         android:text="$234.67"/>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="2dp"
+        android:background="@color/blueGrey" />
 
     <ScrollView
-        android:id="@+id/categoryTitleScrollView"
+        android:id="@+id/expensesTitleScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingTop="10dp"
         android:layout_weight="1">
 
         <LinearLayout
-            android:id="@+id/categoryScrollViewLinearLayout"
+            android:id="@+id/expensesScrollViewLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
