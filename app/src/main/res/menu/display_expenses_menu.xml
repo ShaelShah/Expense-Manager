@@ -12,14 +12,14 @@
         android:id="@+id/sort_amount"
         android:icon="@drawable/ic_sort_black_24dp"
         android:showAsAction="always"
-        android:title="Filter">
+        android:title="Sort Amount">
     </item>
 
     <item
         android:id="@+id/sort_location"
         android:icon="@drawable/ic_sort_by_alpha_black_24dp"
         android:showAsAction="always"
-        android:title="Filter">
+        android:title="Sort Location">
     </item>
 
 </menu>

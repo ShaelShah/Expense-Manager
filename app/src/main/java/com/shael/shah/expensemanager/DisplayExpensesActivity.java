@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +47,9 @@ public class DisplayExpensesActivity extends Activity {
 
     ArrayList<Expense> allExpenses;
     ArrayList<Expense> filteredExpenses;
+
+    private boolean amountSmallToBig = true;
+    private boolean locationAtoZ = true;
 
     private TextView expensesTitleTextView;
     private TextView amountExpensesTextView;
@@ -112,9 +119,35 @@ public class DisplayExpensesActivity extends Activity {
                 return true;
 
             case R.id.sort_amount:
+
+                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                    @Override
+                    public int compare(Expense o1, Expense o2) {
+                        if (amountSmallToBig)
+                            return o1.getAmount().compareTo(o2.getAmount());
+                        else
+                            return o2.getAmount().compareTo(o1.getAmount());
+                    }
+                });
+
+                amountSmallToBig = !amountSmallToBig;
+                populateScrollView(filteredExpenses);
                 return true;
 
             case R.id.sort_location:
+
+                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                    @Override
+                    public int compare(Expense o1, Expense o2) {
+                        if (locationAtoZ)
+                            return o1.getLocation().compareTo(o2.getLocation());
+                        else
+                            return o2.getLocation().compareTo(o1.getLocation());
+                    }
+                });
+
+                locationAtoZ = !locationAtoZ;
+                populateScrollView(filteredExpenses);
                 return true;
 
             default:
@@ -124,7 +157,7 @@ public class DisplayExpensesActivity extends Activity {
 
     private void createFilterDialog() {
         final List<RadioButton> categoryRadioButtons = new ArrayList<>();
-        List<Category> categories = Singleton.getInstance(null).getCategories();
+        final List<Category> categories = Singleton.getInstance(null).getCategories();
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -184,16 +217,50 @@ public class DisplayExpensesActivity extends Activity {
                 Date startDate = null;
                 Date endDate = null;
 
-                try {
-                    startDate = sdf.parse(startDateEditText.getText().toString());
-                    endDate = sdf.parse(endDateEditText.getText().toString());
-                } catch (ParseException e) {
+                try { startDate = sdf.parse(startDateEditText.getText().toString()); } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                try { endDate = sdf.parse(endDateEditText.getText().toString()); } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
                 String category = getCategoryTitle(categoryRadioButtons);
 
-                populateScrollView(startDate, endDate, category);
+                List<Expense> categoryExpenses = new ArrayList<>();
+                if (category != null && !category.equals("") && !category.equals("All")) {
+                    for (Expense e : allExpenses) {
+                        if (e.getCategory().getType().equals(category))
+                            categoryExpenses.add(e);
+                    }
+                } else {
+                    categoryExpenses = allExpenses;
+                }
+
+                List<Expense> dateExpenses = new ArrayList<>();
+                //TODO: Can probably be refractored
+                if (startDate != null && endDate != null) {
+                    for (Expense e : categoryExpenses) {
+                        if (e.getDate().compareTo(startDate) >= 0 && e.getDate().compareTo(endDate) <= 0)
+                            dateExpenses.add(e);
+                    }
+                } else if (startDate != null && endDate == null) {
+                    for (Expense e : categoryExpenses) {
+                        if (e.getDate().compareTo(startDate) >= 0)
+                            dateExpenses.add(e);
+                    }
+                } else if (startDate == null && endDate != null) {
+                    Log.d("StartDate", "Nancy is a boob");
+                    for (Expense e : categoryExpenses) {
+                        if (e.getDate().compareTo(endDate) <= 0)
+                            dateExpenses.add(e);
+                    }
+                } else {
+                    dateExpenses = categoryExpenses;
+                }
+
+                filteredExpenses = (ArrayList<Expense>) dateExpenses;
+                populateScrollView(dateExpenses);
                 dialog.dismiss();
             }
         });
@@ -297,37 +364,6 @@ public class DisplayExpensesActivity extends Activity {
         LinearLayout scrollLinearLayout = (LinearLayout) expensesTitleScrollView.findViewById(R.id.expensesScrollViewLinearLayout);
         if (scrollLinearLayout.getChildCount() > 0)
             scrollLinearLayout.removeAllViews();
-
-//        List<Expense> categoryExpenses = new ArrayList<>();
-//        if (category != null && !category.equals("") && !category.equals("All")) {
-//            for (Expense e : allExpenses) {
-//                if (e.getCategory().getType().equals(category))
-//                    categoryExpenses.add(e);
-//            }
-//        } else {
-//            categoryExpenses = allExpenses;
-//        }
-//
-//        List<Expense> dateExpenses = new ArrayList<>();
-//        TODO: Can probably be refractored
-//        if (startDate != null && endDate != null) {
-//            for (Expense e : categoryExpenses) {
-//                if (e.getDate().compareTo(startDate) > 0 && e.getDate().compareTo(endDate) < 0)
-//                    dateExpenses.add(e);
-//            }
-//        } else if (startDate != null && endDate == null) {
-//            for (Expense e : categoryExpenses) {
-//                if (e.getDate().compareTo(startDate) > 0)
-//                    dateExpenses.add(e);
-//            }
-//        } else if (startDate == null && endDate != null) {
-//            for (Expense e : categoryExpenses) {
-//                if (e.getDate().compareTo(endDate) < 0)
-//                    dateExpenses.add(e);
-//            }
-//        } else {
-//            dateExpenses = categoryExpenses;
-//        }
 
         //Inflate a category_expense_row_layout for each expense
         BigDecimal amount = new BigDecimal(0);
