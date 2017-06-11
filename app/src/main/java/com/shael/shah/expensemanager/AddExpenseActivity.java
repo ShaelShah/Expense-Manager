@@ -32,10 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-//import android.widget.ArrayAdapter;
-//import android.widget.CheckBox;
-//import android.widget.Spinner;
-
 public class AddExpenseActivity extends Activity {
 
     /*****************************************************************
@@ -51,8 +47,6 @@ public class AddExpenseActivity extends Activity {
     private EditText locationEditText;
     private EditText noteEditText;
     private ScrollView categoryScrollView;
-    //private CheckBox incomeCheckbox;
-    //private CheckBox recurringCheckbox;
     private Spinner recurringSpinner;
 
     private List<Category> categories;
@@ -95,8 +89,6 @@ public class AddExpenseActivity extends Activity {
         dateEditText = (EditText) findViewById(R.id.dateEditText);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
         noteEditText = (EditText) findViewById(R.id.noteEditText);
-        //incomeCheckbox = (CheckBox) findViewById(R.id.incomeCheckbox);
-        //recurringCheckbox = (CheckBox) findViewById(R.id.recurringCheckbox);
         if (!expenseType.equals("Normal"))
             recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
 
@@ -153,8 +145,6 @@ public class AddExpenseActivity extends Activity {
 
         String location = locationEditText.getText().toString();
         String note = noteEditText.getText().toString();
-        //Boolean income = incomeCheckbox.isChecked();
-        //Boolean recurring = recurringCheckbox.isChecked();
 
         foundCategory:
         for (RadioButton rb : categoryRadioButtons) {
@@ -304,8 +294,6 @@ public class AddExpenseActivity extends Activity {
             dateEditText.setText(sdf.format(expense.getDate()));
             locationEditText.setText(expense.getLocation());
             noteEditText.setText(expense.getNote());
-            //incomeCheckbox.setChecked(expense.isIncome());
-            //recurringCheckbox.setChecked(expense.isRecurring());
 
             dateEditText.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -446,25 +434,6 @@ public class AddExpenseActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    /*
-     *  OnClickListener for the recurring checkbox.
-     *
-     *  Enables the recurring period spinner if the recurring checkbox is checked.
-     */
-    /*
-    public void enableSpinner(View view) {
-        CheckBox recurringCheckBox = (CheckBox) view;
-
-        if (recurringCheckBox.isChecked()) {
-            recurringSpinner.setEnabled(true);
-            recurringSpinner.setClickable(true);
-        } else {
-            recurringSpinner.setEnabled(false);
-            recurringSpinner.setClickable(false);
-        }
-    }
-    */
 
     /*
      *  Helper function used to populate the recurring period spinner.

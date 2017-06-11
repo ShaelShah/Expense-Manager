@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Setup toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mainActivityToolbar);
         setActionBar(toolbar);
 
         //Find views to work with during this activity
@@ -122,16 +122,8 @@ public class MainActivity extends Activity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-
+        if (hasFocus)
             startAnimations();
-
-//            if (!colorBoxViews.isEmpty()) {
-//                for (View v : colorBoxViews) {
-//                    scaleView(v, 0f, 1f);
-//                }
-//            }
-        }
     }
 
     /*****************************************************************

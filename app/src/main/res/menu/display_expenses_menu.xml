@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        android:showAsAction="always"
+        android:title="Filter">
+    </item>
+
+    <item
+        android:id="@+id/sort_amount"
+        android:icon="@drawable/ic_sort_black_24dp"
+        android:showAsAction="always"
+        android:title="Filter">
+    </item>
+
+    <item
+        android:id="@+id/sort_location"
+        android:icon="@drawable/ic_sort_by_alpha_black_24dp"
+        android:showAsAction="always"
+        android:title="Filter">
+    </item>
+
+</menu>
