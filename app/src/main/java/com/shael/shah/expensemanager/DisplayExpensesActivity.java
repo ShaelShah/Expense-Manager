@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -191,13 +194,24 @@ public class DisplayExpensesActivity extends Activity {
         startDateEditText.setOnClickListener(onClickListener);
         endDateEditText.setOnClickListener(onClickListener);
 
-        LinearLayout scrollLinearLayout = (LinearLayout) view.findViewById(R.id.displayExpensesCategoryLinearLayout);
-        scrollLinearLayout.addView(inflateCategorySelectRow("All", Color.BLACK, true, categoryRadioButtons));
+        LinearLayout categoryScrollLinearLayout = (LinearLayout) view.findViewById(R.id.displayExpensesCategoryLinearLayout);
+        categoryScrollLinearLayout.addView(inflateCategorySelectRow("All", Color.BLACK, true, categoryRadioButtons));
 
         for (Category c : categories) {
-            scrollLinearLayout.addView(createLine());
-            scrollLinearLayout.addView(inflateCategorySelectRow(c.getType(), c.getColor(), false, categoryRadioButtons));
+            categoryScrollLinearLayout.addView(createLine());
+            categoryScrollLinearLayout.addView(inflateCategorySelectRow(c.getType(), c.getColor(), false, categoryRadioButtons));
         }
+
+        HashSet<String> locationsSet = new HashSet<>();
+        for (Expense e : allExpenses)
+            locationsSet.add(e.getLocation());
+
+        LinearLayout locationScrollLinearLayout = (LinearLayout) view.findViewById(R.id.displayExpensesLocationsLinearLayout);
+        for (String s : locationsSet) {
+            locationScrollLinearLayout.addView(inflateCheckedTextViewRow(s));
+            locationScrollLinearLayout.addView(createLine());
+        }
+        locationScrollLinearLayout.removeViewAt(locationScrollLinearLayout.getChildCount() - 1);
 
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -226,6 +240,17 @@ public class DisplayExpensesActivity extends Activity {
                 }
 
                 String category = getCategoryTitle(categoryRadioButtons);
+
+                List<String> locationStrings = new ArrayList<>();
+                LinearLayout locationScrollLinearLayout = (LinearLayout) displayDialog.findViewById(R.id.displayExpensesLocationsLinearLayout);
+                for (int i = 0; i < locationScrollLinearLayout.getChildCount(); i += 2) {
+                    LinearLayout nestLinearLayout = (LinearLayout) locationScrollLinearLayout.getChildAt(i);
+                    CheckBox checkBox = (CheckBox) nestLinearLayout.getChildAt(1);
+                    if (checkBox.isChecked()) {
+                        TextView textView = (TextView) nestLinearLayout.getChildAt(0);
+                        locationStrings.add(textView.getText().toString());
+                    }
+                }
 
                 List<Expense> categoryExpenses = new ArrayList<>();
                 if (category != null && !category.equals("") && !category.equals("All")) {
@@ -259,8 +284,14 @@ public class DisplayExpensesActivity extends Activity {
                     dateExpenses = categoryExpenses;
                 }
 
-                filteredExpenses = (ArrayList<Expense>) dateExpenses;
-                populateScrollView(dateExpenses);
+                List<Expense> locationExpenses = new ArrayList<>();
+                for (Expense e : dateExpenses) {
+                    if (locationStrings.contains(e.getLocation()))
+                        locationExpenses.add(e);
+                }
+
+                filteredExpenses = (ArrayList<Expense>) locationExpenses;
+                populateScrollView(locationExpenses);
                 dialog.dismiss();
             }
         });
@@ -329,6 +360,33 @@ public class DisplayExpensesActivity extends Activity {
                 }
             }
         });
+
+        return row;
+    }
+
+    /*
+    private View createCheckedTextViewRow(String location) {
+        CheckedTextView checkedTextView = new CheckedTextView(this);
+        checkedTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        checkedTextView.setCheckMarkDrawable(getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
+        checkedTextView.setText(location);
+
+        float scale = getResources().getDisplayMetrics().density;
+        int dp = (int) (5 * scale + 0.5f);
+        checkedTextView.setPadding(dp, dp, dp, dp);
+
+        return checkedTextView;
+    }
+    */
+
+    private View inflateCheckedTextViewRow(String location) {
+        View row = View.inflate(this, R.layout.location_select_row_layout, null);
+
+        TextView locationTextView = (TextView) row.findViewById(R.id.locationLabelTextView);
+        locationTextView.setText(location);
+
+        CheckBox locationCheckBox = (CheckBox) row.findViewById(R.id.locationSelectCheckBox);
+        locationCheckBox.setChecked(true);
 
         return row;
     }
