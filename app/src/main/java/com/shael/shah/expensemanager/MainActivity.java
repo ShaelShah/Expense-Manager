@@ -160,9 +160,12 @@ public class MainActivity extends Activity {
                                     if (item.getTitle().equals("Add Income")) {
                                         intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                                         startActivity(intent);
-                                    } else {
+                                    } else if (item.getTitle().equals("Add Recurring Expense")) {
                                         intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                                         startActivity(intent);
+                                    } else {
+                                        Intent circleIntent = new Intent(MainActivity.this, CircleAnimationTestActivity.class);
+                                        startActivity(circleIntent);
                                     }
                                     return true;
                                 }
@@ -198,6 +201,7 @@ public class MainActivity extends Activity {
             case R.id.open_settings:
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(openSettingsIntent);
+                return true;
 
             /*
             case R.id.add_normal:

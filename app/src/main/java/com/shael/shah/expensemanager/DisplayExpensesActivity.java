@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,7 +28,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -306,7 +304,10 @@ public class DisplayExpensesActivity extends Activity {
         View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
 
         View view = item.findViewById(R.id.categoryColorView);
-        view.setBackgroundColor(expense.getCategory().getColor());
+        if (expense.getCategory() != null)
+            view.setBackgroundColor(expense.getCategory().getColor());
+        else
+            view.setBackgroundColor(getResources().getColor(R.color.lightGreen));
 
         TextView dateTextView = (TextView) item.findViewById(R.id.expenseDateTextView);
         TextView locationTextView = (TextView) item.findViewById(R.id.expenseLocationTextView);

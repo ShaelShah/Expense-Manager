@@ -9,4 +9,8 @@
         android:id="@+id/addRecurring"
         android:title="Add Recurring Expense" />
 
+    <item
+        android:id="@+id/circleAnimation"
+        android:title="Circle Animation Test" />
+
 </menu>
