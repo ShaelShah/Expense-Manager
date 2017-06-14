@@ -26,9 +26,6 @@ class Category implements Serializable {
         if (this == cat)
             return true;
 
-        if (this.getClass() != cat.getClass())
-            return false;
-
         Category category = (Category) cat;
         return (this.getType().equals(category.getType()) && this.getColor() == category.getColor());
     }

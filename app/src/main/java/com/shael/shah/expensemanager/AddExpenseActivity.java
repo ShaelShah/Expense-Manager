@@ -22,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -202,7 +203,6 @@ public class AddExpenseActivity extends Activity {
      */
     private void populateInfoFields() {
         Button cancel = createToolbarButtons("Cancel");
-        Button save = createToolbarButtons("Save");
         View lineOne = createDividerView();
 
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -215,6 +215,8 @@ public class AddExpenseActivity extends Activity {
         });
 
         if (!getIntent().hasExtra(EXTRA_EXPENSE_OBJECT)) {
+
+            Button save = createToolbarButtons("Save");
 
             toolbarLinearLayout.addView(cancel);
             toolbarLinearLayout.addView(lineOne);
@@ -254,6 +256,7 @@ public class AddExpenseActivity extends Activity {
                 }
             });
         } else {
+            Button save = createToolbarButtons("Update");
             Button delete = createToolbarButtons("Delete");
             View lineTwo = createDividerView();
 
@@ -281,7 +284,10 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
-                    Singleton.getInstance(null).removeExpense(expense);
+                    if (Singleton.getInstance(null).removeExpense(expense))
+                        Toast.makeText(AddExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(AddExpenseActivity.this, "Could not find Expense", Toast.LENGTH_LONG).show();
 
                     Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

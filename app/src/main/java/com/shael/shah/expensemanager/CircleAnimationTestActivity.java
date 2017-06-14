@@ -18,7 +18,7 @@ public class CircleAnimationTestActivity extends Activity {
 
     public void startAnimation(View view) {
         CircleAngleAnimation animation = new CircleAngleAnimation(circle, 360);
-        animation.setDuration(1000);
+        animation.setDuration(3000);
         circle.startAnimation(animation);
     }
 }

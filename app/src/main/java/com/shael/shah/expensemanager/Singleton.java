@@ -52,10 +52,11 @@ class Singleton {
 
     void addExpense(Expense expense) {
         boolean added = false;
-        for (int i = 0; i < expenses.size(); i++) {
-            if (expense.getDate().compareTo(expenses.get(i).getDate()) < 0) {
-                expenses.add(expense);
+        for (int i = expenses.size(); i > 0; i--) {
+            if (expense.getDate().compareTo(expenses.get(i - 1).getDate()) >= 0) {
+                expenses.add(i - 1, expense);
                 added = true;
+                break;
             }
         }
 

@@ -69,9 +69,6 @@ class Expense implements Serializable {
         if (this == exp)
             return true;
 
-        if (this.getClass() != exp.getClass())
-            return false;
-
         Expense expense = (Expense) exp;
         if (this.getCategory() == null && expense.getCategory() != null)
             return false;

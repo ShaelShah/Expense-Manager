@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 public class Circle extends View {
 
     private static final int START_ANGLE_POINT = 90;
-    private static final int STROKE_WIDTH = 30;
+    private static final int STROKE_WIDTH = 80;
 
     private final List<Paint> paint;
     private final List<RectF> rect;
@@ -32,8 +31,6 @@ public class Circle extends View {
 
         List<Expense> expenses = Singleton.getInstance(null).getExpenses();
         List<Category> categories = Singleton.getInstance(null).getCategories();
-
-        Log.d("TEST - Categories ", categories.toString());
 
         for (Category c : categories) {
             Paint catPaint = new Paint();
@@ -54,10 +51,6 @@ public class Circle extends View {
             }
             amount.add(catAmount);
             total += catAmount;
-
-            Log.d("TEST - Category", "Category " + c.getType());
-            Log.d("TEST - Amount", "Amount " + catAmount);
-            Log.d("TEST - Total", "Total " + total);
         }
 
         angle = 0;
@@ -67,10 +60,10 @@ public class Circle extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawArc(rect.get(0), START_ANGLE_POINT, angle * (amount.get(0) / total), false, paint.get(0));
-        for (int i = 1; i < rect.size() - 1; i++) {
-            float startingAngle = START_ANGLE_POINT + angle * (amount.get(i - 1) / total);
-            Log.d("ANGLE", "Starting Angle: " + startingAngle);
+        float startingAngle = START_ANGLE_POINT;
+        canvas.drawArc(rect.get(0), startingAngle, angle * (amount.get(0) / total), false, paint.get(0));
+        for (int i = 1; i < rect.size(); i++) {
+            startingAngle += (360 * (amount.get(i - 1) / total));
             canvas.drawArc(rect.get(i), startingAngle, angle * (amount.get(i) / total), false, paint.get(i));
         }
     }

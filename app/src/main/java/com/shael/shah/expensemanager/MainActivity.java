@@ -81,12 +81,14 @@ public class MainActivity extends Activity {
         populateMainCategoryRows();
 
         //Workaround to delete all expenses/categories programmatically
-        //Singleton.getInstance(this).reset();
+//        Singleton.getInstance(this).reset();
 
         //Workaround to add categories programmatically
-        //Singleton.getInstance(this).addCategory("Food");
-        //Singleton.getInstance(this).addCategory("Transportation");
-        //Singleton.getInstance(this).addCategory("Entertainment");
+//        Singleton.getInstance(this).addCategory("Food");
+//        Singleton.getInstance(this).addCategory("Drinks");
+//        Singleton.getInstance(this).addCategory("Transportation");
+//        Singleton.getInstance(this).addCategory("Entertainment");
+//        Singleton.getInstance(this).addCategory("Groceries");
     }
 
     @Override
