@@ -22,7 +22,6 @@ import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -54,13 +53,6 @@ public class AddExpenseActivity extends Activity {
     private List<RadioButton> categoryRadioButtons;
     private ArrayAdapter<String> spinnerAdapter;
 
-    //TODO: May be beneficial to move away from Java Date class
-    private Calendar calendar = Calendar.getInstance();
-    private int year = calendar.get(Calendar.YEAR);
-    private int month = calendar.get(Calendar.MONTH);
-    private int day = calendar.get(Calendar.DAY_OF_MONTH);
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-
     /*****************************************************************
      * Lifecycle Methods
      *****************************************************************/
@@ -80,9 +72,6 @@ public class AddExpenseActivity extends Activity {
         else
             setContentView(R.layout.activity_add_expense_recurring);
 
-        //Disables keyboard from automatically popping up when this activity starts
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         //Find views to work with during add expense activity
         toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
         categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
@@ -101,6 +90,9 @@ public class AddExpenseActivity extends Activity {
         if (!expenseType.equals("Normal"))
             createSpinnerRows();
         populateInfoFields();
+
+        //Disables keyboard from automatically popping up when this activity starts
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     /*****************************************************************
@@ -129,9 +121,9 @@ public class AddExpenseActivity extends Activity {
 
         try {
             if (dateEditText.getText().toString().equals("Today")) {
-                date = calendar.getTime();
+                date = Calendar.getInstance().getTime();
             } else {
-                date = sdf.parse(dateEditText.getText().toString());
+                date = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -197,7 +189,7 @@ public class AddExpenseActivity extends Activity {
     /*
      *  Helper function used to de-clutter onCreate method.
      *
-     *  This activity is used for 2 functionalities; creating a new expense, modifying/deleting
+     *  This activity is used for 2 use cases; creating a new expense, modifying/deleting
      *  an old expense. To support this, the intent that created this activity is checked for
      *  an extra and the GUI is set up appropriately.
      */
@@ -213,6 +205,31 @@ public class AddExpenseActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        View.OnClickListener dateListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calendar = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                Calendar calendar = Calendar.getInstance();
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, day);
+
+                                dateEditText.setText(sdf.format(calendar.getTime()));
+                            }
+
+                        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+                datePickerDialog.setTitle("Select Date");
+                datePickerDialog.show();
+            }
+        };
 
         if (!getIntent().hasExtra(EXTRA_EXPENSE_OBJECT)) {
 
@@ -235,26 +252,7 @@ public class AddExpenseActivity extends Activity {
 
             //TODO: May be beneficial to move away from Java Date class
             dateEditText.setText(R.string.today);
-            dateEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
-
-                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                    calendar.set(Calendar.YEAR, year);
-                                    calendar.set(Calendar.MONTH, month);
-                                    calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                                    dateEditText.setText(sdf.format(calendar.getTime()));
-                                }
-
-                            }, year, month, day);
-
-                    datePickerDialog.setTitle("Select Date");
-                    datePickerDialog.show();
-                }
-            });
+            dateEditText.setOnClickListener(dateListener);
         } else {
             Button save = createToolbarButtons("Update");
             Button delete = createToolbarButtons("Delete");
@@ -297,30 +295,11 @@ public class AddExpenseActivity extends Activity {
 
             Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
             amountEditText.setText(getString(R.string.currency, expense.getAmount()));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
             dateEditText.setText(sdf.format(expense.getDate()));
             locationEditText.setText(expense.getLocation());
             noteEditText.setText(expense.getNote());
-
-            dateEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
-                            new DatePickerDialog.OnDateSetListener() {
-
-                                public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                                    calendar.set(Calendar.YEAR, year);
-                                    calendar.set(Calendar.MONTH, month);
-                                    calendar.set(Calendar.DAY_OF_MONTH, day);
-
-                                    dateEditText.setText(sdf.format(calendar.getTime()));
-                                }
-
-                            }, year, month, day);
-
-                    datePickerDialog.setTitle("Select Date");
-                    datePickerDialog.show();
-                }
-            });
+            dateEditText.setOnClickListener(dateListener);
 
             if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal")) {
                 int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
@@ -365,12 +344,9 @@ public class AddExpenseActivity extends Activity {
                     }
                 }
             });
-            scrollLinearLayout.addView(item);
 
-            View line = new View(this);
-            line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-            line.setBackgroundColor(Color.LTGRAY);
-            scrollLinearLayout.addView(line);
+            scrollLinearLayout.addView(item);
+            scrollLinearLayout.addView(createSeparatorView());
         }
 
         LinearLayout addCategoryTextView = (LinearLayout) View.inflate(this, R.layout.add_category_row_layout, null);
@@ -421,12 +397,8 @@ public class AddExpenseActivity extends Activity {
                         }
                     });
 
-                    View line = new View(AddExpenseActivity.this);
-                    line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-                    line.setBackgroundColor(Color.LTGRAY);
-
                     scrollLinearLayout.addView(item, scrollLinearLayout.getChildCount() - 1);
-                    scrollLinearLayout.addView(line, scrollLinearLayout.getChildCount() - 1);
+                    scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
                     Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG).show();
                 } else {
@@ -462,6 +434,17 @@ public class AddExpenseActivity extends Activity {
         button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
         return button;
+    }
+
+    /*
+    *  Helper function to create separators used inbetween categories.
+    */
+    private View createSeparatorView() {
+        View line = new View(this);
+        line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        line.setBackgroundColor(Color.LTGRAY);
+
+        return line;
     }
 
     /*

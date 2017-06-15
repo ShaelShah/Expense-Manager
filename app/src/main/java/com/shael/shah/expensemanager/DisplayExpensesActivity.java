@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,22 +45,14 @@ public class DisplayExpensesActivity extends Activity {
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
 
-    ArrayList<Expense> allExpenses;
-    ArrayList<Expense> filteredExpenses;
+    private ArrayList<Expense> allExpenses;
+    private ArrayList<Expense> filteredExpenses;
 
-    private boolean amountSmallToBig = true;
-    private boolean locationAtoZ = true;
+    private boolean amountSort = true;
+    private boolean locationSort = true;
 
-    private TextView expensesTitleTextView;
     private TextView amountExpensesTextView;
     private ScrollView expensesTitleScrollView;
-
-    //TODO: May be beneficial to move away from Java Date class
-    private Calendar calendar = Calendar.getInstance();
-    private int year = calendar.get(Calendar.YEAR);
-    private int month = calendar.get(Calendar.MONTH);
-    private int day = calendar.get(Calendar.DAY_OF_MONTH);
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
     /*****************************************************************
      * Lifecycle Methods
@@ -78,6 +69,7 @@ public class DisplayExpensesActivity extends Activity {
         setContentView(R.layout.activity_show_expenses);
 
         Intent intent = getIntent();
+        //TODO: This warning can be ignored.
         allExpenses = (ArrayList<Expense>) intent.getSerializableExtra(EXTRA_EXPENSES_DISPLAY);
         filteredExpenses = allExpenses;
         String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
@@ -86,9 +78,9 @@ public class DisplayExpensesActivity extends Activity {
         setActionBar(toolbar);
 
         //Find views to work with during this activity
-        expensesTitleTextView = (TextView) findViewById(R.id.expensesTitleTextView);
         amountExpensesTextView = (TextView) findViewById(R.id.amountExpensesTextView);
         expensesTitleScrollView = (ScrollView) findViewById(R.id.expensesTitleScrollView);
+        TextView expensesTitleTextView = (TextView) findViewById(R.id.expensesTitleTextView);
         expensesTitleTextView.setText(title);
 
         populateScrollView(allExpenses);
@@ -124,14 +116,14 @@ public class DisplayExpensesActivity extends Activity {
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
-                        if (amountSmallToBig)
+                        if (amountSort)
                             return o1.getAmount().compareTo(o2.getAmount());
                         else
                             return o2.getAmount().compareTo(o1.getAmount());
                     }
                 });
 
-                amountSmallToBig = !amountSmallToBig;
+                amountSort = !amountSort;
                 populateScrollView(filteredExpenses);
                 return true;
 
@@ -140,14 +132,14 @@ public class DisplayExpensesActivity extends Activity {
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
-                        if (locationAtoZ)
+                        if (locationSort)
                             return o1.getLocation().compareTo(o2.getLocation());
                         else
                             return o2.getLocation().compareTo(o1.getLocation());
                     }
                 });
 
-                locationAtoZ = !locationAtoZ;
+                locationSort = !locationSort;
                 populateScrollView(filteredExpenses);
                 return true;
 
@@ -156,6 +148,10 @@ public class DisplayExpensesActivity extends Activity {
         }
     }
 
+    /*
+     *  Creates a dialog (Filter Dialog) which allows the user to select filtering options.
+     *  Inflates a filter_options_dialog layout.
+     */
     private void createFilterDialog() {
         final List<RadioButton> categoryRadioButtons = new ArrayList<>();
         final List<Category> categories = Singleton.getInstance(null).getCategories();
@@ -175,6 +171,9 @@ public class DisplayExpensesActivity extends Activity {
                 DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+
                         calendar.set(Calendar.YEAR, year);
                         calendar.set(Calendar.MONTH, month);
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -183,7 +182,8 @@ public class DisplayExpensesActivity extends Activity {
                     }
                 };
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(DisplayExpensesActivity.this, onDateSetListener, year, month, day);
+                Calendar calendar = Calendar.getInstance();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(DisplayExpensesActivity.this, onDateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.setTitle("Select Date");
                 datePickerDialog.show();
             }
@@ -228,12 +228,17 @@ public class DisplayExpensesActivity extends Activity {
 
                 Date startDate = null;
                 Date endDate = null;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
-                try { startDate = sdf.parse(startDateEditText.getText().toString()); } catch (ParseException e) {
+                try {
+                    startDate = sdf.parse(startDateEditText.getText().toString());
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-                try { endDate = sdf.parse(endDateEditText.getText().toString()); } catch (ParseException e) {
+                try {
+                    endDate = sdf.parse(endDateEditText.getText().toString());
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
@@ -261,19 +266,17 @@ public class DisplayExpensesActivity extends Activity {
                 }
 
                 List<Expense> dateExpenses = new ArrayList<>();
-                //TODO: Can probably be refractored
                 if (startDate != null && endDate != null) {
                     for (Expense e : categoryExpenses) {
                         if (e.getDate().compareTo(startDate) >= 0 && e.getDate().compareTo(endDate) <= 0)
                             dateExpenses.add(e);
                     }
-                } else if (startDate != null && endDate == null) {
+                } else if (startDate != null) {
                     for (Expense e : categoryExpenses) {
                         if (e.getDate().compareTo(startDate) >= 0)
                             dateExpenses.add(e);
                     }
-                } else if (startDate == null && endDate != null) {
-                    Log.d("StartDate", "Nancy is a boob");
+                } else if (endDate != null) {
                     for (Expense e : categoryExpenses) {
                         if (e.getDate().compareTo(endDate) <= 0)
                             dateExpenses.add(e);
@@ -364,21 +367,6 @@ public class DisplayExpensesActivity extends Activity {
 
         return row;
     }
-
-    /*
-    private View createCheckedTextViewRow(String location) {
-        CheckedTextView checkedTextView = new CheckedTextView(this);
-        checkedTextView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        checkedTextView.setCheckMarkDrawable(getResources().getDrawable(R.drawable.ic_check_box_outline_blank_black_24dp));
-        checkedTextView.setText(location);
-
-        float scale = getResources().getDisplayMetrics().density;
-        int dp = (int) (5 * scale + 0.5f);
-        checkedTextView.setPadding(dp, dp, dp, dp);
-
-        return checkedTextView;
-    }
-    */
 
     private View inflateCheckedTextViewRow(String location) {
         View row = View.inflate(this, R.layout.location_select_row_layout, null);
