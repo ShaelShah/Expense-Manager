@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
 
+    //TODO: This should be a sharedPreference
     TimePeriod timePeriod = TimePeriod.MONTHLY;
 
     private List<Expense> expenses;
@@ -75,20 +76,20 @@ public class MainActivity extends Activity {
 
         //Helper functions
         getLists();
-        setActionListeners();
         createRecurringExpenses();
+        setActionListeners();
         populateMoneyTextViews();
         populateMainCategoryRows();
 
         //Workaround to delete all expenses/categories programmatically
-//        Singleton.getInstance(this).reset();
+        //Singleton.getInstance(this).reset();
 
         //Workaround to add categories programmatically
-//        Singleton.getInstance(this).addCategory("Food");
-//        Singleton.getInstance(this).addCategory("Drinks");
-//        Singleton.getInstance(this).addCategory("Transportation");
-//        Singleton.getInstance(this).addCategory("Entertainment");
-//        Singleton.getInstance(this).addCategory("Groceries");
+        //Singleton.getInstance(this).addCategory("Food");
+        //Singleton.getInstance(this).addCategory("Drinks");
+        //Singleton.getInstance(this).addCategory("Transportation");
+        //Singleton.getInstance(this).addCategory("Entertainment");
+        //Singleton.getInstance(this).addCategory("Groceries");
     }
 
     @Override
@@ -121,8 +122,14 @@ public class MainActivity extends Activity {
         setLists();
     }
 
+    /*
+    *  Method called by the system main activity GUI has been created.
+    *  Starts animations for expanding category colour bars.
+    */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
+        //TODO: Is using this function to start the animations bad practice?
+        //TODO: The animations also start when settings has been clicked.
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus)
             startAnimations();
@@ -139,13 +146,13 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        //TODO: Is using a listener thread bad practice?
         new Handler().post(new Runnable() {
             @Override
             public void run() {
                 final View view = findViewById(R.id.add_item);
 
                 if (view != null) {
-
                     view.setOnLongClickListener(new View.OnLongClickListener() {
 
                         @Override
@@ -166,6 +173,7 @@ public class MainActivity extends Activity {
                                         intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                                         startActivity(intent);
                                     } else {
+                                        //TODO: This else branch is temporary for testing purposes.
                                         Intent circleIntent = new Intent(MainActivity.this, CircleAnimationTestActivity.class);
                                         startActivity(circleIntent);
                                     }
@@ -204,23 +212,6 @@ public class MainActivity extends Activity {
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(openSettingsIntent);
                 return true;
-
-            /*
-            case R.id.add_normal:
-                intent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
-                //startActivity(intent);
-                return true;
-
-            case R.id.add_income:
-                intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
-                //startActivity(intent);
-                return true;
-
-            case R.id.add_recurring:
-                intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
-                //startActivity(intent);
-                return true;
-            */
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -265,6 +256,7 @@ public class MainActivity extends Activity {
             if (e.isRecurring()) {
                 calendar.setTime(e.getDate());
 
+                //TODO: Bi-weekly should also be an option (maybe even custom ranges).
                 switch (e.getRecurringPeriod()) {
                     case "Daily":
                         calendar.add(Calendar.DATE, 1);
@@ -300,6 +292,9 @@ public class MainActivity extends Activity {
 
         List<Expense> tempExpenses = new ArrayList<>();
 
+        //TODO: Bi-weekly should also be an option (maybe even custom ranges).
+        //TODO: Can some of this code be refractored?
+        //TODO: Check out Joda-Time library.
         switch (timePeriod) {
             case DAILY:
                 for (Expense e : expenses) {
@@ -391,6 +386,7 @@ public class MainActivity extends Activity {
         if (scrollLinearLayout != null) {
             LinearLayout displayCategoryLinearLayout;
 
+            //TODO: Can some of this code be refractored?
             for (int i = 0; i < scrollLinearLayout.getChildCount(); i++) {
                 displayCategoryLinearLayout = (LinearLayout) scrollLinearLayout.getChildAt(i);
                 View colorBox = displayCategoryLinearLayout.getChildAt(0);
