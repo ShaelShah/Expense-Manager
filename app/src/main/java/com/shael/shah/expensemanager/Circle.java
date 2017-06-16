@@ -3,88 +3,86 @@ package com.shael.shah.expensemanager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Circle extends View {
 
-    private static final int START_ANGLE_POINT = 90;
-    private static final int STROKE_WIDTH = 80;
+    private Path path;
+    private RectF rect;
+    private Paint paint;
+    private Paint textPaint;
 
-    private final List<Paint> paint;
-    private final List<RectF> rect;
-    private final List<Float> amount;
-    private float total = 0;
+    private float startAngle;
+    private float currentAngle;
+    private float sweepAngle;
 
-    private float angle;
+    private String category;
 
-    public Circle(Context context, AttributeSet attrs) {
+    public Circle(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth, String category) {
         super(context, attrs);
 
-        paint = new ArrayList<>();
-        rect = new ArrayList<>();
-        amount = new ArrayList<>();
+        //Create RectF
+        rect = new RectF(0, 0, 0, 0);
 
-        List<Expense> expenses = Singleton.getInstance(null).getExpenses();
-        List<Category> categories = Singleton.getInstance(null).getCategories();
+        //Create Path
+        path = new Path();
+        path.addArc(rect, startAngle, sweepAngle);
 
-        for (Category c : categories) {
-            Paint catPaint = new Paint();
-            catPaint.setAntiAlias(true);
-            catPaint.setStyle(Paint.Style.STROKE);
-            catPaint.setStrokeWidth(STROKE_WIDTH);
-            catPaint.setColor(c.getColor());
-            paint.add(catPaint);
+        //Create Paint and initialize
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(strokeWidth);
+        paint.setColor(color);
+        paint.setAlpha(alpha);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(16f);
 
-            RectF catRect = new RectF(0, 0, 0, 0);
-            rect.add(catRect);
+        //Create TextPaint and initialize
+        textPaint = new Paint();
+        textPaint.setAntiAlias(true);
+        textPaint.setColor(color);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextSize(24f);
 
-            float catAmount = 0;
-            for (Expense e : expenses) {
-                if (e.getCategory().getType().equals(c.getType())) {
-                    catAmount += e.getAmount().doubleValue();
-                }
-            }
-            amount.add(catAmount);
-            total += catAmount;
-        }
-
-        angle = 0;
+        //Setup member values
+        this.startAngle = startAngle;
+        this.sweepAngle = sweepAngle;
+        this.currentAngle = 0;
+        this.category = category;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        float startingAngle = START_ANGLE_POINT;
-        canvas.drawArc(rect.get(0), startingAngle, angle * (amount.get(0) / total), false, paint.get(0));
-        for (int i = 1; i < rect.size(); i++) {
-            startingAngle += (360 * (amount.get(i - 1) / total));
-            canvas.drawArc(rect.get(i), startingAngle, angle * (amount.get(i) / total), false, paint.get(i));
-        }
+        canvas.drawArc(rect, startAngle, currentAngle, false, paint);
+        canvas.drawTextOnPath(category, path, 0, 20, textPaint);
+        postInvalidate();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int min = Math.min(width, height);
-        setMeasuredDimension(min, min);
-        float highStroke = 100;
+        setMeasuredDimension(width, height);
+        float highStroke = 200;
 
-        for (RectF r : rect)
-            r.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
+        rect.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
     }
 
-    public float getAngle() {
-        return angle;
+    public float getCurrentAngle() {
+        return currentAngle;
     }
 
-    public void setAngle(float angle) {
-        this.angle = angle;
+    public void setCurrentAngle(float currentAngle) {
+        this.currentAngle = currentAngle;
+    }
+
+    public float getSweepAngle() {
+        return sweepAngle;
     }
 }
