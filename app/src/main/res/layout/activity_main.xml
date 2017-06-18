@@ -5,41 +5,41 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/lightGrey"
+    android:orientation="vertical"
     tools:context="com.shael.shah.expensemanager.MainActivity">
 
     <Toolbar
         android:id="@+id/mainActivityToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/actionBarSize"
+        android:background="@color/grey"
         android:elevation="4dp"
-        android:background="@color/grey">
+        android:minHeight="?android:attr/actionBarSize">
     </Toolbar>
 
     <TextView
         android:id="@+id/timePeriodTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:textSize="20sp"
-        android:textAlignment="center"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="June" />
+        android:paddingTop="20dp"
+        android:text="June"
+        android:textAlignment="center"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/netTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="30dp"
-        android:textAlignment="center"
-        android:textSize="48sp"
-        android:textStyle="bold"
         android:fontFamily="sans-serif-smallcaps"
         android:gravity="center_vertical"
-        android:text="$1734.90" />
+        android:paddingBottom="30dp"
+        android:paddingTop="10dp"
+        android:text="$1734.90"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,27 +51,43 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:gravity="center_vertical"
-            android:textSize="26sp"
-            android:textColor="@color/green"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="$2734.90" />
+            android:gravity="center_vertical"
+            android:text="$2734.90"
+            android:textAlignment="center"
+            android:textColor="@color/green"
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/expensesTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textAlignment="center"
-            android:gravity="center_vertical"
-            android:textSize="26sp"
-            android:textColor="@color/red"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="$1000.90" />
+            android:gravity="center_vertical"
+            android:text="$1000.90"
+            android:textAlignment="center"
+            android:textColor="@color/red"
+            android:textSize="26sp" />
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/fragmentFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp" />
+
+    <!--
+    <fragment
+        android:id="@+id/mainScrollViewFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        tools:layout="@layout/fragment_segments" />
+    -->
+
+    <!--
     <ScrollView
         android:id="@+id/mainCategoryScrollView"
         android:layout_width="match_parent"
@@ -86,5 +102,6 @@
             android:layout_marginTop="20dp" />
 
     </ScrollView>
+    -->
 
 </LinearLayout>

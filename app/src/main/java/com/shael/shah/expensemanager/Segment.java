@@ -8,7 +8,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class Circle extends View {
+public class Segment extends View {
 
     private Path path;
     private RectF rect;
@@ -21,7 +21,7 @@ public class Circle extends View {
 
     private String category;
 
-    public Circle(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth, String category) {
+    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth, String category) {
         super(context, attrs);
 
         //Create RectF

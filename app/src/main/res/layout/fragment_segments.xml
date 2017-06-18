@@ -5,16 +5,9 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/circleSegmentsFrameLayout"
+        android:id="@+id/segmentsFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <Button
-        android:id="@+id/startAnimationButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="startAnimation"
-        android:text="Start Animation" />
 
 </LinearLayout>

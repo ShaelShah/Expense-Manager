@@ -9,12 +9,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toolbar;
 
@@ -22,7 +18,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,19 +30,20 @@ public class MainActivity extends Activity {
     private static final String EXTRA_EXPENSES_DISPLAY = "com.shael.shah.expensemanager.EXTRA_EXPENSES_DISPLAY";
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
+    private static final String EXTRA_EXPENSE_LIST = "com.shael.shah.expensemanager.EXTRA_EXPENSE_LIST";
 
     //TODO: This should be a sharedPreference
     TimePeriod timePeriod = TimePeriod.MONTHLY;
 
     private List<Expense> expenses;
-    private List<Category> categories;
 
     private TextView timePeriodTextView;
     private TextView netTextView;
     private TextView incomeTexView;
     private TextView expensesTextView;
-    private ScrollView mainCategoryScrollView;
     private RadioGroup dateRangeRadioGroup;
+
+    private String displayExpensesOption = "BAR";
 
     /*****************************************************************
      * Lifecycle Methods
@@ -72,14 +68,29 @@ public class MainActivity extends Activity {
         netTextView = (TextView) findViewById(R.id.netTextView);
         incomeTexView = (TextView) findViewById(R.id.incomeTextView);
         expensesTextView = (TextView) findViewById(R.id.expensesTextView);
-        mainCategoryScrollView = (ScrollView) findViewById(R.id.mainCategoryScrollView);
 
         //Helper functions
         getLists();
         createRecurringExpenses();
         setActionListeners();
         populateMoneyTextViews();
-        populateMainCategoryRows();
+        setDateRangeTextView();
+
+        if (savedInstanceState == null) {
+            if (displayExpensesOption.equals("CIRCLE")) {
+                SegmentsFragment fragment = new SegmentsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
+                fragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
+            } else {
+                BarsFragment fragment = new BarsFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
+                fragment.setArguments(bundle);
+                getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
+            }
+        }
 
         //Workaround to delete all expenses/categories programmatically
         //Singleton.getInstance(this).reset();
@@ -122,19 +133,6 @@ public class MainActivity extends Activity {
         setLists();
     }
 
-    /*
-    *  Method called by the system main activity GUI has been created.
-    *  Starts animations for expanding category colour bars.
-    */
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        //TODO: Is using this function to start the animations bad practice?
-        //TODO: The animations also start when settings has been clicked.
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus)
-            startAnimations();
-    }
-
     /*****************************************************************
      * Menu Methods
      *****************************************************************/
@@ -174,7 +172,7 @@ public class MainActivity extends Activity {
                                         startActivity(intent);
                                     } else {
                                         //TODO: This else branch is temporary for testing purposes.
-                                        Intent circleIntent = new Intent(MainActivity.this, CircleAnimationTestActivity.class);
+                                        Intent circleIntent = new Intent(MainActivity.this, SegmentsFragment.class);
                                         startActivity(circleIntent);
                                     }
                                     return true;
@@ -228,7 +226,7 @@ public class MainActivity extends Activity {
      */
     private void getLists() {
         expenses = Singleton.getInstance(this).getExpenses();
-        categories = Singleton.getInstance(this).getCategories();
+        //categories = Singleton.getInstance(this).getCategories();
     }
 
     /*
@@ -285,7 +283,7 @@ public class MainActivity extends Activity {
      *  Iterates through all expenses and returns an List<Expense> of all expenses that fall
      *  within the current time period.
      */
-    private List<Expense> getDateRangeExpenses() {
+    public List<Expense> getDateRangeExpenses() {
 
         Calendar currentCal = Calendar.getInstance();
         Calendar oldCal = Calendar.getInstance();
@@ -372,56 +370,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    /*
-     *  Finds the color bar for each category and performs an animation starting from 0
-     *  horizontally and ending at a percentage of how much that category makes up the
-     *  net total spent, all scaled to the highest contributor set to 100%.
-     */
-    private void startAnimations() {
-        LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
-
-        List<View> colorBoxViews = new ArrayList<>();
-        List<Float> ratioFloats = new ArrayList<>();
-
-        if (scrollLinearLayout != null) {
-            LinearLayout displayCategoryLinearLayout;
-
-            //TODO: Can some of this code be refractored?
-            for (int i = 0; i < scrollLinearLayout.getChildCount(); i++) {
-                displayCategoryLinearLayout = (LinearLayout) scrollLinearLayout.getChildAt(i);
-                View colorBox = displayCategoryLinearLayout.getChildAt(0);
-                LinearLayout displayCategoryInformationLinearLayout = (LinearLayout) displayCategoryLinearLayout.getChildAt(1);
-                TextView categoryRowAmount = (TextView) displayCategoryInformationLinearLayout.getChildAt(1);
-
-                float amount = Float.parseFloat(categoryRowAmount.getText().toString().replaceAll("[^\\d.]", ""));
-                float net = Float.parseFloat(netTextView.getText().toString().replaceAll("[^\\d.]", ""));
-
-                colorBoxViews.add(colorBox);
-                ratioFloats.add(amount / net);
-            }
-
-            if (!colorBoxViews.isEmpty() && !ratioFloats.isEmpty()) {
-                if (colorBoxViews.size() == ratioFloats.size()) {
-                    float max = Collections.max(ratioFloats);
-
-                    for (int i = 0; i < colorBoxViews.size(); i++) {
-                        scaleView(colorBoxViews.get(i), 0f, ratioFloats.get(i) / max);
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-     *  Horizontal expansion of a view.
-     */
-    private void scaleView(View v, float startScale, float endScale) {
-        Animation anim = new ScaleAnimation(startScale, endScale, 1f, 1f);
-        anim.setFillAfter(true);
-        anim.setDuration(2000);
-        v.startAnimation(anim);
-    }
-
     /*****************************************************************
      * GUI Setup Methods
      *****************************************************************/
@@ -453,75 +401,6 @@ public class MainActivity extends Activity {
         //noinspection deprecation
         int color = net.signum() > 0 ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red);
         netTextView.setTextColor(color);
-    }
-
-    /*
-     *  Iterates through all of the expenses passed in through the List<Expense> parameter
-     *  to provide a list of all expenses sorted by category.
-     *
-     *  Inflates a category_select_row_layout for each category.
-     *  Initially removes all child views from the parent.
-     */
-    private void populateMainCategoryRows() {
-        //TODO: This function can be better optimized, instead of looping through all expenses for each category, loop through the expenses once and assign temporary lists for each category
-        LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
-
-        if (scrollLinearLayout.getChildCount() > 0) {
-            scrollLinearLayout.removeAllViews();
-        }
-
-        setDateRangeTextView();
-        List<Expense> tempExpenses = getDateRangeExpenses();
-
-        for (final Category c : categories) {
-
-            String title = c.getType();
-            BigDecimal amount = new BigDecimal(0);
-
-            for (Expense e : tempExpenses) {
-                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
-                    amount = amount.add(e.getAmount());
-                }
-            }
-
-            if (amount.signum() > 0) {
-                //TODO: Look into View.inflate method (specifically the 3rd parameter)
-                View item = View.inflate(this, R.layout.category_display_row_layout, null);
-
-                View colorBox = item.findViewById(R.id.mainColorView);
-                colorBox.setBackgroundColor(c.getColor());
-
-                TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
-                categoryRowTitle.setText(title);
-                categoryRowTitle.setTextColor(c.getColor());
-
-                TextView categoryRowAmount = (TextView) item.findViewById(R.id.categoryRowAmount);
-                categoryRowAmount.setTextColor(c.getColor());
-
-                categoryRowAmount.setText(getString(R.string.currency, amount));
-                scrollLinearLayout.addView(item);
-
-                item.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String categoryTitle = ((TextView) v.findViewById(R.id.categoryRowTitle)).getText().toString();
-
-                        List<Expense> dateRangeExpenses = getDateRangeExpenses();
-                        //TODO: ArrayList used instead of List due to List not being instantiable
-                        ArrayList<Expense> tempExpenses = new ArrayList<>();
-                        for (Expense e : dateRangeExpenses) {
-                            if (e.getCategory().getType().equals(categoryTitle))
-                                tempExpenses.add(e);
-                        }
-
-                        Intent intent = new Intent(MainActivity.this, DisplayExpensesActivity.class);
-                        intent.putExtra(EXTRA_EXPENSES_DISPLAY, tempExpenses);
-                        intent.putExtra(EXTRA_EXPENSES_TITLE, c.getType());
-                        startActivity(intent);
-                    }
-                });
-            }
-        }
     }
 
     /*****************************************************************
@@ -625,7 +504,17 @@ public class MainActivity extends Activity {
                                 break;
                         }
 
-                        populateMainCategoryRows();
+                        //populateMainCategoryRows();
+                        //Bundle bundle = new Bundle();
+                        if (displayExpensesOption.equals("CIRCLE")) {
+                            SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.fragmentFrameLayout);
+                            if (fragment != null)
+                                fragment.updateExpenses(getDateRangeExpenses());
+                        } else {
+                            BarsFragment fragment = (BarsFragment) getFragmentManager().findFragmentById(R.id.fragmentFrameLayout);
+                            if (fragment != null)
+                                fragment.updateExpenses(getDateRangeExpenses());
+                        }
                         populateMoneyTextViews();
                         //TODO: Is a final okay here?
                         dialog.dismiss();

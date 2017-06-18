@@ -5,22 +5,22 @@ import android.view.animation.Transformation;
 
 public class CircleAngleAnimation extends Animation {
 
-    private Circle circle;
+    private Segment segment;
 
     private float oldAngle;
     private float newAngle;
 
-    public CircleAngleAnimation(Circle circle) {
-        this.oldAngle = circle.getCurrentAngle();
-        this.newAngle = circle.getSweepAngle();
-        this.circle = circle;
+    public CircleAngleAnimation(Segment segment) {
+        this.oldAngle = segment.getCurrentAngle();
+        this.newAngle = segment.getSweepAngle();
+        this.segment = segment;
     }
 
     @Override
     protected void applyTransformation(float linearTime, Transformation transformation) {
         float angle = oldAngle + ((newAngle - oldAngle) * linearTime);
 
-        circle.setCurrentAngle(angle);
-        circle.requestLayout();
+        segment.setCurrentAngle(angle);
+        segment.requestLayout();
     }
 }

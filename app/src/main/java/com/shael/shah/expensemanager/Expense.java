@@ -1,12 +1,23 @@
 package com.shael.shah.expensemanager;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-class Expense implements Serializable {
+class Expense implements Parcelable {
 
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Expense createFromParcel(Parcel in) {
+            return new Expense(in);
+        }
+
+        public Expense[] newArray(int size) {
+            return new Expense[size];
+        }
+    };
     private Date date;
     private BigDecimal amount;
     private Category category;
@@ -26,6 +37,17 @@ class Expense implements Serializable {
         this.recurring = recurring;
         this.income = income;
         this.recurringPeriod = recurringPeriod;
+    }
+
+    private Expense(Parcel parcel) {
+        this.date = new Date(parcel.readLong());
+        this.amount = new BigDecimal(parcel.readString());
+        this.category = parcel.readParcelable(Category.class.getClassLoader());
+        this.location = parcel.readString();
+        this.note = parcel.readString();
+        this.recurring = parcel.readInt() != 0;
+        this.income = parcel.readInt() != 0;
+        this.recurringPeriod = parcel.readString();
     }
 
     Date getDate() {
@@ -89,5 +111,22 @@ class Expense implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod);
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeLong(date.getTime());
+        parcel.writeString(amount.toString());
+        parcel.writeParcelable(category, flags);
+        parcel.writeString(location);
+        parcel.writeString(note);
+        parcel.writeInt(recurring ? 1 : 0);
+        parcel.writeInt(income ? 1 : 0);
+        parcel.writeString(recurringPeriod);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

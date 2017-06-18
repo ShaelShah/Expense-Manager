@@ -25,7 +25,7 @@
             android:name=".DisplayExpensesActivity">
         </activity>
 
-        <activity android:name=".CircleAnimationTestActivity"></activity>
+        <activity android:name=".SegmentsFragment"></activity>
 
         <activity
             android:name=".SettingsActivity"
