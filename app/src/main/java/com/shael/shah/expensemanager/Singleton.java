@@ -92,11 +92,11 @@ class Singleton {
         setSharedPreferenceColor(currentColor);
     }
 
-    void reset() {
-        removeAllCategories();
-        removeAllExpenses();
-        currentColor = 0;
-    }
+    //void reset() {
+    //    removeAllCategories();
+    //    removeAllExpenses();
+    //    currentColor = 0;
+    //}
 
     private List<Expense> getExpensesListFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -156,11 +156,11 @@ class Singleton {
         prefEditor.apply();
     }
 
-    private void removeAllCategories() {
-        categories.clear();
-    }
+    //private void removeAllCategories() {
+    //    categories.clear();
+    //}
 
-    private void removeAllExpenses() {
-        expenses.clear();
-    }
+    //private void removeAllExpenses() {
+    //    expenses.clear();
+    //}
 }

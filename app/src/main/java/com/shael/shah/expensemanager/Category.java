@@ -25,7 +25,7 @@ class Category implements Parcelable {
         this.color = color;
     }
 
-    Category(Parcel parcel) {
+    private Category(Parcel parcel) {
         this.type = parcel.readString();
         this.color = parcel.readInt();
     }
@@ -43,8 +43,12 @@ class Category implements Parcelable {
         if (this == cat)
             return true;
 
+        if (this.getClass() != cat.getClass())
+            return false;
+
         Category category = (Category) cat;
-        return (this.getType().equals(category.getType()) && this.getColor() == category.getColor());
+        return (this.getType().equals(category.getType())
+                && this.getColor() == category.getColor());
     }
 
     @Override

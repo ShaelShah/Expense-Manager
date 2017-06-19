@@ -3,14 +3,14 @@ package com.shael.shah.expensemanager;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
-public class CircleAngleAnimation extends Animation {
+class CircleAngleAnimation extends Animation {
 
     private Segment segment;
 
     private float oldAngle;
     private float newAngle;
 
-    public CircleAngleAnimation(Segment segment) {
+    CircleAngleAnimation(Segment segment) {
         this.oldAngle = segment.getCurrentAngle();
         this.newAngle = segment.getSweepAngle();
         this.segment = segment;

@@ -69,8 +69,7 @@ public class DisplayExpensesActivity extends Activity {
         setContentView(R.layout.activity_show_expenses);
 
         Intent intent = getIntent();
-        //TODO: This warning can be ignored.
-        allExpenses = (ArrayList<Expense>) intent.getSerializableExtra(EXTRA_EXPENSES_DISPLAY);
+        allExpenses = intent.getParcelableArrayListExtra(EXTRA_EXPENSES_DISPLAY);
         filteredExpenses = allExpenses;
         String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
 
@@ -302,15 +301,14 @@ public class DisplayExpensesActivity extends Activity {
         dialog.show();
     }
 
-    private View inflateExpenseDisplayRow(final Expense expense) {
+    private View inflateExpenseDisplayRow(Expense expense) {
         //TODO: Figure out what this third parameter is for
         View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
 
         View view = item.findViewById(R.id.categoryColorView);
-        if (expense.getCategory() != null)
-            view.setBackgroundColor(expense.getCategory().getColor());
-        else
-            view.setBackgroundColor(getResources().getColor(R.color.lightGreen));
+        //noinspection deprecation
+        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColor();
+        view.setBackgroundColor(color);
 
         TextView dateTextView = (TextView) item.findViewById(R.id.expenseDateTextView);
         TextView locationTextView = (TextView) item.findViewById(R.id.expenseLocationTextView);
@@ -321,16 +319,16 @@ public class DisplayExpensesActivity extends Activity {
         locationTextView.setText(expense.getLocation());
         amountTextView.setText(getString(R.string.currency, expense.getAmount()));
 
-        //TODO: Is it okay if the expense in this onClickListener is final?
+        final Expense temp = expense;
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DisplayExpensesActivity.this, AddExpenseActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_OBJECT, expense);
+                intent.putExtra(EXTRA_EXPENSE_OBJECT, temp);
 
-                if (expense.isRecurring() && expense.isIncome())
+                if (temp.isRecurring() && temp.isIncome())
                     intent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
-                else if (expense.isRecurring() && !expense.isIncome())
+                else if (temp.isRecurring() && !temp.isIncome())
                     intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                 else
                     intent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");

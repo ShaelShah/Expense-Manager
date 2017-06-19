@@ -268,7 +268,7 @@ public class AddExpenseActivity extends Activity {
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+                    Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
                     Singleton.getInstance(null).removeExpense(expense);
 
                     if (saveExpense()) {
@@ -282,7 +282,7 @@ public class AddExpenseActivity extends Activity {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+                    Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
                     if (Singleton.getInstance(null).removeExpense(expense))
                         Toast.makeText(AddExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
                     else

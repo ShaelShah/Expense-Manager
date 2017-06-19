@@ -138,7 +138,6 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        //TODO: Is using a listener thread bad practice?
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -165,9 +164,7 @@ public class MainActivity extends Activity {
                                         intent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
                                         startActivity(intent);
                                     } else {
-                                        //TODO: This else branch is temporary for testing purposes.
-                                        Intent circleIntent = new Intent(MainActivity.this, SegmentsFragment.class);
-                                        startActivity(circleIntent);
+                                        return false;
                                     }
                                     return true;
                                 }
@@ -408,7 +405,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 List<Expense> dateRangeExpenses = getDateRangeExpenses();
-                //TODO: ArrayList used instead of List due to List not being instantiable
                 ArrayList<Expense> tempExpenses = new ArrayList<>();
                 for (Expense e : dateRangeExpenses) {
                     if (e.isIncome())
@@ -426,7 +422,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 List<Expense> dateRangeExpenses = getDateRangeExpenses();
-                //TODO: ArrayList used instead of List due to List not being instantiable
                 ArrayList<Expense> tempExpenses = new ArrayList<>();
                 for (Expense e : dateRangeExpenses) {
                     if (!e.isIncome())
@@ -507,7 +502,6 @@ public class MainActivity extends Activity {
                                 fragment.updateExpenses(getDateRangeExpenses());
                         }
                         populateMoneyTextViews();
-                        //TODO: Is a final okay here?
                         dialog.dismiss();
                     }
                 });

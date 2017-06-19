@@ -3,33 +3,34 @@ package com.shael.shah.expensemanager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
+//import android.graphics.Path;
+
 public class Segment extends View {
 
-    private Path path;
+    //private Path path;
     private RectF rect;
     private Paint paint;
-    private Paint textPaint;
+    //private Paint textPaint;
 
     private float startAngle;
     private float currentAngle;
     private float sweepAngle;
 
-    private String category;
+    //private String category;
 
-    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth, String category) {
+    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth/*, String category*/) {
         super(context, attrs);
 
         //Create RectF
         rect = new RectF(0, 0, 0, 0);
 
         //Create Path
-        path = new Path();
-        path.addArc(rect, startAngle, sweepAngle);
+        //path = new Path();
+        //path.addArc(rect, startAngle, sweepAngle);
 
         //Create Paint and initialize
         paint = new Paint();
@@ -44,17 +45,17 @@ public class Segment extends View {
         paint.setTextSize(16f);
 
         //Create TextPaint and initialize
-        textPaint = new Paint();
-        textPaint.setAntiAlias(true);
-        textPaint.setColor(color);
-        textPaint.setTextAlign(Paint.Align.CENTER);
-        textPaint.setTextSize(24f);
+        //textPaint = new Paint();
+        //textPaint.setAntiAlias(true);
+        //textPaint.setColor(color);
+        //textPaint.setTextAlign(Paint.Align.CENTER);
+        //textPaint.setTextSize(24f);
 
         //Setup member values
         this.startAngle = startAngle;
         this.sweepAngle = sweepAngle;
         this.currentAngle = 0;
-        this.category = category;
+        //this.category = category;
     }
 
     @Override
@@ -71,7 +72,7 @@ public class Segment extends View {
         final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int min = Math.min(width, height);
         setMeasuredDimension(width, height);
-        float highStroke = 200;
+        float highStroke = 600;
 
         rect.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
     }

@@ -55,7 +55,7 @@ public class SegmentsFragment extends Fragment {
 
         List<Category> categories = Singleton.getInstance(null).getCategories();
 
-        Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 50, 120, "");
+        Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 100);
         segments.add(budgetSegment);
         segmentsFrameLayout.addView(budgetSegment);
 
@@ -73,7 +73,7 @@ public class SegmentsFragment extends Fragment {
             }
 
             if (catAmount != 0) {
-                Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 1, c.getType());
+                Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 80);
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);
@@ -99,10 +99,10 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.startAnimation(animationSet);
     }
 
-    public void updateExpenses(Bundle bundle) {
-        List<Expense> expenses = bundle.getParcelableArrayList(EXTRA_EXPENSE_LIST);
-        createCircleView(expenses);
-    }
+    //public void updateExpenses(Bundle bundle) {
+    //    List<Expense> expenses = bundle.getParcelableArrayList(EXTRA_EXPENSE_LIST);
+    //    createCircleView(expenses);
+    //}
 
     public void updateExpenses(List<Expense> expenses) {
         createCircleView(expenses);
