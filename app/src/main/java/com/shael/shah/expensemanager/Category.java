@@ -16,6 +16,7 @@ class Category implements Parcelable {
             return new Category[size];
         }
     };
+
     private String type;
     private int color;
 

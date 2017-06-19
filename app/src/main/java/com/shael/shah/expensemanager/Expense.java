@@ -18,6 +18,7 @@ class Expense implements Parcelable {
             return new Expense[size];
         }
     };
+
     private Date date;
     private BigDecimal amount;
     private Category category;

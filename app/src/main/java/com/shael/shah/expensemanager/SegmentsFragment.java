@@ -22,7 +22,6 @@ public class SegmentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        segments = new ArrayList<>();
     }
 
     @Override
@@ -51,10 +50,8 @@ public class SegmentsFragment extends Fragment {
 
     private void createCircleView(List<Expense> expenses) {
 
-        if (segmentsFrameLayout.getChildCount() > 0) {
-            segmentsFrameLayout.removeAllViews();
-            segments = new ArrayList<>();
-        }
+        segmentsFrameLayout.removeAllViews();
+        segments = new ArrayList<>();
 
         List<Category> categories = Singleton.getInstance(null).getCategories();
 
@@ -76,7 +73,7 @@ public class SegmentsFragment extends Fragment {
             }
 
             if (catAmount != 0) {
-                Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 80, c.getType());
+                Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 1, c.getType());
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);

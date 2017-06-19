@@ -34,6 +34,8 @@ public class Segment extends View {
         //Create Paint and initialize
         paint = new Paint();
         paint.setAntiAlias(true);
+        //paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        //paint.setStrokeWidth(1f);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(strokeWidth);
         paint.setColor(color);
@@ -59,8 +61,8 @@ public class Segment extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawArc(rect, startAngle, currentAngle, false, paint);
-        canvas.drawTextOnPath(category, path, 0, 20, textPaint);
-        postInvalidate();
+        //canvas.drawTextOnPath(category, path, 0, 20, textPaint);
+        //postInvalidate();
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -293,7 +294,10 @@ public class AddExpenseActivity extends Activity {
                 }
             });
 
-            Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+            Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
+
+            Log.d("Expense", expense.toString());
+
             amountEditText.setText(getString(R.string.currency, expense.getAmount()));
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
             dateEditText.setText(sdf.format(expense.getDate()));

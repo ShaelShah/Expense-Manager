@@ -2,6 +2,7 @@ package com.shael.shah.expensemanager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,7 +44,7 @@ public class MainActivity extends Activity {
     private TextView expensesTextView;
     private RadioGroup dateRangeRadioGroup;
 
-    private String displayExpensesOption = "BAR";
+    private String displayExpensesOption = "CIRCLE";
 
     /*****************************************************************
      * Lifecycle Methods
@@ -76,20 +77,13 @@ public class MainActivity extends Activity {
         populateMoneyTextViews();
         setDateRangeTextView();
 
+        Fragment fragment;
         if (savedInstanceState == null) {
-            if (displayExpensesOption.equals("CIRCLE")) {
-                SegmentsFragment fragment = new SegmentsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
-                fragment.setArguments(bundle);
-                getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
-            } else {
-                BarsFragment fragment = new BarsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
-                fragment.setArguments(bundle);
-                getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
-            }
+            fragment = displayExpensesOption.equals("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
+            fragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
         }
 
         //Workaround to delete all expenses/categories programmatically
@@ -226,7 +220,6 @@ public class MainActivity extends Activity {
      */
     private void getLists() {
         expenses = Singleton.getInstance(this).getExpenses();
-        //categories = Singleton.getInstance(this).getCategories();
     }
 
     /*
@@ -343,6 +336,10 @@ public class MainActivity extends Activity {
         }
     }
 
+    /*****************************************************************
+     * GUI Setup Methods
+     *****************************************************************/
+
     /*
      *  Sets the timePeriodTextView to the current date range
      */
@@ -369,10 +366,6 @@ public class MainActivity extends Activity {
                 break;
         }
     }
-
-    /*****************************************************************
-     * GUI Setup Methods
-     *****************************************************************/
 
     /*
      *  Iterates through all expenses passed in through the List<Expense> parameter
@@ -504,8 +497,6 @@ public class MainActivity extends Activity {
                                 break;
                         }
 
-                        //populateMainCategoryRows();
-                        //Bundle bundle = new Bundle();
                         if (displayExpensesOption.equals("CIRCLE")) {
                             SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.fragmentFrameLayout);
                             if (fragment != null)
