@@ -53,7 +53,7 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.removeAllViews();
         segments = new ArrayList<>();
 
-        List<Category> categories = Singleton.getInstance(null).getCategories();
+        List<Category> categories = Singleton.getInstance().getCategories();
 
         Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 100);
         segments.add(budgetSegment);
@@ -88,7 +88,7 @@ public class SegmentsFragment extends Fragment {
         int startOffset = 0;
         AnimationSet animationSet = new AnimationSet(true);
         for (Segment c : segments) {
-            CircleAngleAnimation animation = new CircleAngleAnimation(c);
+            SegmentAnimation animation = new SegmentAnimation(c);
             float duration = c.getSweepAngle() / 360;
             animation.setDuration((long) (duration * 1500));
             animation.setStartOffset(startOffset);

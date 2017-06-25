@@ -42,6 +42,13 @@ class Singleton {
         return instance;
     }
 
+    static Singleton getInstance() {
+        if (instance != null)
+            return instance;
+
+        throw new IllegalArgumentException("Singleton has not be initialized");
+    }
+
     List<Expense> getExpenses() {
         return expenses;
     }
@@ -91,12 +98,6 @@ class Singleton {
         setSharedPreferences(categories, SHAREDPREF_CATEGORIES);
         setSharedPreferenceColor(currentColor);
     }
-
-    //void reset() {
-    //    removeAllCategories();
-    //    removeAllExpenses();
-    //    currentColor = 0;
-    //}
 
     private List<Expense> getExpensesListFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -156,11 +157,11 @@ class Singleton {
         prefEditor.apply();
     }
 
-    //private void removeAllCategories() {
-    //    categories.clear();
-    //}
+    private void removeAllCategories() {
+        categories.clear();
+    }
 
-    //private void removeAllExpenses() {
-    //    expenses.clear();
-    //}
+    private void removeAllExpenses() {
+        expenses.clear();
+    }
 }

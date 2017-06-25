@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,10 +48,12 @@ public class AddExpenseActivity extends Activity {
     private EditText noteEditText;
     private ScrollView categoryScrollView;
     private Spinner recurringSpinner;
+    private Spinner paymentSpinner;
 
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
-    private ArrayAdapter<String> spinnerAdapter;
+    private ArrayAdapter<String> recurringSpinnerAdapter;
+    private ArrayAdapter<String> paymentSpinnerAdapter;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -68,10 +69,12 @@ public class AddExpenseActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
-        if (expenseType.equals("Normal"))
+        if (expenseType.equals("Normal")) {
             setContentView(R.layout.activity_add_expense);
-        else
+        } else {
             setContentView(R.layout.activity_add_expense_recurring);
+            recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        }
 
         //Find views to work with during add expense activity
         toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
@@ -80,16 +83,14 @@ public class AddExpenseActivity extends Activity {
         dateEditText = (EditText) findViewById(R.id.dateEditText);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
         noteEditText = (EditText) findViewById(R.id.noteEditText);
-        if (!expenseType.equals("Normal"))
-            recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        paymentSpinner = (Spinner) findViewById(R.id.paymentSpinner);
 
-        categories = Singleton.getInstance(null).getCategories();
+        categories = Singleton.getInstance().getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
-        if (!expenseType.equals("Normal"))
-            createSpinnerRows();
+        createSpinnerRows(!expenseType.equals("Normal"));
         populateInfoFields();
 
         //Disables keyboard from automatically popping up when this activity starts
@@ -115,7 +116,6 @@ public class AddExpenseActivity extends Activity {
         try {
             amount = new BigDecimal(amountString);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -127,7 +127,6 @@ public class AddExpenseActivity extends Activity {
                 date = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
             }
         } catch (ParseException e) {
-            e.printStackTrace();
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -139,6 +138,7 @@ public class AddExpenseActivity extends Activity {
 
         String location = locationEditText.getText().toString();
         String note = noteEditText.getText().toString();
+        String payment = paymentSpinner.getSelectedItem().toString();
 
         foundCategory:
         for (RadioButton rb : categoryRadioButtons) {
@@ -161,25 +161,21 @@ public class AddExpenseActivity extends Activity {
             }
         }
 
-        Expense expense = null;
-        String recurringPeriod;
+        Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note).paymentMethod(payment);
         switch (expenseType) {
             case "Normal":
-            expense = new Expense(date, amount, category, location, note, false, false, "");
                 break;
 
             case "Income":
-                recurringPeriod = recurringSpinner.getSelectedItem().toString();
-                expense = new Expense(date, amount, category, location, note, true, true, recurringPeriod);
+                builder.recurring(true).income(true).recurringPeriod(recurringSpinner.getSelectedItem().toString());
                 break;
 
             case "Recurring":
-                recurringPeriod = recurringSpinner.getSelectedItem().toString();
-                expense = new Expense(date, amount, category, location, note, true, false, recurringPeriod);
+                builder.recurring(true).income(false).recurringPeriod(recurringSpinner.getSelectedItem().toString());
                 break;
         }
 
-        Singleton.getInstance(this).addExpense(expense);
+        Singleton.getInstance(this).addExpense(builder.build());
         return true;
     }
 
@@ -269,7 +265,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
-                    Singleton.getInstance(null).removeExpense(expense);
+                    Singleton.getInstance().removeExpense(expense);
 
                     if (saveExpense()) {
                         Intent intent = new Intent(AddExpenseActivity.this, MainActivity.class);
@@ -283,7 +279,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
-                    if (Singleton.getInstance(null).removeExpense(expense))
+                    if (Singleton.getInstance().removeExpense(expense))
                         Toast.makeText(AddExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
                     else
                         Toast.makeText(AddExpenseActivity.this, "Could not find Expense", Toast.LENGTH_LONG).show();
@@ -296,19 +292,16 @@ public class AddExpenseActivity extends Activity {
 
             Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
 
-            Log.d("Expense", expense.toString());
-
             amountEditText.setText(getString(R.string.currency, expense.getAmount()));
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
             dateEditText.setText(sdf.format(expense.getDate()));
             locationEditText.setText(expense.getLocation());
             noteEditText.setText(expense.getNote());
             dateEditText.setOnClickListener(dateListener);
+            paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
 
-            if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal")) {
-                int position = spinnerAdapter.getPosition(expense.getRecurringPeriod());
-                recurringSpinner.setSelection(position);
-            }
+            if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal"))
+                recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
 
             if (expense.getCategory() != null) {
                 String categoryTitle = expense.getCategory().getType();
@@ -377,8 +370,8 @@ public class AddExpenseActivity extends Activity {
                 Dialog categoryDialog = (Dialog) dialog;
                 EditText categoryNameEditText = (EditText) categoryDialog.findViewById(R.id.categoryNameEditText);
 
-                if (Singleton.getInstance(null).addCategory(categoryNameEditText.getText().toString())) {
-                    Singleton.getInstance(null).saveLists();
+                if (Singleton.getInstance().addCategory(categoryNameEditText.getText().toString())) {
+                    Singleton.getInstance().saveLists();
 
                     LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
@@ -420,11 +413,18 @@ public class AddExpenseActivity extends Activity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createSpinnerRows() {
-        String items[] = new String[] {"Daily", "Weekly", "Monthly", "Yearly"};
-        spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        recurringSpinner.setAdapter(spinnerAdapter);
+    private void createSpinnerRows(boolean all) {
+        if (all) {
+            String recurringItems[] = new String[]{"Daily", "Weekly", "Monthly", "Yearly"};
+            recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
+            recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            recurringSpinner.setAdapter(recurringSpinnerAdapter);
+        }
+
+        String paymentItems[] = new String[]{"Credit", "Debit", "Cash"};
+        paymentSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paymentItems);
+        paymentSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        paymentSpinner.setAdapter(paymentSpinnerAdapter);
     }
 
     /*

@@ -153,7 +153,7 @@ public class DisplayExpensesActivity extends Activity {
      */
     private void createFilterDialog() {
         final List<RadioButton> categoryRadioButtons = new ArrayList<>();
-        final List<Category> categories = Singleton.getInstance(null).getCategories();
+        final List<Category> categories = Singleton.getInstance().getCategories();
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

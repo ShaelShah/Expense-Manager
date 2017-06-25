@@ -25,8 +25,8 @@ import java.util.Locale;
 public class MainActivity extends Activity {
 
     /*****************************************************************
-    * Private Variables
-    ******************************************************************/
+     * Private Variables
+     ******************************************************************/
 
     private static final String EXTRA_EXPENSES_DISPLAY = "com.shael.shah.expensemanager.EXTRA_EXPENSES_DISPLAY";
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
     private TextView expensesTextView;
     private RadioGroup dateRangeRadioGroup;
 
+    //TODO: This should be a sharedPreference
     private String displayExpensesOption = "CIRCLE";
 
     /*****************************************************************
@@ -77,9 +78,8 @@ public class MainActivity extends Activity {
         populateMoneyTextViews();
         setDateRangeTextView();
 
-        Fragment fragment;
         if (savedInstanceState == null) {
-            fragment = displayExpensesOption.equals("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
+            Fragment fragment = displayExpensesOption.equals("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
             fragment.setArguments(bundle);
@@ -97,11 +97,11 @@ public class MainActivity extends Activity {
         //Singleton.getInstance(this).addCategory("Groceries");
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        setLists();
-    }
+    //@Override
+    //protected void onPause() {
+    //    super.onPause();
+    //    setLists();
+    //}
 
     @Override
     protected void onStart() {
@@ -109,11 +109,11 @@ public class MainActivity extends Activity {
         getLists();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getLists();
-    }
+    //@Override
+    //protected void onResume() {
+    //    super.onResume();
+    //    getLists();
+    //}
 
     @Override
     protected void onStop() {
@@ -121,11 +121,11 @@ public class MainActivity extends Activity {
         setLists();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        setLists();
-    }
+    //@Override
+    //protected void onDestroy() {
+    //    super.onDestroy();
+    //    setLists();
+    //}
 
     /*****************************************************************
      * Menu Methods
@@ -195,7 +195,7 @@ public class MainActivity extends Activity {
                 return true;
 
             case R.id.open_menu:
-                return true;
+                return false;
 
             case R.id.open_settings:
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
@@ -236,8 +236,7 @@ public class MainActivity extends Activity {
      */
     private void createRecurringExpenses() {
         //TODO: This function needs to be tested.
-        //TODO: There is probably a better way to implement this function.
-        //TODO: Check out the Joda-Time library.
+        //TODO: There is probably a better way to implement this function (Joda-Time).
         Calendar calendar = Calendar.getInstance();
 
         for (Expense e : expenses) {
@@ -261,7 +260,14 @@ public class MainActivity extends Activity {
                 }
 
                 if (calendar.getTime().compareTo(e.getDate()) < 0) {
-                    Expense newExpense = new Expense(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation(), e.getNote(), true, e.isIncome(), e.getRecurringPeriod());
+                    //Expense newExpense = new Expense(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation(), e.getNote(), true, e.isIncome(), e.getRecurringPeriod(), e.getPaymentMethod());
+                    Expense newExpense = new Expense.Builder(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation())
+                            .note(e.getNote())
+                            .recurring(true)
+                            .income(e.isIncome())
+                            .recurringPeriod(e.getRecurringPeriod())
+                            .paymentMethod(e.getPaymentMethod())
+                            .build();
                     Singleton.getInstance(this).addExpense(newExpense);
                     e.setRecurring(false);
                 }
@@ -273,7 +279,7 @@ public class MainActivity extends Activity {
      *  Iterates through all expenses and returns an List<Expense> of all expenses that fall
      *  within the current time period.
      */
-    public List<Expense> getDateRangeExpenses() {
+    private List<Expense> getDateRangeExpenses() {
 
         Calendar currentCal = Calendar.getInstance();
         Calendar oldCal = Calendar.getInstance();

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/lightGrey"
+    android:orientation="vertical"
     tools:context="com.shael.shah.expensemanager.AddExpenseActivity">
 
     <LinearLayout
@@ -17,25 +17,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="16dp"
         android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingLeft="16dp">
+        android:paddingTop="16dp">
 
         <EditText
             android:id="@+id/amountEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-
-            android:textAlignment="viewEnd"
-            android:textSize="40sp"
+            android:background="@android:color/transparent"
             android:fontFamily="sans-serif"
 
-            android:background="@android:color/transparent"
+            android:hint="$$$"
             android:inputType="numberDecimal"
-            android:hint="$$$" />
+            android:paddingBottom="10dp"
+
+            android:paddingTop="10dp"
+            android:textAlignment="viewEnd"
+            android:textSize="40sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,12 +50,12 @@
 
         <ScrollView
             android:id="@+id/categoryScrollView"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_weight="1"
             android:fillViewport="true"
-            android:layout_weight="1">
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
 
             <LinearLayout
                 android:id="@+id/scrollLinearLayout"
@@ -80,8 +80,8 @@
             android:id="@+id/dateLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/dateLabelTextView"
@@ -148,11 +148,36 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/paymentLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/paymentLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Payment Method" />
+
+            <Spinner
+                android:id="@+id/paymentSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAlignment="center">
+            </Spinner>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/recurringLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
 
             <TextView
                 android:id="@+id/recurringLabelTextView"
@@ -160,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-smallcaps"
-                android:text="Recurring Period"/>
+                android:text="Recurring Period" />
 
             <Spinner
                 android:id="@+id/recurringSpinner"
@@ -171,40 +196,6 @@
             </Spinner>
 
         </LinearLayout>
-
-        <!--
-        <CheckBox
-            android:id="@+id/incomeCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-7dp"
-            android:paddingTop="10dp"
-            android:text="Income"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <CheckBox
-                android:id="@+id/recurringCheckbox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:onClick="enableSpinner"
-                android:layout_marginStart="-7dp"
-                android:text="Recurring" />
-
-            <Spinner
-                android:id="@+id/recurringSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:clickable="false">
-            </Spinner>
-
-        </LinearLayout>
-        -->
 
     </LinearLayout>
 

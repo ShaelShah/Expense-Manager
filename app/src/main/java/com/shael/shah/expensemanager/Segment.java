@@ -7,8 +7,6 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-//import android.graphics.Path;
-
 public class Segment extends View {
 
     //private Path path;
@@ -41,8 +39,8 @@ public class Segment extends View {
         paint.setStrokeWidth(strokeWidth);
         paint.setColor(color);
         paint.setAlpha(alpha);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(16f);
+        //paint.setTextAlign(Paint.Align.CENTER);
+        //paint.setTextSize(16f);
 
         //Create TextPaint and initialize
         //textPaint = new Paint();
@@ -72,7 +70,7 @@ public class Segment extends View {
         final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int min = Math.min(width, height);
         setMeasuredDimension(width, height);
-        float highStroke = 600;
+        float highStroke = 200;
 
         rect.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
     }

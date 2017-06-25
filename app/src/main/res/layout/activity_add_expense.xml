@@ -148,39 +148,30 @@
 
         </LinearLayout>
 
-        <!--
-        <CheckBox
-            android:id="@+id/incomeCheckbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-7dp"
-            android:paddingTop="10dp"
-            android:text="Income"/>
-
         <LinearLayout
+            android:id="@+id/paymentLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
 
-            <CheckBox
-                android:id="@+id/recurringCheckbox"
+            <TextView
+                android:id="@+id/paymentLabelTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:onClick="enableSpinner"
-                android:layout_marginStart="-7dp"
-                android:text="Recurring" />
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Payment Method" />
 
             <Spinner
-                android:id="@+id/recurringSpinner"
+                android:id="@+id/paymentSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:clickable="false">
+                android:textAlignment="center">
             </Spinner>
 
         </LinearLayout>
-        -->
 
     </LinearLayout>
 

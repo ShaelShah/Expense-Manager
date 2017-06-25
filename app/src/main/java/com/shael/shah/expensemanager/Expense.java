@@ -27,18 +27,31 @@ class Expense implements Parcelable {
     private boolean recurring;
     private boolean income;
     private String recurringPeriod;
+    private String paymentMethod;
 
-    //TODO: Use a builder instead of the classical constructor
-    Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod) {
-        this.date = date;
-        this.amount = amount;
-        this.category = category;
-        this.location = location;
-        this.note = note;
-        this.recurring = recurring;
-        this.income = income;
-        this.recurringPeriod = recurringPeriod;
+    private Expense(Builder builder) {
+        this.date = builder.date;
+        this.amount = builder.amount;
+        this.category = builder.category;
+        this.location = builder.location;
+        this.note = builder.note;
+        this.recurring = builder.recurring;
+        this.income = builder.income;
+        this.recurringPeriod = builder.recurringPeriod;
+        this.paymentMethod = builder.paymentMethod;
     }
+
+    //private Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod, String paymentMethod) {
+    //    this.date = date;
+    //    this.amount = amount;
+    //    this.category = category;
+    //    this.location = location;
+    //    this.note = note;
+    //    this.recurring = recurring;
+    //    this.income = income;
+    //    this.recurringPeriod = recurringPeriod;
+    //    this.paymentMethod = paymentMethod;
+    //}
 
     private Expense(Parcel parcel) {
         this.date = new Date(parcel.readLong());
@@ -49,6 +62,7 @@ class Expense implements Parcelable {
         this.recurring = parcel.readInt() != 0;
         this.income = parcel.readInt() != 0;
         this.recurringPeriod = parcel.readString();
+        this.paymentMethod = parcel.readString();
     }
 
     Date getDate() {
@@ -87,6 +101,10 @@ class Expense implements Parcelable {
         return recurringPeriod;
     }
 
+    String getPaymentMethod() {
+        return paymentMethod;
+    }
+
     @Override
     public boolean equals(Object exp) {
         if (this == exp)
@@ -109,12 +127,13 @@ class Expense implements Parcelable {
                 && this.isIncome() == expense.isIncome()
                 && this.getLocation().equals(expense.getLocation())
                 && this.getNote().equals(expense.getNote())
-                && this.getRecurringPeriod().equals(expense.getRecurringPeriod()));
+                && this.getRecurringPeriod().equals(expense.getRecurringPeriod())
+                && this.getPaymentMethod().equals(expense.getPaymentMethod()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod);
+        return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod, paymentMethod);
     }
 
     @Override
@@ -127,10 +146,61 @@ class Expense implements Parcelable {
         parcel.writeInt(recurring ? 1 : 0);
         parcel.writeInt(income ? 1 : 0);
         parcel.writeString(recurringPeriod);
+        parcel.writeString(paymentMethod);
     }
 
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public static class Builder {
+
+        private final Date date;
+        private final BigDecimal amount;
+        private final Category category;
+        private final String location;
+
+        private String note = "";
+        private boolean recurring = false;
+        private boolean income = false;
+        private String recurringPeriod = "";
+        private String paymentMethod = "";
+
+        public Builder(Date date, BigDecimal amount, Category category, String location) {
+            this.date = date;
+            this.amount = amount;
+            this.category = category;
+            this.location = location;
+        }
+
+        public Builder note(String note) {
+            this.note = note;
+            return this;
+        }
+
+        public Builder recurring(boolean recurring) {
+            this.recurring = recurring;
+            return this;
+        }
+
+        public Builder income(boolean income) {
+            this.income = income;
+            return this;
+        }
+
+        public Builder recurringPeriod(String recurringPeriod) {
+            this.recurringPeriod = recurringPeriod;
+            return this;
+        }
+
+        public Builder paymentMethod(String paymentMethod) {
+            this.paymentMethod = paymentMethod;
+            return this;
+        }
+
+        public Expense build() {
+            return new Expense(this);
+        }
     }
 }
