@@ -105,6 +105,10 @@ class Expense implements Parcelable {
         return paymentMethod;
     }
 
+    String printCSV() {
+        return date.toString() + "," + amount.toString() + "," + category.getType() + "," + location + "," + note + "," + recurring + "," + income + "," + recurringPeriod + "," + paymentMethod;
+    }
+
     @Override
     public boolean equals(Object exp) {
         if (this == exp)

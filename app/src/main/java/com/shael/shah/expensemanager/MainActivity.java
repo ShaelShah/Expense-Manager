@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -95,6 +97,10 @@ public class MainActivity extends Activity {
         //Singleton.getInstance(this).addCategory("Transportation");
         //Singleton.getInstance(this).addCategory("Entertainment");
         //Singleton.getInstance(this).addCategory("Groceries");
+
+        for (Expense e : expenses) {
+            Log.d("CSV", e.printCSV());
+        }
     }
 
     //@Override
@@ -239,27 +245,44 @@ public class MainActivity extends Activity {
         //TODO: There is probably a better way to implement this function (Joda-Time).
         Calendar calendar = Calendar.getInstance();
 
+        //Iterator<Expense> iterator = expenses.iterator();
+        //while (iterator.hasNext()) {
+        //    Expense e = iterator.next();
+
+        List<Expense> newExpenses = new ArrayList<>();
         for (Expense e : expenses) {
             if (e.isRecurring()) {
                 calendar.setTime(e.getDate());
 
+                Log.d("Recurring", e.toString());
+
                 //TODO: Bi-weekly should also be an option (maybe even custom ranges).
                 switch (e.getRecurringPeriod()) {
                     case "Daily":
+                        Log.d("Recurring", e.toString() + "Daily");
                         calendar.add(Calendar.DATE, 1);
                         break;
                     case "Weekly":
+                        Log.d("Recurring", e.toString() + "Weekly");
                         calendar.add(Calendar.DATE, 7);
                         break;
                     case "Monthly":
+                        Log.d("Recurring", e.toString() + "Monthly");
                         calendar.add(Calendar.MONTH, 1);
                         break;
                     case "Yearly":
+                        Log.d("Recurring", e.toString() + "Yearly");
                         calendar.add(Calendar.YEAR, 1);
                         break;
                 }
 
-                if (calendar.getTime().compareTo(e.getDate()) < 0) {
+                Log.d("Date", Calendar.getInstance().getTime().toString());
+                Log.d("Date", calendar.getTime().toString());
+                Log.d("Date", e.getDate().toString());
+
+                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
+                //if (calendar.getTime().compareTo(e.getDate()) < 0) {
+                    Log.d("Recurring", "Adding new expense");
                     //Expense newExpense = new Expense(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation(), e.getNote(), true, e.isIncome(), e.getRecurringPeriod(), e.getPaymentMethod());
                     Expense newExpense = new Expense.Builder(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation())
                             .note(e.getNote())
@@ -268,11 +291,17 @@ public class MainActivity extends Activity {
                             .recurringPeriod(e.getRecurringPeriod())
                             .paymentMethod(e.getPaymentMethod())
                             .build();
-                    Singleton.getInstance(this).addExpense(newExpense);
+                    //Singleton.getInstance(this).addExpense(newExpense);
                     e.setRecurring(false);
+                    newExpenses.add(newExpense);
                 }
             }
         }
+
+        for (Expense e : newExpenses) {
+            Singleton.getInstance(this).addExpense(e);
+        }
+
     }
 
     /*
