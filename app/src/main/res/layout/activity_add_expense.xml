@@ -88,7 +88,7 @@
                 android:id="@+id/dateLabelTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:fontFamily="sans-serif-smallcaps"
                 android:text="Date"/>
 
@@ -96,7 +96,7 @@
                 android:id="@+id/dateEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="6"
                 android:focusable="false"
                 android:gravity="center"/>
 
@@ -112,7 +112,7 @@
                 android:id="@+id/locationLabelTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:fontFamily="sans-serif-smallcaps"
                 android:text="Location"/>
 
@@ -120,7 +120,7 @@
                 android:id="@+id/locationEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="6"
                 android:gravity="center"/>
 
         </LinearLayout>
@@ -135,7 +135,7 @@
                 android:id="@+id/noteLabelTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="3"
                 android:fontFamily="sans-serif-smallcaps"
                 android:text="Note"/>
 
@@ -143,7 +143,7 @@
                 android:id="@+id/noteEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="6"
                 android:gravity="center"/>
 
         </LinearLayout>
@@ -153,6 +153,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingBottom="10dp"
             android:paddingTop="10dp">
 
             <TextView

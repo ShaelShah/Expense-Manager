@@ -69,12 +69,31 @@ public class AddExpenseActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
-        if (expenseType.equals("Normal")) {
-            setContentView(R.layout.activity_add_expense);
-        } else {
-            setContentView(R.layout.activity_add_expense_recurring);
-            recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+        switch (expenseType) {
+            case "Normal":
+                setContentView(R.layout.activity_add_expense);
+                paymentSpinner = (Spinner) findViewById(R.id.paymentSpinner);
+
+                createPaymentSpinnerRows();
+                break;
+
+            case "Income":
+                setContentView(R.layout.activity_add_income);
+                recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+
+                createRecurringSpinnerRows();
+                break;
+
+            case "Recurring":
+                setContentView(R.layout.activity_add_expense_recurring);
+                paymentSpinner = (Spinner) findViewById(R.id.paymentSpinner);
+                recurringSpinner = (Spinner) findViewById(R.id.recurringSpinner);
+
+                createRecurringSpinnerRows();
+                createPaymentSpinnerRows();
+                break;
         }
+
 
         //Find views to work with during add expense activity
         toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
@@ -83,14 +102,12 @@ public class AddExpenseActivity extends Activity {
         dateEditText = (EditText) findViewById(R.id.dateEditText);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
         noteEditText = (EditText) findViewById(R.id.noteEditText);
-        paymentSpinner = (Spinner) findViewById(R.id.paymentSpinner);
 
         categories = Singleton.getInstance().getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
-        createSpinnerRows(!expenseType.equals("Normal"));
         populateInfoFields();
 
         //Disables keyboard from automatically popping up when this activity starts
@@ -138,7 +155,6 @@ public class AddExpenseActivity extends Activity {
 
         String location = locationEditText.getText().toString();
         String note = noteEditText.getText().toString();
-        String payment = paymentSpinner.getSelectedItem().toString();
 
         foundCategory:
         for (RadioButton rb : categoryRadioButtons) {
@@ -161,17 +177,32 @@ public class AddExpenseActivity extends Activity {
             }
         }
 
-        Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note).paymentMethod(payment);
+        Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note);
         switch (expenseType) {
             case "Normal":
+                builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
                 break;
 
             case "Income":
-                builder.recurring(true).income(true).recurringPeriod(recurringSpinner.getSelectedItem().toString());
+                if (recurringSpinner.getSelectedItem().toString().equals("None")) {
+                    builder.recurring(false);
+                } else {
+                    builder.recurring(true)
+                            .income(true)
+                            .recurringPeriod(recurringSpinner.getSelectedItem().toString());
+                }
                 break;
 
             case "Recurring":
-                builder.recurring(true).income(false).recurringPeriod(recurringSpinner.getSelectedItem().toString());
+                if (recurringSpinner.getSelectedItem().toString().equals("None")) {
+                    Toast.makeText(this, "Recurring Period cannot be None", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+
+                builder.recurring(true)
+                        .income(false)
+                        .recurringPeriod(recurringSpinner.getSelectedItem().toString())
+                        .paymentMethod(paymentSpinner.getSelectedItem().toString());
                 break;
         }
 
@@ -298,10 +329,22 @@ public class AddExpenseActivity extends Activity {
             locationEditText.setText(expense.getLocation());
             noteEditText.setText(expense.getNote());
             dateEditText.setOnClickListener(dateListener);
-            paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
 
-            if (!getIntent().getStringExtra(EXTRA_EXPENSE_TYPE).equals("Normal"))
-                recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
+            String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
+            switch (expenseType) {
+                case "Normal":
+                    paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
+                    break;
+
+                case "Income":
+                    recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
+                    break;
+
+                case "Recurring":
+                    paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
+                    recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
+                    break;
+            }
 
             if (expense.getCategory() != null) {
                 String categoryTitle = expense.getCategory().getType();
@@ -413,14 +456,17 @@ public class AddExpenseActivity extends Activity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createSpinnerRows(boolean all) {
-        if (all) {
-            String recurringItems[] = new String[]{"Daily", "Weekly", "Monthly", "Yearly"};
-            recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
-            recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            recurringSpinner.setAdapter(recurringSpinnerAdapter);
-        }
+    private void createRecurringSpinnerRows() {
+        String recurringItems[] = new String[]{"Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly", "None"};
+        recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
+        recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        recurringSpinner.setAdapter(recurringSpinnerAdapter);
+    }
 
+    /*
+     *  Helper function used to populate the recurring period spinner.
+     */
+    private void createPaymentSpinnerRows() {
         String paymentItems[] = new String[]{"Credit", "Debit", "Cash"};
         paymentSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paymentItems);
         paymentSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

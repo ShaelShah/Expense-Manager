@@ -51,6 +51,8 @@ public class DisplayExpensesActivity extends Activity {
     private boolean amountSort = true;
     private boolean locationSort = true;
 
+    private LinearLayout amountLinearLayout;
+    private TextView amountIncomesTextView;
     private TextView amountExpensesTextView;
     private ScrollView expensesTitleScrollView;
 
@@ -77,7 +79,16 @@ public class DisplayExpensesActivity extends Activity {
         setActionBar(toolbar);
 
         //Find views to work with during this activity
+        amountLinearLayout = (LinearLayout) findViewById(R.id.amountLinearLayout);
+        amountIncomesTextView = (TextView) findViewById(R.id.amountIncomesTextView);
         amountExpensesTextView = (TextView) findViewById(R.id.amountExpensesTextView);
+
+        if (title.equals("Incomes"))
+            amountExpensesTextView.setVisibility(View.GONE);
+
+        if (title.equals("Expenses"))
+            amountIncomesTextView.setVisibility(View.GONE);
+
         expensesTitleScrollView = (ScrollView) findViewById(R.id.expensesTitleScrollView);
         TextView expensesTitleTextView = (TextView) findViewById(R.id.expensesTitleTextView);
         expensesTitleTextView.setText(title);
@@ -411,12 +422,21 @@ public class DisplayExpensesActivity extends Activity {
             scrollLinearLayout.removeAllViews();
 
         //Inflate a category_expense_row_layout for each expense
-        BigDecimal amount = new BigDecimal(0);
+        BigDecimal amountEarned = new BigDecimal(0);
+        BigDecimal amountSpent = new BigDecimal(0);
         for (Expense e : expensesToDisplay) {
-            amount = amount.add(e.getAmount());
+            if (e.isIncome())
+                amountEarned = amountEarned.add(e.getAmount());
+            else
+                amountSpent = amountSpent.add(e.getAmount());
+
             scrollLinearLayout.addView(inflateExpenseDisplayRow(e));
         }
 
-        amountExpensesTextView.setText(getString(R.string.currency, amount));
+        if (amountIncomesTextView != null)
+            amountIncomesTextView.setText(getString(R.string.currency, amountEarned));
+
+        if (amountExpensesTextView != null)
+            amountExpensesTextView.setText(getString(R.string.currency, amountSpent));
     }
 }

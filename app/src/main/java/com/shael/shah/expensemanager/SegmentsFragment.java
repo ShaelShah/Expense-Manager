@@ -60,20 +60,23 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.addView(budgetSegment);
 
         float total = 0;
-        for (Expense e : expenses)
-            total += e.getAmount().floatValue();
+        for (Expense e : expenses) {
+            if (!e.isIncome())
+                total += e.getAmount().floatValue();
+        }
 
         float prevAmount = 90;
         for (Category c : categories) {
 
             float catAmount = 0;
             for (Expense e : expenses) {
-                if (e.getCategory().equals(c))
+                if (e.getCategory() != null && e.getCategory().equals(c))
                     catAmount += e.getAmount().floatValue();
             }
 
             if (catAmount != 0) {
-                Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 80);
+                Segment segment = new Segment(getActivity(), null, prevAmount, (360 - prevAmount) + 90, c.getColor(), 255, 80);
+                //Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 80);
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);

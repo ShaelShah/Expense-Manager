@@ -43,6 +43,9 @@ class Category implements Parcelable {
         if (this == cat)
             return true;
 
+        if (cat == null)
+            return false;
+
         if (this.getClass() != cat.getClass())
             return false;
 
