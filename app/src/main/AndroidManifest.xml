@@ -25,12 +25,13 @@
             android:name=".DisplayExpensesActivity">
         </activity>
 
-        <activity android:name=".SegmentsFragment"></activity>
-
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings">
         </activity>
     </application>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

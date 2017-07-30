@@ -1,11 +1,16 @@
 package com.shael.shah.expensemanager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,8 +18,12 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -97,35 +106,17 @@ public class MainActivity extends Activity {
         //Singleton.getInstance(this).addCategory("Groceries");
     }
 
-    //@Override
-    //protected void onPause() {
-    //    super.onPause();
-    //    setLists();
-    //}
-
     @Override
     protected void onStart() {
         super.onStart();
         getLists();
     }
 
-    //@Override
-    //protected void onResume() {
-    //    super.onResume();
-    //    getLists();
-    //}
-
     @Override
     protected void onStop() {
         super.onStop();
         setLists();
     }
-
-    //@Override
-    //protected void onDestroy() {
-    //    super.onDestroy();
-    //    setLists();
-    //}
 
     /*****************************************************************
      * Menu Methods
@@ -201,6 +192,9 @@ public class MainActivity extends Activity {
                 Intent openSettingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(openSettingsIntent);
                 return true;
+
+            case R.id.save_csv:
+                backupToCSV();
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -405,6 +399,74 @@ public class MainActivity extends Activity {
         //noinspection deprecation
         int color = net.signum() > 0 ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red);
         netTextView.setTextColor(color);
+    }
+
+    private void backupToCSV() {
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Expense Manager";
+        String filename = "Backup - " + Calendar.getInstance().getTime().toString() + ".csv";
+
+        try {
+            File fPath = new File(path);
+            if (!fPath.exists()) {
+                fPath.mkdirs();
+            }
+
+            File f = new File(path + File.separator + filename);
+            if (!f.exists() || f.isDirectory()) {
+                f.createNewFile();
+            }
+
+            FileWriter fileWriter = new FileWriter(f, true);
+
+            fileWriter.append("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method\n");
+            fileWriter.write("Incomes\n");
+            for (Expense e : expenses) {
+                if (e.isIncome())
+                    fileWriter.append(expenseToCSV(e) + "\n");
+            }
+
+            fileWriter.append("\nExpenses\n");
+            for (Expense e : expenses) {
+                if (!e.isIncome())
+                    fileWriter.append(expenseToCSV(e) + "\n");
+            }
+
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Could not backup to CSV", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String expenseToCSV(Expense e) {
+        if (e.getCategory() != null)
+            return e.getDate().toString() + ","
+                    + e.getAmount().toString() + ","
+                    + e.getCategory().getType() + ","
+                    + e.getLocation() + ","
+                    + e.getNote() + ","
+                    + e.isRecurring() + ","
+                    + e.isIncome() + ","
+                    + e.getRecurringPeriod() + ","
+                    + e.getPaymentMethod();
+        else
+            return e.getDate().toString() + ","
+                    + e.getAmount().toString() + ","
+                    + "" + ","
+                    + e.getLocation() + ","
+                    + e.getNote() + ","
+                    + e.isRecurring() + ","
+                    + e.isIncome() + ","
+                    + e.getRecurringPeriod() + ","
+                    + e.getPaymentMethod();
     }
 
     /*****************************************************************
