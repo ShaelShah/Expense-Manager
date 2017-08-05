@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,13 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +46,8 @@ public class MainActivity extends Activity {
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_LIST = "com.shael.shah.expensemanager.EXTRA_EXPENSE_LIST";
+
+    private static final int GET_FILE_RESULT_CODE = 1;
 
     //TODO: This should be a sharedPreference
     TimePeriod timePeriod = TimePeriod.MONTHLY;
@@ -193,11 +200,26 @@ public class MainActivity extends Activity {
                 startActivity(openSettingsIntent);
                 return true;
 
+            case R.id.restore_csv:
+                restoreFromCSV();
+                return true;
+
             case R.id.save_csv:
                 backupToCSV();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == GET_FILE_RESULT_CODE && resultCode == Activity.RESULT_OK) {
+            if (resultData != null) {
+                Uri uri = resultData.getData();
+                CSVToExpenses(uri);
+            }
         }
     }
 
@@ -409,64 +431,91 @@ public class MainActivity extends Activity {
             }
         }
 
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Expense Manager";
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath() + File.separator + "Expense Manager";
         String filename = "Backup - " + Calendar.getInstance().getTime().toString() + ".csv";
 
         try {
-            File fPath = new File(path);
-            if (!fPath.exists()) {
-                fPath.mkdirs();
-            }
+            File filepath = new File(path);
+            File file = new File(path, filename);
+            filepath.mkdirs();
 
-            File f = new File(path + File.separator + filename);
-            if (!f.exists() || f.isDirectory()) {
-                f.createNewFile();
-            }
-
-            FileWriter fileWriter = new FileWriter(f, true);
-
-            fileWriter.append("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method\n");
-            fileWriter.write("Incomes\n");
+            FileWriter fileWriter = new FileWriter(file);
+            fileWriter.write("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method\n");
+            fileWriter.append("Incomes\n");
             for (Expense e : expenses) {
                 if (e.isIncome())
-                    fileWriter.append(expenseToCSV(e) + "\n");
+                    fileWriter.append(e.toCSV() + "\n");
             }
 
-            fileWriter.append("\nExpenses\n");
+            fileWriter.append("Expenses\n");
             for (Expense e : expenses) {
                 if (!e.isIncome())
-                    fileWriter.append(expenseToCSV(e) + "\n");
+                    fileWriter.append(e.toCSV() + "\n");
             }
 
             fileWriter.flush();
             fileWriter.close();
+
+            MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null, null);
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Could not backup to CSV", Toast.LENGTH_LONG).show();
+            return;
         }
+
+        Toast.makeText(this, "Backup completed", Toast.LENGTH_LONG).show();
     }
 
-    private String expenseToCSV(Expense e) {
-        if (e.getCategory() != null)
-            return e.getDate().toString() + ","
-                    + e.getAmount().toString() + ","
-                    + e.getCategory().getType() + ","
-                    + e.getLocation() + ","
-                    + e.getNote() + ","
-                    + e.isRecurring() + ","
-                    + e.isIncome() + ","
-                    + e.getRecurringPeriod() + ","
-                    + e.getPaymentMethod();
-        else
-            return e.getDate().toString() + ","
-                    + e.getAmount().toString() + ","
-                    + "" + ","
-                    + e.getLocation() + ","
-                    + e.getNote() + ","
-                    + e.isRecurring() + ","
-                    + e.isIncome() + ","
-                    + e.getRecurringPeriod() + ","
-                    + e.getPaymentMethod();
+    private void restoreFromCSV() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/csv");
+        startActivityForResult(intent, GET_FILE_RESULT_CODE);
+    }
+
+    private void CSVToExpenses(Uri uri) {
+        Singleton.getInstance().reset();
+
+        try {
+            List<Category> categories = null;
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(uri.getPath()));
+
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!line.equals("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method") && !line.equals("Incomes") && !line.equals("Expenses")) {
+                    String[] parts = line.split(",");
+
+                    if (parts[6].equalsIgnoreCase("false")) {
+                        Singleton.getInstance().addCategory(parts[2]);
+                        categories = Singleton.getInstance().getCategories();
+                    }
+
+                    Category category = null;
+                    if (categories != null) {
+                        for (Category c : categories) {
+                            if (c.getType().equals(parts[2])) {
+                                category = c;
+                                break;
+                            }
+                        }
+                    }
+
+                    Expense expense = new Expense.Builder(new Date(parts[0]), new BigDecimal(parts[1]), category, parts[3])
+                            .note(parts[4])
+                            .recurring(Boolean.parseBoolean(parts[5]))
+                            .income(Boolean.parseBoolean(parts[6]))
+                            .recurringPeriod(parts[7])
+                            .paymentMethod(parts[8])
+                            .build();
+                    Singleton.getInstance().addExpense(expense);
+                }
+            }
+        } catch (IOException e) {
+            Toast.makeText(this, "Could not restore from CSV", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(this, "Restored from CSV", Toast.LENGTH_LONG).show();
     }
 
     /*****************************************************************

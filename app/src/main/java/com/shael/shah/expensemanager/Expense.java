@@ -41,18 +41,6 @@ class Expense implements Parcelable {
         this.paymentMethod = builder.paymentMethod;
     }
 
-    //private Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean recurring, boolean income, String recurringPeriod, String paymentMethod) {
-    //    this.date = date;
-    //    this.amount = amount;
-    //    this.category = category;
-    //    this.location = location;
-    //    this.note = note;
-    //    this.recurring = recurring;
-    //    this.income = income;
-    //    this.recurringPeriod = recurringPeriod;
-    //    this.paymentMethod = paymentMethod;
-    //}
-
     private Expense(Parcel parcel) {
         this.date = new Date(parcel.readLong());
         this.amount = new BigDecimal(parcel.readString());
@@ -105,7 +93,7 @@ class Expense implements Parcelable {
         return paymentMethod;
     }
 
-    String printCSV() {
+    String toCSV() {
         return date.toString() + "," + amount.toString() + "," + category.getType() + "," + location + "," + note + "," + recurring + "," + income + "," + recurringPeriod + "," + paymentMethod;
     }
 
