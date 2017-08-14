@@ -2,33 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/add_item"
-        android:icon="@drawable/ic_add_black_24dp"
-        android:showAsAction="ifRoom"
-        android:title="Add Item">
-
+        android:id="@+id/add_expense"
+        android:icon="@drawable/ic_money_off_black_24dp"
+        android:showAsAction="always"
+        android:title="Add Expense">
     </item>
 
     <item
-        android:id="@+id/open_menu"
-        android:icon="@drawable/ic_menu_black_24dp"
-        android:showAsAction="ifRoom"
-        android:title="Open Menu">
+        android:id="@+id/add_recurring_expense"
+        android:icon="@drawable/ic_monetization_on_black_24dp"
+        android:showAsAction="always"
+        android:title="Add Recurring Expense"></item>
 
-        <menu>
-            <item
-                android:id="@+id/open_settings"
-                android:title="Settings" />
-
-            <item
-                android:id="@+id/save_csv"
-                android:title="Backup to CSV" />
-
-            <item
-                android:id="@+id/restore_csv"
-                android:title="Restore from CSV" />
-        </menu>
-
+    <item
+        android:id="@+id/add_income"
+        android:icon="@drawable/ic_attach_money_black_24dp"
+        android:showAsAction="always"
+        android:title="Add Income">
     </item>
 
 </menu>

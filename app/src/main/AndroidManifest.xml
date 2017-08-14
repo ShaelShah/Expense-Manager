@@ -7,28 +7,23 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppThemeNoActionBar">
+        android:theme="@style/Theme.AppCompat.Light">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".AddExpenseActivity">
+        <activity android:name=".activity.AddExpenseActivity">
             android:theme="@android:style/Theme.NoTitleBar"
             android:windowSoftInputMode="stateHidden"
         </activity>
 
-        <activity
-            android:name=".DisplayExpensesActivity">
+        <activity android:name=".activity.DisplayExpensesActivity">
         </activity>
 
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
