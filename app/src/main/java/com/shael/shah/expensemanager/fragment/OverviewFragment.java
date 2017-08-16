@@ -3,7 +3,10 @@ package com.shael.shah.expensemanager.fragment;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +34,11 @@ public class OverviewFragment extends Fragment {
     private static final String EXTRA_EXPENSES_DISPLAY = "com.shael.shah.expensemanager.EXTRA_EXPENSES_DISPLAY";
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_LIST = "com.shael.shah.expensemanager.EXTRA_EXPENSE_LIST";
+    private static final String SHAREDPREF_DISPLAY_OPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAY_OPTION";
+    private static final String SHAREDPREF_TIME_PERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIME_PERIOD";
 
-    //TODO: This should be a sharedPreference
-    TimePeriod timePeriod = TimePeriod.MONTHLY;
-
+    private TimePeriod timePeriod;
+    private String displayExpensesOption;
     private List<Expense> expenses;
 
     private TextView timePeriodTextView;
@@ -42,9 +46,6 @@ public class OverviewFragment extends Fragment {
     private TextView incomeTexView;
     private TextView expensesTextView;
     private RadioGroup dateRangeRadioGroup;
-
-    //TODO: This should be a sharedPreference
-    private String displayExpensesOption = "CIRCLE";
 
     /*****************************************************************
      * Lifecycle Methods
@@ -75,12 +76,16 @@ public class OverviewFragment extends Fragment {
         incomeTexView = (TextView) view.findViewById(R.id.incomeTextView);
         expensesTextView = (TextView) view.findViewById(R.id.expensesTextView);
 
+        timePeriod = getTimePeriodFromSharedPreferences();
+        displayExpensesOption = getDisplayOptionFromSharedPreferences();
+
         setActionListeners();
         populateMoneyTextViews();
         setDateRangeTextView();
 
         if (savedInstanceState == null) {
-            Fragment fragment = displayExpensesOption.equals("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
+            Log.d("ANIMATION", displayExpensesOption);
+            Fragment fragment = displayExpensesOption.equalsIgnoreCase("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
             fragment.setArguments(bundle);
@@ -100,6 +105,7 @@ public class OverviewFragment extends Fragment {
     public void onStop() {
         super.onStop();
         setLists();
+        setTimePeriodSharedPreference(timePeriod);
     }
 
     /*****************************************************************
@@ -130,7 +136,6 @@ public class OverviewFragment extends Fragment {
      *  expense member field recurring to false to avoid duplicates.
      */
     private void createRecurringExpenses() {
-        //TODO: This function needs to be tested.
         //TODO: There is probably a better way to implement this function (Joda-Time).
         Calendar calendar = Calendar.getInstance();
 
@@ -189,7 +194,6 @@ public class OverviewFragment extends Fragment {
 
         List<Expense> tempExpenses = new ArrayList<>();
 
-        //TODO: Bi-weekly should also be an option (maybe even custom ranges).
         //TODO: Can some of this code be refractored?
         //TODO: Check out Joda-Time library.
         switch (timePeriod) {
@@ -402,7 +406,7 @@ public class OverviewFragment extends Fragment {
                                 break;
                         }
 
-                        if (displayExpensesOption.equals("CIRCLE")) {
+                        if (displayExpensesOption.equalsIgnoreCase("CIRCLE")) {
                             SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.displayExpensesAnimationFrameLayout);
                             if (fragment != null)
                                 fragment.updateExpenses(getDateRangeExpenses());
@@ -419,7 +423,61 @@ public class OverviewFragment extends Fragment {
         });
     }
 
+    /*****************************************************************
+     * Get/Set Shared Preferences
+     *****************************************************************/
+
+    private TimePeriod getTimePeriodFromSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return TimePeriod.fromInteger(sharedPreferences.getInt(SHAREDPREF_TIME_PERIOD, 2));
+    }
+
+    private void setTimePeriodSharedPreference(TimePeriod timePeriod) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+
+        prefEditor.putInt(SHAREDPREF_TIME_PERIOD, TimePeriod.toInteger(timePeriod));
+        prefEditor.apply();
+    }
+
+    private String getDisplayOptionFromSharedPreferences() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return sharedPreferences.getString(SHAREDPREF_DISPLAY_OPTION, "CIRCLE");
+    }
+
     private enum TimePeriod {
-        DAILY, WEEKLY, MONTHLY, YEARLY, ALL
+        DAILY, WEEKLY, MONTHLY, YEARLY, ALL;
+
+        public static TimePeriod fromInteger(int x) {
+            switch (x) {
+                case 0:
+                    return DAILY;
+                case 1:
+                    return WEEKLY;
+                case 2:
+                    return MONTHLY;
+                case 3:
+                    return YEARLY;
+                case 4:
+                    return ALL;
+            }
+            return MONTHLY;
+        }
+
+        public static int toInteger(TimePeriod timePeriod) {
+            switch (timePeriod) {
+                case DAILY:
+                    return 0;
+                case WEEKLY:
+                    return 1;
+                case MONTHLY:
+                    return 2;
+                case YEARLY:
+                    return 3;
+                case ALL:
+                    return 4;
+            }
+            return 2;
+        }
     }
 }

@@ -2,17 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/backupTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
+        android:onClick="backupData"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Backup Data"
-        android:textAlignment="viewEnd" />
+        android:text="Backup Data" />
 
     <View
         android:layout_width="match_parent"
@@ -24,10 +25,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
+        android:onClick="restoreData"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Restore Data"
-        android:textAlignment="viewEnd" />
+        android:text="Restore Data" />
 
     <View
         android:layout_width="match_parent"

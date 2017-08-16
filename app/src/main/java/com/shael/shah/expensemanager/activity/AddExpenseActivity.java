@@ -29,6 +29,7 @@ import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,6 +134,8 @@ public class AddExpenseActivity extends Activity {
         Date date;
         Category category = null;
 
+        NumberFormat format = NumberFormat.getCurrencyInstance();
+        amountEditText.setText(format.format(Double.parseDouble(amountEditText.getText().toString())));
         String amountString = amountEditText.getText().toString().replaceAll("[^\\d.]", "");
         try {
             amount = new BigDecimal(amountString);
