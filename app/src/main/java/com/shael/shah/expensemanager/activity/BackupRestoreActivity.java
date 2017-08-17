@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -102,6 +103,12 @@ public class BackupRestoreActivity extends Activity {
     }
 
     private void restoreFromCSV() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            }
+        }
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/csv");
@@ -110,7 +117,7 @@ public class BackupRestoreActivity extends Activity {
 
     private void CSVToExpenses(Uri uri) {
         DataSingleton.getInstance().reset();
-
+        Log.d("Location", uri.toString());
         try {
             List<Category> categories = null;
             BufferedReader bufferedReader = new BufferedReader(new FileReader(uri.getPath()));
@@ -146,6 +153,7 @@ public class BackupRestoreActivity extends Activity {
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
             Toast.makeText(this, "Could not restore from CSV", Toast.LENGTH_LONG).show();
             return;
         }

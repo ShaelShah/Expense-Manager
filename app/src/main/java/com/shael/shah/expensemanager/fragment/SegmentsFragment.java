@@ -62,7 +62,7 @@ public class SegmentsFragment extends Fragment {
 
         List<Category> categories = DataSingleton.getInstance().getCategories();
 
-        Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 100);
+        Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 110);
         segments.add(budgetSegment);
         segmentsFrameLayout.addView(budgetSegment);
 
@@ -82,8 +82,8 @@ public class SegmentsFragment extends Fragment {
             }
 
             if (catAmount != 0) {
-                Segment segment = new Segment(getActivity(), null, prevAmount, (360 - prevAmount) + 90, c.getColor(), 255, 80);
-                //Segment segment = new Segment(getActivity(), null, prevAmount, 360 * (catAmount / total), c.getColor(), 255, 80);
+                //Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 - prevAmount) + 90 - 2, c.getColor(), 255, 80);
+                Segment segment = new Segment(getActivity(), null, prevAmount + 1, (360 * (catAmount / total)) - 1, c.getColor(), 255, 80);
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);

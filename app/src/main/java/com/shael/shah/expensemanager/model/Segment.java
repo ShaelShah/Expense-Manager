@@ -9,59 +9,38 @@ import android.view.View;
 
 public class Segment extends View {
 
-    //private Path path;
     private RectF rect;
     private Paint paint;
-    //private Paint textPaint;
 
     private float startAngle;
     private float currentAngle;
     private float sweepAngle;
 
-    //private String category;
-
-    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth/*, String category*/) {
+    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth) {
         super(context, attrs);
 
         //Create RectF
         rect = new RectF(0, 0, 0, 0);
 
-        //Create Path
-        //path = new Path();
-        //path.addArc(rect, startAngle, sweepAngle);
-
         //Create Paint and initialize
         paint = new Paint();
         paint.setAntiAlias(true);
-        //paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        //paint.setStrokeWidth(1f);
+        paint.setFlags(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(strokeWidth);
         paint.setColor(color);
         paint.setAlpha(alpha);
-        //paint.setTextAlign(Paint.Align.CENTER);
-        //paint.setTextSize(16f);
-
-        //Create TextPaint and initialize
-        //textPaint = new Paint();
-        //textPaint.setAntiAlias(true);
-        //textPaint.setColor(color);
-        //textPaint.setTextAlign(Paint.Align.CENTER);
-        //textPaint.setTextSize(24f);
 
         //Setup member values
         this.startAngle = startAngle;
         this.sweepAngle = sweepAngle;
         this.currentAngle = 0;
-        //this.category = category;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawArc(rect, startAngle, currentAngle, false, paint);
-        //canvas.drawTextOnPath(category, path, 0, 20, textPaint);
-        //postInvalidate();
     }
 
     @Override
