@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.BackupRestoreActivity;
+import com.shael.shah.expensemanager.activity.CategoryUpdate;
 import com.shael.shah.expensemanager.activity.ChangeAppearance;
 
 public class SettingsFragment extends Fragment {
@@ -39,6 +40,22 @@ public class SettingsFragment extends Fragment {
                 changeAppearance();
             }
         });
+
+        TextView dateRangeTextView = (TextView) view.findViewById(R.id.dateRangeTextView);
+        dateRangeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dateRangeUpdate();
+            }
+        });
+
+        TextView categoriesTextView = (TextView) view.findViewById(R.id.categoryTextView);
+        categoriesTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryUpdate();
+            }
+        });
         return view;
     }
 
@@ -49,6 +66,16 @@ public class SettingsFragment extends Fragment {
 
     private void changeAppearance() {
         Intent intent = new Intent(getActivity(), ChangeAppearance.class);
+        startActivity(intent);
+    }
+
+    private void dateRangeUpdate() {
+//        Intent intent = new Intent(getActivity(), DateRangeUpdate.class);
+//        startActivity(intent);
+    }
+
+    private void categoryUpdate() {
+        Intent intent = new Intent(getActivity(), CategoryUpdate.class);
         startActivity(intent);
     }
 }

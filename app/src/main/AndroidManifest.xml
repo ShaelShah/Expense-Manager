@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".activity.DisplayExpensesActivity" />
         <activity android:name=".activity.BackupRestoreActivity" />
-        <activity android:name=".activity.ChangeAppearance"></activity>
+        <activity android:name=".activity.ChangeAppearance" />
+        <activity android:name=".activity.CategoryUpdate" />
     </application>
 
 </manifest>

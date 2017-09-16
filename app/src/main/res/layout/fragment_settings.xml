@@ -21,7 +21,7 @@
         android:background="@color/blueGrey" />
 
     <TextView
-        android:id="@+id/PLACEHOLDERTextView"
+        android:id="@+id/dateRangeTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
@@ -35,10 +35,20 @@
         android:background="@color/grey" />
 
     <TextView
+        android:id="@+id/categoryTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-smallcaps"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:text="Categories" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
+        android:paddingTop="15dp"
         android:text="Appearance"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -57,16 +67,12 @@
         android:paddingTop="15dp"
         android:text="Expenses View Animation" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
+        android:paddingTop="15dp"
         android:text="Backup and Restore"
         android:textSize="14sp"
         android:textStyle="bold" />
