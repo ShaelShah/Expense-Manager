@@ -24,8 +24,7 @@ public class LandingActivity extends Activity {
      ******************************************************************/
 
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
-
-    private static String currentFragment = "OVERVIEW";
+    private static String currentFragment = "";
 
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;

@@ -135,8 +135,13 @@ public class AddExpenseActivity extends Activity {
         Category category = null;
 
         NumberFormat format = NumberFormat.getCurrencyInstance();
-        amountEditText.setText(format.format(Double.parseDouble(amountEditText.getText().toString())));
+        try {
+            amountEditText.setText(format.format(Double.parseDouble(amountEditText.getText().toString())));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
         String amountString = amountEditText.getText().toString().replaceAll("[^\\d.]", "");
+
         try {
             amount = new BigDecimal(amountString);
         } catch (IllegalArgumentException e) {
