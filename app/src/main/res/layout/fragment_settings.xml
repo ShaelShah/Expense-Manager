@@ -48,7 +48,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
-        android:paddingTop="15dp"
         android:text="Appearance"
         android:textSize="14sp"
         android:textStyle="bold" />
@@ -72,7 +71,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
-        android:paddingTop="15dp"
         android:text="Backup and Restore"
         android:textSize="14sp"
         android:textStyle="bold" />
