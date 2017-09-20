@@ -120,12 +120,10 @@ public class DisplayExpensesActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.filter:
-
                 createFilterDialog();
                 return true;
 
             case R.id.sort_amount:
-
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
@@ -141,7 +139,6 @@ public class DisplayExpensesActivity extends Activity {
                 return true;
 
             case R.id.sort_location:
-
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
@@ -161,6 +158,7 @@ public class DisplayExpensesActivity extends Activity {
         }
     }
 
+    //TODO: This filter dialog is pretty ugly.
     /*
      *  Creates a dialog (Filter Dialog) which allows the user to select filtering options.
      *  Inflates a filter_options_dialog layout.
