@@ -7,17 +7,17 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-public class Expense implements Parcelable {
+public class Expense /*implements Parcelable*/ {
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Expense createFromParcel(Parcel in) {
-            return new Expense(in);
-        }
-
-        public Expense[] newArray(int size) {
-            return new Expense[size];
-        }
-    };
+//    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+//        public Expense createFromParcel(Parcel in) {
+//            return new Expense(in);
+//        }
+//
+//        public Expense[] newArray(int size) {
+//            return new Expense[size];
+//        }
+//    };
 
     private Date date;
     private BigDecimal amount;
@@ -131,23 +131,23 @@ public class Expense implements Parcelable {
         return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod, paymentMethod);
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(date.getTime());
-        parcel.writeString(amount.toString());
-        parcel.writeParcelable(category, flags);
-        parcel.writeString(location);
-        parcel.writeString(note);
-        parcel.writeInt(recurring ? 1 : 0);
-        parcel.writeInt(income ? 1 : 0);
-        parcel.writeString(recurringPeriod);
-        parcel.writeString(paymentMethod);
-    }
+//    @Override
+//    public void writeToParcel(Parcel parcel, int flags) {
+//        parcel.writeLong(date.getTime());
+//        parcel.writeString(amount.toString());
+//        parcel.writeParcelable(category, flags);
+//        parcel.writeString(location);
+//        parcel.writeString(note);
+//        parcel.writeInt(recurring ? 1 : 0);
+//        parcel.writeInt(income ? 1 : 0);
+//        parcel.writeString(recurringPeriod);
+//        parcel.writeString(paymentMethod);
+//    }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
 
     public static class Builder {
 

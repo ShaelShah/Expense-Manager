@@ -8,17 +8,4 @@
         android:title="Add Expense">
     </item>
 
-    <item
-        android:id="@+id/add_recurring_expense"
-        android:icon="@drawable/ic_monetization_on_black_24dp"
-        android:showAsAction="always"
-        android:title="Add Recurring Expense"></item>
-
-    <item
-        android:id="@+id/add_income"
-        android:icon="@drawable/ic_attach_money_black_24dp"
-        android:showAsAction="always"
-        android:title="Add Income">
-    </item>
-
 </menu>

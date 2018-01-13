@@ -59,7 +59,7 @@ public class BackupRestoreActivity extends Activity {
     }
 
     private void backupToCSV() {
-        List<Expense> expenses = DataSingleton.getInstance().getExpenses();
+       /* List<Expense> expenses = DataSingleton.getInstance().getExpenses();
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -99,7 +99,7 @@ public class BackupRestoreActivity extends Activity {
             return;
         }
 
-        Toast.makeText(this, "Backup completed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Backup completed", Toast.LENGTH_LONG).show();*/
     }
 
     private void restoreFromCSV() {
@@ -116,7 +116,7 @@ public class BackupRestoreActivity extends Activity {
     }
 
     private void CSVToExpenses(Uri uri) {
-        DataSingleton.getInstance().reset();
+    /*    DataSingleton.getInstance().reset();
         Log.d("Location", uri.toString());
         try {
             List<Category> categories = null;
@@ -158,7 +158,7 @@ public class BackupRestoreActivity extends Activity {
             return;
         }
 
-        Toast.makeText(this, "Restored from CSV", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Restored from CSV", Toast.LENGTH_LONG).show();*/
     }
 }
 

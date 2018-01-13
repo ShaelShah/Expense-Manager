@@ -11,10 +11,13 @@ import android.widget.FrameLayout;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.animation.SegmentAnimation;
-import com.shael.shah.expensemanager.model.Category;
-import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Segment;
-import com.shael.shah.expensemanager.utils.DataSingleton;
+import com.shael.shah.expensemanager.db.AppDatabase;
+import com.shael.shah.expensemanager.db.Expense;
+import com.shael.shah.expensemanager.db.Category;
+//import com.shael.shah.expensemanager.model.Category;
+//import com.shael.shah.expensemanager.model.Expense;
+//import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +26,26 @@ public class SegmentsFragment extends Fragment {
 
     private static final String EXTRA_EXPENSE_LIST = "com.shael.shah.expensemanager.EXTRA_EXPENSE_LIST";
 
+    private AppDatabase appDatabase;
+
     private List<Segment> segments;
     private FrameLayout segmentsFrameLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        appDatabase = AppDatabase.getAppDatabase(getActivity().getApplicationContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<Expense> expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
+        //List<Expense> expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
         View view = inflater.inflate(R.layout.fragment_segments, container, false);
 
-        segmentsFrameLayout = (FrameLayout) view.findViewById(R.id.segmentsFrameLayout);
-        createCircleView(expenses);
+        segmentsFrameLayout = view.findViewById(R.id.segmentsFrameLayout);
+        createCircleView(appDatabase.expenseDao().getAllExpenses());
 
         return view;
     }
@@ -60,7 +66,8 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.removeAllViews();
         segments = new ArrayList<>();
 
-        List<Category> categories = DataSingleton.getInstance().getCategories();
+        int[] colours = getActivity().getApplicationContext().getResources().getIntArray(R.array.categoryColors);
+        List<Category> categories = appDatabase.categoryDao().getAllCategories();
 
         Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 110);
         segments.add(budgetSegment);
@@ -83,7 +90,7 @@ public class SegmentsFragment extends Fragment {
 
             if (catAmount != 0) {
                 //Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 - prevAmount) + 90 - 2, c.getColor(), 255, 80);
-                Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 * (catAmount / total)) - 2, c.getColor(), 255, 80);
+                Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 * (catAmount / total)) - 2, colours[c.getColour()], 255, 80);
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);

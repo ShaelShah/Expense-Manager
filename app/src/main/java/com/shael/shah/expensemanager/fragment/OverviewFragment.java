@@ -15,8 +15,11 @@ import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
-import com.shael.shah.expensemanager.model.Expense;
-import com.shael.shah.expensemanager.utils.DataSingleton;
+import com.shael.shah.expensemanager.db.AppDatabase;
+import com.shael.shah.expensemanager.db.Expense;
+//import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
+//import com.shael.shah.expensemanager.model.Expense;
+//import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -37,8 +40,10 @@ public class OverviewFragment extends Fragment {
     private static final String SHAREDPREF_DISPLAY_OPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAY_OPTION";
     private static final String SHAREDPREF_TIME_PERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIME_PERIOD";
 
+    private AppDatabase appDatabase;
+
     private TimePeriod timePeriod;
-    private String displayExpensesOption;
+//    private String displayExpensesOption;
     private List<Expense> expenses;
 
     private TextView timePeriodTextView;
@@ -60,6 +65,8 @@ public class OverviewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        appDatabase = AppDatabase.getAppDatabase(getActivity().getApplicationContext());
+
         //Helper functions
         getLists();
         createRecurringExpenses();
@@ -77,18 +84,18 @@ public class OverviewFragment extends Fragment {
         expensesTextView = (TextView) view.findViewById(R.id.expensesTextView);
 
         timePeriod = getTimePeriodFromSharedPreferences();
-        displayExpensesOption = getDisplayOptionFromSharedPreferences();
+//        displayExpensesOption = getDisplayOptionFromSharedPreferences();
 
-        setActionListeners();
+        //setActionListeners();
         populateMoneyTextViews();
         setDateRangeTextView();
 
         if (savedInstanceState == null) {
-            Log.d("ANIMATION", displayExpensesOption);
-            Fragment fragment = displayExpensesOption.equalsIgnoreCase("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
-            fragment.setArguments(bundle);
+            //Fragment fragment = displayExpensesOption.equalsIgnoreCase("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
+            Fragment fragment = new SegmentsFragment();
+            //Bundle bundle = new Bundle();
+            //bundle.putParcelableArrayList(EXTRA_EXPENSE_LIST, (ArrayList<Expense>) getDateRangeExpenses());
+            //fragment.setArguments(bundle);
             getFragmentManager().beginTransaction().add(R.id.displayExpensesAnimationFrameLayout, fragment).commit();
         }
 
@@ -117,14 +124,15 @@ public class OverviewFragment extends Fragment {
      *  corresponding global variables.
      */
     private void getLists() {
-        expenses = DataSingleton.getInstance(getActivity()).getExpenses();
+        //expenses = DataSingleton.getInstance(getActivity()).getExpenses();
+        expenses = appDatabase.expenseDao().getAllExpenses();
     }
 
     /*
      *  Saves all expenses and categories to sharedPreferences.
      */
     private void setLists() {
-        DataSingleton.getInstance(getActivity()).saveLists();
+        //DataSingleton.getInstance(getActivity()).saveLists();
     }
 
     /*
@@ -141,7 +149,7 @@ public class OverviewFragment extends Fragment {
 
         List<Expense> newExpenses = new ArrayList<>();
         for (Expense e : expenses) {
-            if (e.isRecurring()) {
+            if (!e.getRecurringPeriod().equals("None")) {
                 calendar.setTime(e.getDate());
 
                 //TODO: Bi-weekly should also be an option (maybe even custom ranges).
@@ -171,14 +179,14 @@ public class OverviewFragment extends Fragment {
                             .recurringPeriod(e.getRecurringPeriod())
                             .paymentMethod(e.getPaymentMethod())
                             .build();
-                    e.setRecurring(false);
+                    e.setRecurringPeriod("None");
                     newExpenses.add(newExpense);
                 }
             }
         }
 
         for (Expense e : newExpenses) {
-            DataSingleton.getInstance().addExpense(e);
+            appDatabase.expenseDao().insert(e);
         }
 
     }
@@ -364,7 +372,7 @@ public class OverviewFragment extends Fragment {
          *  Currently only works for the current day, week, month or year.
          *  Does not allow for custom date ranges.
          */
-        timePeriodTextView.setOnClickListener(new View.OnClickListener() {
+        /*timePeriodTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -420,7 +428,7 @@ public class OverviewFragment extends Fragment {
                     }
                 });
             }
-        });
+        });*/
     }
 
     /*****************************************************************

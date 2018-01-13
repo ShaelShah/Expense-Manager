@@ -5,17 +5,17 @@ import android.os.Parcelable;
 
 import java.util.Objects;
 
-public class Category implements Parcelable {
+public class Category /*implements Parcelable*/ {
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Category createFromParcel(Parcel in) {
-            return new Category(in);
-        }
-
-        public Category[] newArray(int size) {
-            return new Category[size];
-        }
-    };
+//    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+//        public Category createFromParcel(Parcel in) {
+//            return new Category(in);
+//        }
+//
+//        public Category[] newArray(int size) {
+//            return new Category[size];
+//        }
+//    };
 
     private String type;
     private int color;
@@ -25,10 +25,10 @@ public class Category implements Parcelable {
         this.color = color;
     }
 
-    private Category(Parcel parcel) {
-        this.type = parcel.readString();
-        this.color = parcel.readInt();
-    }
+//    private Category(Parcel parcel) {
+//        this.type = parcel.readString();
+//        this.color = parcel.readInt();
+//    }
 
     public String getType() {
         return type;
@@ -59,14 +59,14 @@ public class Category implements Parcelable {
         return Objects.hash(type, color);
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(type);
-        parcel.writeInt(color);
-    }
+//    @Override
+//    public void writeToParcel(Parcel parcel, int flags) {
+//        parcel.writeString(type);
+//        parcel.writeInt(color);
+//    }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
 }

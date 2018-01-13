@@ -44,12 +44,12 @@ public class LandingActivity extends Activity {
         setContentView(R.layout.landing_activity);
 
         //Setup toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.mainActivityToolbar);
+        Toolbar toolbar = findViewById(R.id.mainActivityToolbar);
         setActionBar(toolbar);
 
         //Find views to work with during this activity
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigationView);
 
         //Helper functions
         setupDrawer();
@@ -87,7 +87,7 @@ public class LandingActivity extends Activity {
                 if (fragment != null)
                     getFragmentManager().beginTransaction().replace(R.id.fragmentFrameLayout, fragment).commit();
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(Gravity.START);
                 return true;
             }
@@ -96,6 +96,8 @@ public class LandingActivity extends Activity {
         //Setup initial fragment
         getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, new OverviewFragment()).commit();
     }
+
+
 
     /*****************************************************************
      * Menu Methods
@@ -108,24 +110,11 @@ public class LandingActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
 
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item))
             return true;
-        }
 
         switch (item.getItemId()) {
-
             case R.id.add_expense:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
-                startActivity(addExpenseIntent);
-                return true;
-
-            case R.id.add_recurring_expense:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
-                startActivity(addExpenseIntent);
-                return false;
-
-            case R.id.add_income:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                 startActivity(addExpenseIntent);
                 return true;
 

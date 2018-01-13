@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,9 +25,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.model.Category;
-import com.shael.shah.expensemanager.model.Expense;
-import com.shael.shah.expensemanager.utils.DataSingleton;
+import com.shael.shah.expensemanager.db.AppDatabase;
+import com.shael.shah.expensemanager.db.Category;
+import com.shael.shah.expensemanager.db.Expense;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -47,8 +48,11 @@ public class AddExpenseActivity extends Activity {
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
 
+    private AppDatabase appDatabase;
+
     private LinearLayout toolbarLinearLayout;
     private EditText amountEditText;
+    private CheckBox incomeCheckbox;
     private EditText dateEditText;
     private EditText locationEditText;
     private EditText noteEditText;
@@ -73,8 +77,9 @@ public class AddExpenseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_expense);
 
-        String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
+        /*String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
         switch (expenseType) {
             case "Normal":
                 setContentView(R.layout.activity_add_expense);
@@ -98,23 +103,30 @@ public class AddExpenseActivity extends Activity {
                 createRecurringSpinnerRows();
                 createPaymentSpinnerRows();
                 break;
-        }
+        }*/
 
+        appDatabase = AppDatabase.getAppDatabase(getApplicationContext());
 
         //Find views to work with during add expense activity
-        toolbarLinearLayout = (LinearLayout) findViewById(R.id.toolbarLinearLayout);
-        categoryScrollView = (ScrollView) findViewById(R.id.categoryScrollView);
-        amountEditText = (EditText) findViewById(R.id.amountEditText);
-        dateEditText = (EditText) findViewById(R.id.dateEditText);
-        locationEditText = (EditText) findViewById(R.id.locationEditText);
-        noteEditText = (EditText) findViewById(R.id.noteEditText);
+        toolbarLinearLayout = findViewById(R.id.toolbarLinearLayout);
+        categoryScrollView = findViewById(R.id.categoryScrollView);
+        amountEditText = findViewById(R.id.amountEditText);
+        incomeCheckbox = findViewById(R.id.incomeCheckbox);
+        dateEditText = findViewById(R.id.dateEditText);
+        locationEditText = findViewById(R.id.locationEditText);
+        noteEditText = findViewById(R.id.noteEditText);
+        paymentSpinner = findViewById(R.id.paymentSpinner);
+        recurringSpinner = findViewById(R.id.recurringSpinner);
 
-        categories = DataSingleton.getInstance().getCategories();
+        //categories = DataSingleton.getInstance().getCategories();
+        categories = appDatabase.categoryDao().getAllCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
         populateInfoFields();
+        createRecurringSpinnerRows();
+        createPaymentSpinnerRows();
 
         //Disables keyboard from automatically popping up when this activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -130,19 +142,29 @@ public class AddExpenseActivity extends Activity {
      *  Returns true on a successful save of the expense, false otherwise.
      */
     private boolean saveExpense() {
-        BigDecimal amount;
-        Date date;
+        String amountString;
+        BigDecimal amount = null;
+        Date date = null;
         Category category = null;
 
-        NumberFormat format = NumberFormat.getCurrencyInstance();
         try {
-            amountEditText.setText(format.format(Double.parseDouble(amountEditText.getText().toString())));
+            NumberFormat format = NumberFormat.getCurrencyInstance();
+            amountString = format.format(Double.parseDouble(amountEditText.getText().toString())).replaceAll("[^\\d.]", "");
+            amount = new BigDecimal(amountString);
+            date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
         } catch (NumberFormatException e) {
             e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
+            return false;
+        } catch (ParseException e) {
+            Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
+            return false;
         }
-        String amountString = amountEditText.getText().toString().replaceAll("[^\\d.]", "");
 
-        try {
+        //amountString = amountEditText.getText().toString().replaceAll("[^\\d.]", "");
+
+        /*try {
             amount = new BigDecimal(amountString);
         } catch (IllegalArgumentException e) {
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
@@ -150,6 +172,7 @@ public class AddExpenseActivity extends Activity {
         }
 
         try {
+            date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString())
             if (dateEditText.getText().toString().equals("Today")) {
                 date = Calendar.getInstance().getTime();
             } else {
@@ -158,7 +181,7 @@ public class AddExpenseActivity extends Activity {
         } catch (ParseException e) {
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
-        }
+        }*/
 
         if (locationEditText.getText().length() == 0) {
             Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
@@ -181,16 +204,20 @@ public class AddExpenseActivity extends Activity {
             }
         }
 
-        String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
+//        String expenseType = getIntent().getStringExtra(EXTRA_EXPENSE_TYPE);
         if (category == null) {
-            if (!expenseType.equals("Income")) {
-                Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
-                return false;
-            }
+//            if (!expenseType.equals("Income")) {
+            Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
+            return false;
+//            }
         }
 
         Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note);
-        switch (expenseType) {
+        builder.income(incomeCheckbox.isChecked());
+        builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
+        builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
+
+        /*switch (expenseType) {
             case "Normal":
                 builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
                 break;
@@ -216,9 +243,9 @@ public class AddExpenseActivity extends Activity {
                         .recurringPeriod(recurringSpinner.getSelectedItem().toString())
                         .paymentMethod(paymentSpinner.getSelectedItem().toString());
                 break;
-        }
+        }*/
 
-        DataSingleton.getInstance(this).addExpense(builder.build());
+        appDatabase.expenseDao().insert(builder.build());
         return true;
     }
 
@@ -290,10 +317,9 @@ public class AddExpenseActivity extends Activity {
                 }
             });
 
-            //TODO: May be beneficial to move away from Java Date class
             dateEditText.setText(R.string.today);
             dateEditText.setOnClickListener(dateListener);
-        } else {
+        } /*else {
             Button save = createToolbarButton("Update");
             Button delete = createToolbarButton("Delete");
             View lineTwo = createDividerView();
@@ -308,7 +334,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
-                    DataSingleton.getInstance().removeExpense(expense);
+                    appDatabase.expenseDao().delete(expense);
 
                     if (saveExpense()) {
                         Intent intent = new Intent(AddExpenseActivity.this, LandingActivity.class);
@@ -322,7 +348,7 @@ public class AddExpenseActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Expense expense = getIntent().getParcelableExtra(EXTRA_EXPENSE_OBJECT);
-                    if (DataSingleton.getInstance().removeExpense(expense))
+                    if (appDatabase.expenseDao().delete(expense) != 0)
                         Toast.makeText(AddExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
                     else
                         Toast.makeText(AddExpenseActivity.this, "Could not find Expense", Toast.LENGTH_LONG).show();
@@ -367,7 +393,7 @@ public class AddExpenseActivity extends Activity {
                     }
                 }
             }
-        }
+        }*/
     }
 
     /*
@@ -375,16 +401,16 @@ public class AddExpenseActivity extends Activity {
      *  plus a row for "add category..."
      */
     private void createCategoryRows() {
-        LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
+        LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
         for (int i = 0; i < categories.size(); i++) {
             //TODO: Look into View.inflate method (specifically the 3rd parameter)
             View item = View.inflate(this, R.layout.category_select_row_layout, null);
 
             View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(categories.get(i).getColor());
+            colorBox.setBackgroundColor(categories.get(i).getColour());
 
-            RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
+            RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
             categoryRadioButton.setText(categories.get(i).getType());
             categoryRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -423,20 +449,22 @@ public class AddExpenseActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
 
                 Dialog categoryDialog = (Dialog) dialog;
-                EditText categoryNameEditText = (EditText) categoryDialog.findViewById(R.id.categoryNameEditText);
+                EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
 
-                if (DataSingleton.getInstance().addCategory(categoryNameEditText.getText().toString())) {
-                    DataSingleton.getInstance().saveLists();
+                Category newCategory = new Category(categoryNameEditText.getText().toString());
+                if (appDatabase.categoryDao().insert(newCategory) != 0) {
+                    //DataSingleton.getInstance().saveLists();
+                    categories.add(newCategory);
 
-                    LinearLayout scrollLinearLayout = (LinearLayout) categoryScrollView.findViewById(R.id.scrollLinearLayout);
+                    LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
                     //TODO: Look into View.inflate method (specifically the 3rd parameter)
                     View item = View.inflate(AddExpenseActivity.this, R.layout.category_select_row_layout, null);
 
                     View colorBox = item.findViewById(R.id.colorView);
-                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColor());
+                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColour());
 
-                    RadioButton categoryRadioButton = (RadioButton) item.findViewById(R.id.categoryRadioButton);
+                    RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
                     categoryRadioButton.setText(categories.get(categories.size() - 1).getType());
                     categoryRadioButton.setOnClickListener(new View.OnClickListener() {
@@ -469,7 +497,7 @@ public class AddExpenseActivity extends Activity {
      *  Helper function used to populate the recurring period spinner.
      */
     private void createRecurringSpinnerRows() {
-        String recurringItems[] = new String[]{"Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly", "None"};
+        String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
         recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
         recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recurringSpinner.setAdapter(recurringSpinnerAdapter);

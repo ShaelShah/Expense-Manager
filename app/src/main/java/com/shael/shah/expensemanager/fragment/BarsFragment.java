@@ -36,7 +36,7 @@ public class BarsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
+        //expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BarsFragment extends Fragment {
      *  Initially removes all child views from the parent.
      */
     private void populateMainCategoryRows() {
-        List<Category> categories = DataSingleton.getInstance().getCategories();
+        /*//List<Category> categories = DataSingleton.getInstance().getCategories();
         //TODO: This function can be better optimized, instead of looping through all expenses for each category, loop through the expenses once and assign temporary lists for each category
         LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
 
@@ -126,7 +126,7 @@ public class BarsFragment extends Fragment {
             }
         }
 
-        startAnimations();
+        startAnimations();*/
     }
 
 

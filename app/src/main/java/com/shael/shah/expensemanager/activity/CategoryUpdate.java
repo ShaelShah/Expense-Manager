@@ -24,7 +24,7 @@ public class CategoryUpdate extends Activity {
         setContentView(R.layout.category_update_layout);
 
         linearLayout = (LinearLayout) findViewById(R.id.categoryUpdateLinearLayout);
-        categories = DataSingleton.getInstance().getCategories();
+//        categories = DataSingleton.getInstance().getCategories();
 
         createCategoryRows();
     }

@@ -38,19 +38,19 @@ public class DataSingleton {
         currentColor = getColorFromSharedPreferences();
     }
 
-    public static DataSingleton getInstance(Context context) {
-        if (instance == null) {
-            instance = new DataSingleton(context.getApplicationContext());
-        }
-        return instance;
-    }
+//    public static DataSingleton getInstance(Context context) {
+//        if (instance == null) {
+//            instance = new DataSingleton(context.getApplicationContext());
+//        }
+//        return instance;
+//    }
 
-    public static DataSingleton getInstance() {
-        if (instance != null)
-            return instance;
-
-        throw new IllegalArgumentException("DataSingleton has not been initialized");
-    }
+//    public static DataSingleton getInstance() {
+//        if (instance != null)
+//            return instance;
+//
+//        throw new IllegalArgumentException("DataSingleton has not been initialized");
+//    }
 
     public List<Expense> getExpenses() {
         return expenses;

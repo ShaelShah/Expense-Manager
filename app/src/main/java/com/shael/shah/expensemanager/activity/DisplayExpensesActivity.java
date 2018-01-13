@@ -23,9 +23,12 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.model.Category;
-import com.shael.shah.expensemanager.model.Expense;
-import com.shael.shah.expensemanager.utils.DataSingleton;
+import com.shael.shah.expensemanager.db.AppDatabase;
+import com.shael.shah.expensemanager.db.Expense;
+import com.shael.shah.expensemanager.db.Category;
+//import com.shael.shah.expensemanager.model.Category;
+//import com.shael.shah.expensemanager.model.Expense;
+//import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -50,8 +53,10 @@ public class DisplayExpensesActivity extends Activity {
     private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
     private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
 
-    private ArrayList<Expense> allExpenses;
-    private ArrayList<Expense> filteredExpenses;
+    private AppDatabase appDatabase;
+
+    private List<Expense> expenses;
+//    private ArrayList<Expense> filteredExpenses;
 
     private boolean amountSort = true;
     private boolean locationSort = true;
@@ -74,29 +79,34 @@ public class DisplayExpensesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_expenses);
 
-        Intent intent = getIntent();
-        allExpenses = intent.getParcelableArrayListExtra(EXTRA_EXPENSES_DISPLAY);
-        filteredExpenses = allExpenses;
-        String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
+//        Intent intent = getIntent();
+//        allExpenses = intent.getParcelableArrayListExtra(EXTRA_EXPENSES_DISPLAY);
+//        filteredExpenses = allExpenses;
+//        String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.displayExpensesActivityToolbar);
         setActionBar(toolbar);
+
+        appDatabase = AppDatabase.getAppDatabase(getApplicationContext());
 
         //Find views to work with during this activity
         amountIncomesTextView = (TextView) findViewById(R.id.amountIncomesTextView);
         amountExpensesTextView = (TextView) findViewById(R.id.amountExpensesTextView);
 
-        if (title.equals("Incomes"))
-            amountExpensesTextView.setVisibility(View.GONE);
+//        if (title.equals("Incomes"))
+//            amountExpensesTextView.setVisibility(View.GONE);
 
-        if (title.equals("Expenses"))
-            amountIncomesTextView.setVisibility(View.GONE);
+//        if (title.equals("Expenses"))
+//            amountIncomesTextView.setVisibility(View.GONE);
 
         expensesTitleScrollView = (ScrollView) findViewById(R.id.expensesTitleScrollView);
         TextView expensesTitleTextView = (TextView) findViewById(R.id.expensesTitleTextView);
-        expensesTitleTextView.setText(title);
+//        expensesTitleTextView.setText(title);
+        expensesTitleTextView.setText("Expenses");
 
-        populateScrollView(allExpenses);
+//        populateScrollView(allExpenses);
+        expenses = appDatabase.expenseDao().getAllExpenses();
+        populateScrollView(expenses);
     }
 
     /*****************************************************************
@@ -120,11 +130,11 @@ public class DisplayExpensesActivity extends Activity {
 
         switch (item.getItemId()) {
             case R.id.filter:
-                createFilterDialog();
+//                createFilterDialog();
                 return true;
 
             case R.id.sort_amount:
-                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                Collections.sort(expenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
                         if (amountSort)
@@ -135,11 +145,11 @@ public class DisplayExpensesActivity extends Activity {
                 });
 
                 amountSort = !amountSort;
-                populateScrollView(filteredExpenses);
+                populateScrollView(expenses);
                 return true;
 
             case R.id.sort_location:
-                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                Collections.sort(expenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
                         if (locationSort)
@@ -150,7 +160,7 @@ public class DisplayExpensesActivity extends Activity {
                 });
 
                 locationSort = !locationSort;
-                populateScrollView(filteredExpenses);
+                populateScrollView(expenses);
                 return true;
 
             default:
@@ -163,9 +173,9 @@ public class DisplayExpensesActivity extends Activity {
      *  Creates a dialog (Filter Dialog) which allows the user to select filtering options.
      *  Inflates a filter_options_dialog layout.
      */
-    private void createFilterDialog() {
+    /*private void createFilterDialog() {
         final List<RadioButton> categoryRadioButtons = new ArrayList<>();
-        final List<Category> categories = DataSingleton.getInstance().getCategories();
+        final List<Category> categories = appDatabase.categoryDao().getAllCategories();
 
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -208,11 +218,11 @@ public class DisplayExpensesActivity extends Activity {
 
         for (Category c : categories) {
             categoryScrollLinearLayout.addView(createLine());
-            categoryScrollLinearLayout.addView(inflateCategorySelectRow(c.getType(), c.getColor(), false, categoryRadioButtons));
+            categoryScrollLinearLayout.addView(inflateCategorySelectRow(c.getType(), c.getColour(), false, categoryRadioButtons));
         }
 
         HashSet<String> locationsSet = new HashSet<>();
-        for (Expense e : allExpenses)
+        for (Expense e : expenses)
             locationsSet.add(e.getLocation());
 
         LinearLayout locationScrollLinearLayout = (LinearLayout) view.findViewById(R.id.displayExpensesLocationsLinearLayout);
@@ -268,12 +278,12 @@ public class DisplayExpensesActivity extends Activity {
 
                 List<Expense> categoryExpenses = new ArrayList<>();
                 if (category != null && !category.equals("") && !category.equals("All")) {
-                    for (Expense e : allExpenses) {
+                    for (Expense e : expenses) {
                         if (e.getCategory().getType().equals(category))
                             categoryExpenses.add(e);
                     }
                 } else {
-                    categoryExpenses = allExpenses;
+                    categoryExpenses = expenses;
                 }
 
                 List<Expense> dateExpenses = new ArrayList<>();
@@ -302,7 +312,7 @@ public class DisplayExpensesActivity extends Activity {
                         locationExpenses.add(e);
                 }
 
-                filteredExpenses = (ArrayList<Expense>) locationExpenses;
+                expenses = (ArrayList<Expense>) locationExpenses;
                 populateScrollView(locationExpenses);
                 dialog.dismiss();
             }
@@ -311,7 +321,7 @@ public class DisplayExpensesActivity extends Activity {
         builder.setView(view);
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
+    }*/
 
     private View inflateExpenseDisplayRow(Expense expense) {
         //TODO: Figure out what this third parameter is for
@@ -319,7 +329,7 @@ public class DisplayExpensesActivity extends Activity {
 
         View view = item.findViewById(R.id.categoryColorView);
         //noinspection deprecation
-        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColor();
+        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColour();
         view.setBackgroundColor(color);
 
         TextView dateTextView = (TextView) item.findViewById(R.id.expenseDateTextView);
@@ -331,7 +341,7 @@ public class DisplayExpensesActivity extends Activity {
         locationTextView.setText(expense.getLocation());
         amountTextView.setText(getString(R.string.currency, expense.getAmount()));
 
-        final Expense temp = expense;
+        /*final Expense temp = expense;
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -347,7 +357,7 @@ public class DisplayExpensesActivity extends Activity {
 
                 startActivity(intent);
             }
-        });
+        });*/
 
         return item;
     }
