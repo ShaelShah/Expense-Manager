@@ -21,6 +21,7 @@ import com.shael.shah.expensemanager.utils.DataSingleton;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class BarsFragment extends Fragment {
@@ -36,7 +37,7 @@ public class BarsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
+        //expenses = getArguments().getParcelableArrayList(EXTRA_EXPENSE_LIST);
     }
 
     @Override
@@ -93,14 +94,14 @@ public class BarsFragment extends Fragment {
                 View item = View.inflate(getActivity(), R.layout.category_display_row_layout, null);
 
                 View colorBox = item.findViewById(R.id.mainColorView);
-                colorBox.setBackgroundColor(c.getColor());
+                colorBox.setBackgroundColor(c.getColour());
 
                 TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
                 categoryRowTitle.setText(title);
-                categoryRowTitle.setTextColor(c.getColor());
+                categoryRowTitle.setTextColor(c.getColour());
 
                 TextView categoryRowAmount = (TextView) item.findViewById(R.id.categoryRowAmount);
-                categoryRowAmount.setTextColor(c.getColor());
+                categoryRowAmount.setTextColor(c.getColour());
 
                 categoryRowAmount.setText(getString(R.string.currency, amount));
                 scrollLinearLayout.addView(item);
@@ -183,7 +184,7 @@ public class BarsFragment extends Fragment {
         v.startAnimation(anim);
     }
 
-    public void updateExpenses(List<Expense> expenses) {
+    public void updateExpenses(Date dateRange) {
         this.expenses = expenses;
         populateMainCategoryRows();
     }

@@ -1,15 +1,22 @@
 package com.shael.shah.expensemanager.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+//import android.os.Parcel;
+//import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-public class Expense implements Parcelable {
+@Entity
+//public class Expense implements Parcelable {
+public class Expense implements Serializable {
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    /*public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Expense createFromParcel(Parcel in) {
             return new Expense(in);
         }
@@ -17,17 +24,45 @@ public class Expense implements Parcelable {
         public Expense[] newArray(int size) {
             return new Expense[size];
         }
-    };
+    };*/
 
+    @PrimaryKey(autoGenerate = true)
+    private int expenseID;
+
+    @ColumnInfo
     private Date date;
+
+    @ColumnInfo
     private BigDecimal amount;
+
+    @Embedded
     private Category category;
+
+    @ColumnInfo
     private String location;
+
+    @ColumnInfo
     private String note;
-    private boolean recurring;
+
+    @ColumnInfo
     private boolean income;
+
+    @ColumnInfo
     private String recurringPeriod;
+
+    @ColumnInfo
     private String paymentMethod;
+
+    public Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean income, String recurringPeriod, String paymentMethod) {
+        this.date = date;
+        this.amount = amount;
+        this.category = category;
+        this.location = location;
+        this.note = note;
+        this.income = income;
+        this.recurringPeriod = recurringPeriod;
+        this.paymentMethod = paymentMethod;
+    }
 
     private Expense(Builder builder) {
         this.date = builder.date;
@@ -35,22 +70,28 @@ public class Expense implements Parcelable {
         this.category = builder.category;
         this.location = builder.location;
         this.note = builder.note;
-        this.recurring = builder.recurring;
         this.income = builder.income;
         this.recurringPeriod = builder.recurringPeriod;
         this.paymentMethod = builder.paymentMethod;
     }
 
-    private Expense(Parcel parcel) {
+    /*private Expense(Parcel parcel) {
         this.date = new Date(parcel.readLong());
         this.amount = new BigDecimal(parcel.readString());
         this.category = parcel.readParcelable(Category.class.getClassLoader());
         this.location = parcel.readString();
         this.note = parcel.readString();
-        this.recurring = parcel.readInt() != 0;
         this.income = parcel.readInt() != 0;
         this.recurringPeriod = parcel.readString();
         this.paymentMethod = parcel.readString();
+    }*/
+
+    public int getExpenseID() {
+        return expenseID;
+    }
+
+    public void setExpenseID(int expenseID) {
+        this.expenseID = expenseID;
     }
 
     public Date getDate() {
@@ -59,14 +100,6 @@ public class Expense implements Parcelable {
 
     public BigDecimal getAmount() {
         return amount;
-    }
-
-    public boolean isRecurring() {
-        return recurring;
-    }
-
-    public void setRecurring(boolean recurring) {
-        this.recurring = recurring;
     }
 
     public boolean isIncome() {
@@ -89,15 +122,19 @@ public class Expense implements Parcelable {
         return recurringPeriod;
     }
 
+    public void setRecurringPeriod(String recurringPeriod) {
+        this.recurringPeriod = recurringPeriod;
+    }
+
     public String getPaymentMethod() {
         return paymentMethod;
     }
 
     public String toCSV() {
         if (category == null)
-            return date.toString() + "," + amount.toString() + "," + "," + location + "," + note + "," + recurring + "," + income + "," + recurringPeriod + "," + paymentMethod;
+            return date.toString() + "," + amount.toString() + "," + "," + location + "," + note + "," + income + "," + recurringPeriod + "," + paymentMethod;
 
-        return date.toString() + "," + amount.toString() + "," + category.getType() + "," + location + "," + note + "," + recurring + "," + income + "," + recurringPeriod + "," + paymentMethod;
+        return date.toString() + "," + amount.toString() + "," + category.getType() + "," + location + "," + note + "," + income + "," + recurringPeriod + "," + paymentMethod;
     }
 
     @Override
@@ -118,7 +155,6 @@ public class Expense implements Parcelable {
 
         return (this.getDate().compareTo(expense.getDate()) == 0
                 && this.getAmount().compareTo(expense.getAmount()) == 0
-                && this.isRecurring() == expense.isRecurring()
                 && this.isIncome() == expense.isIncome()
                 && this.getLocation().equals(expense.getLocation())
                 && this.getNote().equals(expense.getNote())
@@ -128,17 +164,16 @@ public class Expense implements Parcelable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(date, amount, category, location, note, recurring, income, recurringPeriod, paymentMethod);
+        return Objects.hash(date, amount, category, location, note, income, recurringPeriod, paymentMethod);
     }
 
-    @Override
+    /*@Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeLong(date.getTime());
         parcel.writeString(amount.toString());
         parcel.writeParcelable(category, flags);
         parcel.writeString(location);
         parcel.writeString(note);
-        parcel.writeInt(recurring ? 1 : 0);
         parcel.writeInt(income ? 1 : 0);
         parcel.writeString(recurringPeriod);
         parcel.writeString(paymentMethod);
@@ -147,7 +182,7 @@ public class Expense implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
+    }*/
 
     public static class Builder {
 
@@ -157,7 +192,6 @@ public class Expense implements Parcelable {
         private final String location;
 
         private String note = "";
-        private boolean recurring = false;
         private boolean income = false;
         private String recurringPeriod = "";
         private String paymentMethod = "";
@@ -171,11 +205,6 @@ public class Expense implements Parcelable {
 
         public Builder note(String note) {
             this.note = note;
-            return this;
-        }
-
-        public Builder recurring(boolean recurring) {
-            this.recurring = recurring;
             return this;
         }
 

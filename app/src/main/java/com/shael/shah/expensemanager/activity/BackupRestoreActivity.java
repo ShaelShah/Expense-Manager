@@ -116,7 +116,7 @@ public class BackupRestoreActivity extends Activity {
     }
 
     private void CSVToExpenses(Uri uri) {
-        DataSingleton.getInstance().reset();
+        //DataSingleton.getInstance().reset();
         Log.d("Location", uri.toString());
         try {
             List<Category> categories = null;
@@ -124,11 +124,11 @@ public class BackupRestoreActivity extends Activity {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                if (!line.equals("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method") && !line.equals("Incomes") && !line.equals("Expenses")) {
+                if (!line.equals("Date,Amount,Category,Location,Note,Income,Recurring Period,Payment Method") && !line.contains("Incomes") && !line.contains("Expenses")) {
                     String[] parts = line.split(",");
 
-                    if (parts[6].equalsIgnoreCase("false")) {
-                        DataSingleton.getInstance().addCategory(parts[2]);
+                    if (parts[5].equalsIgnoreCase("false")) {
+                        //DataSingleton.getInstance().addCategory(parts[2]);
                         categories = DataSingleton.getInstance().getCategories();
                     }
 
@@ -144,12 +144,11 @@ public class BackupRestoreActivity extends Activity {
 
                     Expense expense = new Expense.Builder(new Date(parts[0]), new BigDecimal(parts[1]), category, parts[3])
                             .note(parts[4])
-                            .recurring(Boolean.parseBoolean(parts[5]))
-                            .income(Boolean.parseBoolean(parts[6]))
-                            .recurringPeriod(parts[7])
-                            .paymentMethod(parts[8])
+                            .income(Boolean.parseBoolean(parts[5]))
+                            .recurringPeriod(parts[6])
+                            .paymentMethod(parts[7])
                             .build();
-                    DataSingleton.getInstance().addExpense(expense);
+                    //DataSingleton.getInstance().addExpense(expense);
                 }
             }
         } catch (IOException e) {

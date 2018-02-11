@@ -22,20 +22,37 @@
         android:paddingRight="16dp"
         android:paddingTop="16dp">
 
-        <EditText
-            android:id="@+id/amountEditText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:fontFamily="sans-serif"
+            android:orientation="horizontal">
 
-            android:hint="$$$"
-            android:inputType="numberDecimal"
-            android:paddingBottom="10dp"
+            <CheckBox
+                android:id="@+id/incomeCheckbox"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_gravity="center"
+                android:text="Income"/>
 
-            android:paddingTop="10dp"
-            android:textAlignment="viewEnd"
-            android:textSize="40sp" />
+            <EditText
+                android:id="@+id/amountEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif"
+
+                android:hint="$$$"
+                android:inputType="numberDecimal"
+                android:paddingBottom="10dp"
+
+                android:paddingTop="10dp"
+                android:textAlignment="viewEnd"
+                android:textSize="40sp" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -166,6 +183,32 @@
 
             <Spinner
                 android:id="@+id/paymentSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAlignment="center">
+            </Spinner>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/recurringLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/recurringLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="Recurring Period" />
+
+            <Spinner
+                android:id="@+id/recurringSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"

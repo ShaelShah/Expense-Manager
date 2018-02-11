@@ -3,45 +3,47 @@ package com.shael.shah.expensemanager.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.shael.shah.expensemanager.R;
+import com.shael.shah.expensemanager.db.ApplicationDatabase;
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class DataSingleton {
 
-    private static final String SHAREDPREF_EXPENSES = "com.shael.shah.expensemanager.SHAREDPREF_EXPENSES";
-    private static final String SHAREDPREF_CATEGORIES = "com.shael.shah.expensemanager.SHAREDPREF_CATEGORIES";
-    private static final String SHAREDPREF_COLORS = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
+    private static final String SHAREDPREF_SETTINGS = "com.shael.shah.expensemanager.SHAREDPREF_SETTINGS";
+    private static final String SHAREDPREF_TIMEPERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIMEPERIOD";
+    private static final String SHAREDPREF_DISPLAYOPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAYOPTION";
+    private static final String SHAREDPREF_COLOUR = "com.shael.shah.expensemanager.SHAREDPREF_COLOURS";
+
+    private Context context;
 
     @SuppressLint("StaticFieldLeak")
     private static DataSingleton instance;
-    private static int currentColor = 0;
-    private Context context;
+    private ApplicationDatabase database;
+
     private List<Expense> expenses;
     private List<Category> categories;
-    private int[] colors;
+    private TimePeriod timePeriod;
+    private String displayOption;
+    private int currentColour;
 
     private DataSingleton(Context context) {
         this.context = context;
-
-        expenses = getExpensesListFromSharedPreferences();
-        categories = getCategoriesListFromSharedPreferences();
-        colors = context.getResources().getIntArray(R.array.categoryColors);
-        currentColor = getColorFromSharedPreferences();
+        database = ApplicationDatabase.getInstance(context);
+        getExpensesFromDatabase();
+        getCategoriesFromDatabase();
+        getSettingsFromSharedPref();
+        createRecurringExpenses();
     }
 
-    public static DataSingleton getInstance(Context context) {
-        if (instance == null) {
-            instance = new DataSingleton(context.getApplicationContext());
-        }
+    public static DataSingleton init(Context context) {
+        if (instance == null)
+            instance = new DataSingleton(context);
+
         return instance;
     }
 
@@ -49,7 +51,26 @@ public class DataSingleton {
         if (instance != null)
             return instance;
 
-        throw new IllegalArgumentException("DataSingleton has not been initialized");
+        throw new IllegalStateException("Database has not been initialized");
+    }
+
+    public static void destroyInstance() {
+        instance = null;
+    }
+
+    private void getExpensesFromDatabase() {
+        expenses = database.expenseDao().getAllExpenses();
+    }
+
+    private void getCategoriesFromDatabase() {
+        categories = database.categoryDao().getAllCategories();
+    }
+
+    private void getSettingsFromSharedPref() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE);
+        timePeriod = TimePeriod.fromInteger(sharedPreferences.getInt(SHAREDPREF_TIMEPERIOD, 2));
+        displayOption = sharedPreferences.getString(SHAREDPREF_DISPLAYOPTION, "CIRCLE");
+        currentColour = sharedPreferences.getInt(SHAREDPREF_COLOUR, 0);
     }
 
     public List<Expense> getExpenses() {
@@ -60,124 +81,133 @@ public class DataSingleton {
         return categories;
     }
 
-    public void addExpense(Expense expense) {
-        boolean added = false;
+    public int getCurrentColour() {
+        return currentColour;
+    }
 
-        if (!expenses.isEmpty()) {
-            for (int i = 0; i < expenses.size(); i++) {
-                if (expense.getDate().compareTo(expenses.get(i).getDate()) >= 0) {
-                    expenses.add(i, expense);
-                    added = true;
-                    break;
+    public TimePeriod getTimePeriod() {
+        return timePeriod;
+    }
+
+    public String getDisplayOption() {
+        return displayOption;
+    }
+
+    public void updateDatabase() {
+        database.expenseDao().update(expenses);
+        database.categoryDao().update(categories);
+        updateSettings();
+    }
+
+    public void addCategory(Category category) {
+        database.categoryDao().insert(category);
+    }
+
+    public void addExpense(Expense expense) {
+        database.expenseDao().insert(expense);
+    }
+
+    public void deleteExpense(Expense expense) {
+        database.expenseDao().delete(expense);
+    }
+
+    private void updateSettings() {
+        SharedPreferences.Editor editor = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE).edit();
+        editor.putInt(SHAREDPREF_TIMEPERIOD, TimePeriod.toInteger(timePeriod));
+        editor.putString(SHAREDPREF_DISPLAYOPTION, displayOption);
+        editor.putInt(SHAREDPREF_COLOUR, currentColour);
+        editor.apply();
+    }
+
+    private void createRecurringExpenses() {
+        Calendar calendar = Calendar.getInstance();
+
+        List<Expense> newExpenses = new ArrayList<>();
+        for (Expense e : expenses) {
+            if (!e.getRecurringPeriod().equals("None")) {
+                calendar.setTime(e.getDate());
+
+                switch (e.getRecurringPeriod()) {
+                    case "Daily":
+                        calendar.add(Calendar.DATE, 1);
+                        break;
+                    case "Weekly":
+                        calendar.add(Calendar.DATE, 7);
+                        break;
+                    case "Bi-Weekly":
+                        calendar.add(Calendar.DATE, 14);
+                        break;
+                    case "Monthly":
+                        calendar.add(Calendar.MONTH, 1);
+                        break;
+                    case "Yearly":
+                        calendar.add(Calendar.YEAR, 1);
+                        break;
+                }
+
+                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
+                    Expense newExpense = new Expense.Builder(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation())
+                            .note(e.getNote())
+                            .income(e.isIncome())
+                            .recurringPeriod(e.getRecurringPeriod())
+                            .paymentMethod(e.getPaymentMethod())
+                            .build();
+                    e.setRecurringPeriod("None");
+                    newExpenses.add(newExpense);
                 }
             }
         }
 
-        if (!added)
-            expenses.add(expense);
+        expenses.addAll(newExpenses);
     }
 
-    public boolean removeExpense(Expense expense) {
-        for (Expense e : expenses) {
-            if (e.equals(expense)) {
-                expenses.remove(expense);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public Boolean addCategory(String category) {
+    public boolean checkCategory(String category) {
         for (Category c : categories) {
             if (c.getType().equals(category)) {
                 return false;
             }
         }
 
-        categories.add(new Category(category, colors[currentColor++]));
         return true;
     }
 
-    public void saveLists() {
-        setSharedPreferences(expenses, SHAREDPREF_EXPENSES);
-        setSharedPreferences(categories, SHAREDPREF_CATEGORIES);
-        setSharedPreferenceColor(currentColor);
-    }
+    public enum TimePeriod {
+        DAILY,
+        WEEKLY,
+        MONTHLY,
+        YEARLY,
+        ALL;
 
-    private List<Expense> getExpensesListFromSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(SHAREDPREF_EXPENSES, "");
-
-        Type type = new TypeToken<List<Expense>>() {
-        }.getType();
-        List<Expense> expenses = gson.fromJson(json, type);
-
-        if (expenses == null || expenses.isEmpty()) {
-            return new ArrayList<>();
+        public static TimePeriod fromInteger(int x) {
+            switch (x) {
+                case 0:
+                    return DAILY;
+                case 1:
+                    return WEEKLY;
+                case 2:
+                    return MONTHLY;
+                case 3:
+                    return YEARLY;
+                case 4:
+                    return ALL;
+            }
+            return MONTHLY;
         }
 
-        return expenses;
-    }
-
-    private List<Category> getCategoriesListFromSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(SHAREDPREF_CATEGORIES, "");
-
-        Type type = new TypeToken<List<Category>>() {
-        }.getType();
-        List<Category> categories = gson.fromJson(json, type);
-
-        if (categories == null || categories.isEmpty()) {
-            return new ArrayList<>();
+        public static int toInteger(TimePeriod timePeriod) {
+            switch (timePeriod) {
+                case DAILY:
+                    return 0;
+                case WEEKLY:
+                    return 1;
+                case MONTHLY:
+                    return 2;
+                case YEARLY:
+                    return 3;
+                case ALL:
+                    return 4;
+            }
+            return 2;
         }
-
-        return categories;
-    }
-
-    private int getColorFromSharedPreferences() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt(SHAREDPREF_COLORS, 0);
-    }
-
-    private void setSharedPreferences(List<?> list, String tag) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
-
-        Gson gson = new Gson();
-        String json = gson.toJson(list);
-
-        prefEditor.putString(tag, json);
-        prefEditor.apply();
-    }
-
-    private void setSharedPreferenceColor(int stopColor) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
-
-        prefEditor.putInt(SHAREDPREF_COLORS, stopColor);
-        prefEditor.apply();
-    }
-
-    private void removeAllCategories() {
-        categories.clear();
-    }
-
-    private void removeAllExpenses() {
-        expenses.clear();
-    }
-
-    private void resetColor() {
-        currentColor = 0;
-    }
-
-    public void reset() {
-        removeAllExpenses();
-        removeAllCategories();
-        resetColor();
     }
 }

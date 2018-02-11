@@ -35,7 +35,7 @@ public class CategoryUpdate extends Activity {
             View item = View.inflate(this, R.layout.category_select_row_layout, null);
 
             View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(categories.get(i).getColor());
+            colorBox.setBackgroundColor(categories.get(i).getColour());
 
             linearLayout.addView(item);
             linearLayout.addView(createSeparatorView());

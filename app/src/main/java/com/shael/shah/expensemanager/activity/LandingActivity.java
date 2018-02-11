@@ -14,8 +14,8 @@ import android.view.MenuItem;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
+import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.fragment.OverviewFragment;
-import com.shael.shah.expensemanager.fragment.SettingsFragment;
 
 public class LandingActivity extends Activity {
 
@@ -23,7 +23,9 @@ public class LandingActivity extends Activity {
      * Private Variables
      ******************************************************************/
 
-    private static final String EXTRA_EXPENSE_TYPE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_TYPE";
+    //private DataSingleton instance;
+    private DataSingleton instance;
+
     private static String currentFragment = "";
 
     private ActionBarDrawerToggle drawerToggle;
@@ -43,13 +45,16 @@ public class LandingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_activity);
 
+        //TODO: Do this asynchronously
+        instance = DataSingleton.init(getApplicationContext());
+
         //Setup toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.mainActivityToolbar);
+        Toolbar toolbar = findViewById(R.id.mainActivityToolbar);
         setActionBar(toolbar);
 
         //Find views to work with during this activity
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigationView);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.navigationView);
 
         //Helper functions
         setupDrawer();
@@ -73,13 +78,13 @@ public class LandingActivity extends Activity {
                     case R.id.history:
                         if (!currentFragment.equals("HISTORY")) {
                             //fragment = new HistoryFragment();
-                            currentFragment = "HISTORY";
+                            //currentFragment = "HISTORY";
                         }
                         break;
                     case R.id.settings:
                         if (!currentFragment.equals("SETTINGS")) {
-                            fragment = new SettingsFragment();
-                            currentFragment = "SETTINGS";
+                            //fragment = new SettingsFragment();
+                            //currentFragment = "SETTINGS";
                         }
                         break;
                 }
@@ -87,7 +92,7 @@ public class LandingActivity extends Activity {
                 if (fragment != null)
                     getFragmentManager().beginTransaction().replace(R.id.fragmentFrameLayout, fragment).commit();
 
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(Gravity.START);
                 return true;
             }
@@ -95,6 +100,12 @@ public class LandingActivity extends Activity {
 
         //Setup initial fragment
         getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, new OverviewFragment()).commit();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        instance.updateDatabase();
     }
 
     /*****************************************************************
@@ -108,24 +119,11 @@ public class LandingActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
 
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle.onOptionsItemSelected(item))
             return true;
-        }
 
         switch (item.getItemId()) {
-
             case R.id.add_expense:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Normal");
-                startActivity(addExpenseIntent);
-                return true;
-
-            case R.id.add_recurring_expense:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Recurring");
-                startActivity(addExpenseIntent);
-                return false;
-
-            case R.id.add_income:
-                addExpenseIntent.putExtra(EXTRA_EXPENSE_TYPE, "Income");
                 startActivity(addExpenseIntent);
                 return true;
 
