@@ -84,7 +84,7 @@ public class DisplayExpensesActivity extends Activity {
         filteredExpenses = new ArrayList<>();
         for (Expense e : expenses) {
             if (e.getDate().compareTo(date) >= 0)
-                if ((title.equals("Income") && e.isIncome()) || (title.equals("Expenses") && !e.isIncome()) || title.equals("All Transactions"))
+                if ((title.equals("Incomes") && e.isIncome()) || (title.equals("Expenses") && !e.isIncome()) || title.equals("All Transactions"))
                     filteredExpenses.add(e);
         }
         populateScrollView(filteredExpenses);
@@ -155,7 +155,7 @@ public class DisplayExpensesActivity extends Activity {
 
         View view = item.findViewById(R.id.categoryColorView);
         //noinspection deprecation
-        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColour();
+        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColor();
         view.setBackgroundColor(color);
 
         TextView dateTextView = item.findViewById(R.id.expenseDateTextView);

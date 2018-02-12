@@ -93,7 +93,7 @@ public class SegmentsFragment extends Fragment {
 
             if (catAmount != 0) {
                 //Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 - prevAmount) + 90 - 2, c.getColor(), 255, 80);
-                Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 * (catAmount / total)) - 2, c.getColour(), 255, 80);
+                Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 * (catAmount / total)) - 2, c.getColor(), 255, 80);
                 prevAmount += 360 * (catAmount / total);
 
                 segments.add(segment);

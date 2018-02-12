@@ -20,13 +20,13 @@ public class DataSingletonRemoved {
 
     private static final String SHAREDPREF_EXPENSES = "com.shael.shah.expensemanager.SHAREDPREF_EXPENSES";
     private static final String SHAREDPREF_CATEGORIES = "com.shael.shah.expensemanager.SHAREDPREF_CATEGORIES";
-    private static final String SHAREDPREF_COLOURS = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
+    private static final String SHAREDPREF_COLORS = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
     private static final String SHAREDPREF_TIME_PERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIME_PERIOD";
     private static final String SHAREDPREF_DISPLAY_OPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAY_OPTION";
 
 //    @SuppressLint("StaticFieldLeak")
 //    private static DataSingleton instance;
-    private static int currentColour = 0;
+    private static int currentColor = 0;
     private Context context;
     private List<Expense> expenses;
     private List<Category> categories;
@@ -65,8 +65,8 @@ public class DataSingletonRemoved {
         return categories;
     }
 
-    public int getCurrentColour() {
-        return currentColour;
+    public int getCurrentColor() {
+        return currentColor;
     }
 
     public boolean checkCategory(String category) {
@@ -114,14 +114,14 @@ public class DataSingletonRemoved {
             }
         }
 
-        categories.add(new Category(category, colours[currentColour++]));
+        categories.add(new Category(category, colours[currentColor++]));
         return true;
     }
 
     public void saveLists() {
         setSharedPreferences(expenses, SHAREDPREF_EXPENSES);
         setSharedPreferences(categories, SHAREDPREF_CATEGORIES);
-        setSharedPreferenceColor(currentColour);
+        setSharedPreferenceColor(currentColor);
     }
 
     /*public List<Expense> getExpensesAfterDate(Date dateRange) {

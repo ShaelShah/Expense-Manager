@@ -61,7 +61,7 @@ public class AddExpenseActivity extends Activity {
 
     private List<Expense> expenses;
     private List<Category> categories;
-    private int currentColour;
+    private int currentColor;
     private List<RadioButton> categoryRadioButtons;
     private ArrayAdapter<String> recurringSpinnerAdapter;
     private ArrayAdapter<String> paymentSpinnerAdapter;
@@ -94,7 +94,7 @@ public class AddExpenseActivity extends Activity {
         instance = DataSingleton.getInstance();
         expenses = instance.getExpenses();
         categories = instance.getCategories();
-        currentColour = instance.getCurrentColour();
+        currentColor = instance.getCurrentColor();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
@@ -121,11 +121,18 @@ public class AddExpenseActivity extends Activity {
         BigDecimal amount;
         Date date;
         Category category = null;
+        NumberFormat format = NumberFormat.getCurrencyInstance();
 
         try {
-            NumberFormat format = NumberFormat.getCurrencyInstance();
-            amountString = format.format(Double.parseDouble(amountEditText.getText().toString())).replaceAll("[^\\d.]", "");
-            amount = new BigDecimal(amountString);
+//            amountString = format.format(amountEditText.getText().toString()).replaceAll("[^\\d.]", "");
+            String amountEntered = amountEditText.getText().toString();
+            String amountEnteredParsed = amountEntered.replaceAll("[^\\d.]", "");
+            Double amountParsed = Double.parseDouble(amountEnteredParsed);
+            String formatted = format.format(amountParsed);
+            String stripped = formatted.replaceAll("[^\\d.]", "");
+            amount = new BigDecimal(stripped);
+//            amountString = format.format(amountEditText.getText().toString()).replaceAll("$", "");
+//            amount = new BigDecimal(amountString);
             date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Invalid Amount Format", Toast.LENGTH_LONG).show();
@@ -321,7 +328,7 @@ public class AddExpenseActivity extends Activity {
             View item = View.inflate(this, R.layout.category_select_row_layout, null);
 
             View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(categories.get(i).getColour());
+            colorBox.setBackgroundColor(categories.get(i).getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
@@ -365,8 +372,8 @@ public class AddExpenseActivity extends Activity {
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
                 String categoryToAdd = categoryNameEditText.getText().toString();
                 if (instance.checkCategory(categoryToAdd)) {
-                    categories.add(new Category(categoryToAdd, currentColour++));
-                    instance.addCategory(new Category(categoryToAdd, currentColour++));
+                    categories.add(new Category(categoryToAdd, currentColor++));
+                    instance.addCategory(new Category(categoryToAdd, currentColor++));
 
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
@@ -374,7 +381,7 @@ public class AddExpenseActivity extends Activity {
                     View item = View.inflate(AddExpenseActivity.this, R.layout.category_select_row_layout, null);
 
                     View colorBox = item.findViewById(R.id.colorView);
-                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColour());
+                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColor());
 
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);

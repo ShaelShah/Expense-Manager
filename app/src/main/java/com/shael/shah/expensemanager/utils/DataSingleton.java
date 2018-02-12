@@ -17,7 +17,7 @@ public class DataSingleton {
     private static final String SHAREDPREF_SETTINGS = "com.shael.shah.expensemanager.SHAREDPREF_SETTINGS";
     private static final String SHAREDPREF_TIMEPERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIMEPERIOD";
     private static final String SHAREDPREF_DISPLAYOPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAYOPTION";
-    private static final String SHAREDPREF_COLOUR = "com.shael.shah.expensemanager.SHAREDPREF_COLOURS";
+    private static final String SHAREDPREF_COLOR = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
 
     private Context context;
 
@@ -70,7 +70,7 @@ public class DataSingleton {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE);
         timePeriod = TimePeriod.fromInteger(sharedPreferences.getInt(SHAREDPREF_TIMEPERIOD, 2));
         displayOption = sharedPreferences.getString(SHAREDPREF_DISPLAYOPTION, "CIRCLE");
-        currentColour = sharedPreferences.getInt(SHAREDPREF_COLOUR, 0);
+        currentColour = sharedPreferences.getInt(SHAREDPREF_COLOR, 0);
     }
 
     public List<Expense> getExpenses() {
@@ -81,7 +81,7 @@ public class DataSingleton {
         return categories;
     }
 
-    public int getCurrentColour() {
+    public int getCurrentColor() {
         return currentColour;
     }
 
@@ -115,7 +115,7 @@ public class DataSingleton {
         SharedPreferences.Editor editor = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE).edit();
         editor.putInt(SHAREDPREF_TIMEPERIOD, TimePeriod.toInteger(timePeriod));
         editor.putString(SHAREDPREF_DISPLAYOPTION, displayOption);
-        editor.putInt(SHAREDPREF_COLOUR, currentColour);
+        editor.putInt(SHAREDPREF_COLOR, currentColour);
         editor.apply();
     }
 

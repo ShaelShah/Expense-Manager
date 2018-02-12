@@ -94,14 +94,14 @@ public class BarsFragment extends Fragment {
                 View item = View.inflate(getActivity(), R.layout.category_display_row_layout, null);
 
                 View colorBox = item.findViewById(R.id.mainColorView);
-                colorBox.setBackgroundColor(c.getColour());
+                colorBox.setBackgroundColor(c.getColor());
 
                 TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
                 categoryRowTitle.setText(title);
-                categoryRowTitle.setTextColor(c.getColour());
+                categoryRowTitle.setTextColor(c.getColor());
 
                 TextView categoryRowAmount = (TextView) item.findViewById(R.id.categoryRowAmount);
-                categoryRowAmount.setTextColor(c.getColour());
+                categoryRowAmount.setTextColor(c.getColor());
 
                 categoryRowAmount.setText(getString(R.string.currency, amount));
                 scrollLinearLayout.addView(item);

@@ -7,12 +7,12 @@ import java.math.BigDecimal;
 public class BigDecimalConverter {
 
     @TypeConverter
-    public static BigDecimal fromDouble(Double value) {
-        return value == null ? null : new BigDecimal(value);
+    public static BigDecimal fromLong(Long value) {
+        return value == null ? null : new BigDecimal(value).divide(new BigDecimal(100));
     }
 
     @TypeConverter
-    public static Double fromBigDecimal(BigDecimal value) {
-        return value == null ? null : value.doubleValue();
+    public static Long fromBigDecimal(BigDecimal value) {
+        return value == null ? null : value.multiply(new BigDecimal(100)).longValueExact();
     }
 }

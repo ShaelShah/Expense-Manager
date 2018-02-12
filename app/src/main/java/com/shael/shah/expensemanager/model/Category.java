@@ -30,16 +30,16 @@ public class Category implements Serializable {
     private String type;
 
     @ColumnInfo
-    private int colour;
+    private int color;
 
-    public Category(String type, int colour) {
+    public Category(String type, int color) {
         this.type = type;
-        this.colour = colour;
+        this.color = color;
     }
 
     /*private Category(Parcel parcel) {
         this.type = parcel.readString();
-        this.colour = parcel.readInt();
+        this.color = parcel.readInt();
     }*/
 
     public int getCategoryID() {
@@ -54,8 +54,8 @@ public class Category implements Serializable {
         return type;
     }
 
-    public int getColour() {
-        return colour;
+    public int getColor() {
+        return color;
     }
 
     @Override
@@ -71,18 +71,18 @@ public class Category implements Serializable {
 
         Category category = (Category) cat;
         return (this.getType().equals(category.getType())
-                && this.getColour() == category.getColour());
+                && this.getColor() == category.getColor());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, colour);
+        return Objects.hash(type, color);
     }
 
     /*@Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(type);
-        parcel.writeInt(colour);
+        parcel.writeInt(color);
     }
 
     @Override
