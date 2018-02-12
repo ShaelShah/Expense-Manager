@@ -84,7 +84,7 @@ public class BarsFragment extends Fragment {
             BigDecimal amount = new BigDecimal(0);
 
             for (Expense e : expenses) {
-                if (!e.isIncome() && e.getCategory().getType().equals(title)) {
+                if (!e.isDelete() && !e.isIncome() && e.getCategory().getType().equals(title)) {
                     amount = amount.add(e.getAmount());
                 }
             }

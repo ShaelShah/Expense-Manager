@@ -2,6 +2,7 @@ package com.shael.shah.expensemanager.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 //import android.os.Parcel;
 //import android.os.Parcelable;
@@ -32,9 +33,19 @@ public class Category implements Serializable {
     @ColumnInfo
     private int color;
 
+    @Ignore
+    private boolean insert;
+
     public Category(String type, int color) {
         this.type = type;
         this.color = color;
+    }
+
+    private Category(Builder builder) {
+        type = builder.type;
+        color = builder.color;
+
+        insert = true;
     }
 
     /*private Category(Parcel parcel) {
@@ -56,6 +67,10 @@ public class Category implements Serializable {
 
     public int getColor() {
         return color;
+    }
+
+    public boolean isInsert() {
+        return insert;
     }
 
     @Override
@@ -89,4 +104,19 @@ public class Category implements Serializable {
     public int describeContents() {
         return 0;
     }*/
+
+    public static class Builder {
+
+        private final String type;
+        private final int color;
+
+        public Builder(String type, int color) {
+            this.type = type;
+            this.color = color;
+        }
+
+        public Category build() {
+            return new Category(this);
+        }
+    }
 }

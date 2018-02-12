@@ -78,7 +78,7 @@ public class SegmentsFragment extends Fragment {
 
         float total = 0;
         for (Expense e : expensesToDisplay) {
-            if (!e.isIncome())
+            if (!e.isIncome() && !e.isDelete())
                 total += e.getAmount().floatValue();
         }
 

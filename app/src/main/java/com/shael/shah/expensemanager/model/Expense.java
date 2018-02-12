@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 //import android.os.Parcel;
 //import android.os.Parcelable;
@@ -53,6 +54,15 @@ public class Expense implements Serializable {
     @ColumnInfo
     private String paymentMethod;
 
+    @Ignore
+    private boolean insert = false;
+
+    @Ignore
+    private boolean update = false;
+
+    @Ignore
+    private boolean delete = false;
+
     public Expense(Date date, BigDecimal amount, Category category, String location, String note, boolean income, String recurringPeriod, String paymentMethod) {
         this.date = date;
         this.amount = amount;
@@ -65,14 +75,15 @@ public class Expense implements Serializable {
     }
 
     private Expense(Builder builder) {
-        this.date = builder.date;
-        this.amount = builder.amount;
-        this.category = builder.category;
-        this.location = builder.location;
-        this.note = builder.note;
-        this.income = builder.income;
-        this.recurringPeriod = builder.recurringPeriod;
-        this.paymentMethod = builder.paymentMethod;
+        date = builder.date;
+        amount = builder.amount;
+        category = builder.category;
+        location = builder.location;
+        note = builder.note;
+        income = builder.income;
+        recurringPeriod = builder.recurringPeriod;
+        paymentMethod = builder.paymentMethod;
+        insert = true;
     }
 
     /*private Expense(Parcel parcel) {
@@ -128,6 +139,30 @@ public class Expense implements Serializable {
 
     public String getPaymentMethod() {
         return paymentMethod;
+    }
+
+    public boolean isInsert() {
+        return insert;
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setInsert(boolean insert) {
+        this.insert = insert;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public String toCSV() {

@@ -9,7 +9,7 @@ import android.content.Context;
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
 
-@Database(entities = {Expense.class, Category.class}, version = 4)
+@Database(entities = {Expense.class, Category.class}, version = 7)
 @TypeConverters({DateConverter.class, BigDecimalConverter.class})
 public abstract class ApplicationDatabase extends RoomDatabase {
 

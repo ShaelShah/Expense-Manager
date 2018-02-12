@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer-array name="categoryColours">
+    <integer-array name="categoryColors">
         <item>@color/red</item>
         <item>@color/pink</item>
         <item>@color/purple</item>

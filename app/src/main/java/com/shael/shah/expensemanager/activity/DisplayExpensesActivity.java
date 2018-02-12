@@ -57,15 +57,16 @@ public class DisplayExpensesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_expenses);
 
+        Toolbar toolbar = findViewById(R.id.displayExpensesActivityToolbar);
+        setActionBar(toolbar);
+        getActionBar().setTitle(null);
+
         DataSingleton instance = DataSingleton.getInstance();
         List<Expense> expenses = instance.getExpenses();
 
         Intent intent = getIntent();
         Date date = new Date(intent.getLongExtra(EXTRA_EXPENSE_DATE, -1));
         String title = intent.getStringExtra(EXTRA_EXPENSES_TITLE);
-
-        Toolbar toolbar = findViewById(R.id.displayExpensesActivityToolbar);
-        setActionBar(toolbar);
 
         //Find views to work with during this activity
         amountIncomesTextView = findViewById(R.id.amountIncomesTextView);
@@ -83,9 +84,10 @@ public class DisplayExpensesActivity extends Activity {
 
         filteredExpenses = new ArrayList<>();
         for (Expense e : expenses) {
-            if (e.getDate().compareTo(date) >= 0)
-                if ((title.equals("Incomes") && e.isIncome()) || (title.equals("Expenses") && !e.isIncome()) || title.equals("All Transactions"))
-                    filteredExpenses.add(e);
+            if (!e.isDelete())
+                if (e.getDate().compareTo(date) >= 0)
+                    if ((title.equals("Incomes") && e.isIncome()) || (title.equals("Expenses") && !e.isIncome()) || title.equals("All Transactions"))
+                        filteredExpenses.add(e);
         }
         populateScrollView(filteredExpenses);
     }
@@ -170,7 +172,7 @@ public class DisplayExpensesActivity extends Activity {
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DisplayExpensesActivity.this, AddExpenseActivity.class);
+                Intent intent = new Intent(DisplayExpensesActivity.this, UpdateExpenseActivity.class);
                 intent.putExtra(EXTRA_EXPENSE_OBJECT, expense);
                 startActivity(intent);
             }

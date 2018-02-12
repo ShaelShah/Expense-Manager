@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.db.ApplicationDatabase;
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
@@ -14,6 +15,10 @@ import java.util.List;
 
 public class DataSingleton {
 
+    /*****************************************************************
+     * Private Variables
+     ******************************************************************/
+
     private static final String SHAREDPREF_SETTINGS = "com.shael.shah.expensemanager.SHAREDPREF_SETTINGS";
     private static final String SHAREDPREF_TIMEPERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIMEPERIOD";
     private static final String SHAREDPREF_DISPLAYOPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAYOPTION";
@@ -21,30 +26,48 @@ public class DataSingleton {
 
     private Context context;
 
+    // Singleton instances
     @SuppressLint("StaticFieldLeak")
     private static DataSingleton instance;
-    private ApplicationDatabase database;
+    private static ApplicationDatabase database;
 
+    // Objects
     private List<Expense> expenses;
     private List<Category> categories;
+
+    // Settings
     private TimePeriod timePeriod;
     private String displayOption;
-    private int currentColour;
+    private int currentColor;
+    private int[] colors;
 
-    private DataSingleton(Context context) {
-        this.context = context;
-        database = ApplicationDatabase.getInstance(context);
-        getExpensesFromDatabase();
-        getCategoriesFromDatabase();
-        getSettingsFromSharedPref();
-        createRecurringExpenses();
-    }
+    /*****************************************************************
+     * Constructors
+     ******************************************************************/
 
     public static DataSingleton init(Context context) {
         if (instance == null)
             instance = new DataSingleton(context);
 
         return instance;
+    }
+
+    private DataSingleton(Context context) {
+        this.context = context;
+
+        // Get database instance
+        database = ApplicationDatabase.getInstance(context);
+
+        // Get objects from database
+        expenses = getExpensesFromDatabase();
+        categories = getCategoriesFromDatabase();
+
+        // Get settings from shared preferences
+        colors = context.getResources().getIntArray(R.array.categoryColors);
+        getSettingsFromSharedPref();
+
+        // Initialization work
+        createRecurringExpenses();
     }
 
     public static DataSingleton getInstance() {
@@ -56,22 +79,35 @@ public class DataSingleton {
 
     public static void destroyInstance() {
         instance = null;
+        database = null;
     }
 
-    private void getExpensesFromDatabase() {
-        expenses = database.expenseDao().getAllExpenses();
+    /*****************************************************************
+     * Database Access Methods
+     ******************************************************************/
+
+    private List<Expense> getExpensesFromDatabase() {
+        return database.expenseDao().getAllExpenses();
     }
 
-    private void getCategoriesFromDatabase() {
-        categories = database.categoryDao().getAllCategories();
+    private List<Category> getCategoriesFromDatabase() {
+        return database.categoryDao().getAllCategories();
     }
+
+    /*****************************************************************
+     * SharedPreferences Access Methods
+     ******************************************************************/
 
     private void getSettingsFromSharedPref() {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE);
         timePeriod = TimePeriod.fromInteger(sharedPreferences.getInt(SHAREDPREF_TIMEPERIOD, 2));
         displayOption = sharedPreferences.getString(SHAREDPREF_DISPLAYOPTION, "CIRCLE");
-        currentColour = sharedPreferences.getInt(SHAREDPREF_COLOR, 0);
+        currentColor = sharedPreferences.getInt(SHAREDPREF_COLOR, 0);
     }
+
+    /*****************************************************************
+     * Objects/Settings Access Methods
+     ******************************************************************/
 
     public List<Expense> getExpenses() {
         return expenses;
@@ -81,10 +117,7 @@ public class DataSingleton {
         return categories;
     }
 
-    public int getCurrentColor() {
-        return currentColour;
-    }
-
+    // Get settings for use in application
     public TimePeriod getTimePeriod() {
         return timePeriod;
     }
@@ -93,30 +126,85 @@ public class DataSingleton {
         return displayOption;
     }
 
-    public void updateDatabase() {
-        database.expenseDao().update(expenses);
-        database.categoryDao().update(categories);
-        updateSettings();
-    }
-
-    public void addCategory(Category category) {
-        database.categoryDao().insert(category);
-    }
+    /******************************************************************
+     * Object Interaction Methods
+     ******************************************************************/
 
     public void addExpense(Expense expense) {
-        database.expenseDao().insert(expense);
+        expenses.add(expense);
     }
 
     public void deleteExpense(Expense expense) {
-        database.expenseDao().delete(expense);
+        if (expense.isInsert()) {
+            expense.setInsert(false);
+            return;
+        }
+
+        if (expense.isUpdate()) {
+            expense.setUpdate(false);
+            return;
+        }
+
+        expense.setDelete(true);
     }
 
-    private void updateSettings() {
+    public void updateExpense(Expense toDelete, Expense toAdd) {
+        deleteExpense(toDelete);
+        addExpense(toAdd);
+    }
+
+    public boolean addCategory(String category) {
+        if (checkCategory(category)) {
+            Category.Builder builder = new Category.Builder(category, colors[currentColor++]);
+            categories.add(builder.build());
+            return true;
+        }
+
+        return false;
+    }
+
+    /******************************************************************
+     * Shutdown Update Methods
+     ******************************************************************/
+
+    public void updateDatabase() {
+        for (Expense e : expenses) {
+            if (e.isInsert())
+                database.expenseDao().insert(e);
+
+            if (e.isUpdate())
+                database.expenseDao().update(e);
+
+            if (e.isDelete())
+                database.expenseDao().delete(e);
+        }
+
+        for (Category c : categories) {
+            if (c.isInsert())
+                database.categoryDao().insert(c);
+        }
+    }
+
+    public void updateSettings() {
         SharedPreferences.Editor editor = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE).edit();
         editor.putInt(SHAREDPREF_TIMEPERIOD, TimePeriod.toInteger(timePeriod));
         editor.putString(SHAREDPREF_DISPLAYOPTION, displayOption);
-        editor.putInt(SHAREDPREF_COLOR, currentColour);
+        editor.putInt(SHAREDPREF_COLOR, currentColor);
         editor.apply();
+    }
+
+    /******************************************************************
+     * Private Helper Methods
+     ******************************************************************/
+
+    private boolean checkCategory(String category) {
+        for (Category c : categories) {
+            if (c.getType().equals(category)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void createRecurringExpenses() {
@@ -161,15 +249,9 @@ public class DataSingleton {
         expenses.addAll(newExpenses);
     }
 
-    public boolean checkCategory(String category) {
-        for (Category c : categories) {
-            if (c.getType().equals(category)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+    /******************************************************************
+     * TimePeriod Enum
+     ******************************************************************/
 
     public enum TimePeriod {
         DAILY,

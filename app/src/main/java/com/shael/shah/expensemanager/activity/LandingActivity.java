@@ -23,7 +23,6 @@ public class LandingActivity extends Activity {
      * Private Variables
      ******************************************************************/
 
-    //private DataSingleton instance;
     private DataSingleton instance;
 
     private static String currentFragment = "";
@@ -103,9 +102,11 @@ public class LandingActivity extends Activity {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         instance.updateDatabase();
+        instance.updateSettings();
+        DataSingleton.destroyInstance();
     }
 
     /*****************************************************************

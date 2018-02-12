@@ -26,6 +26,7 @@
         <activity android:name=".activity.BackupRestoreActivity" />
         <activity android:name=".activity.ChangeAppearance" />
         <activity android:name=".activity.CategoryUpdate" />
+        <activity android:name=".activity.UpdateExpenseActivity"></activity>
     </application>
 
 </manifest>

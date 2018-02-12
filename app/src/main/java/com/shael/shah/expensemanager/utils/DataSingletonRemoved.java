@@ -220,7 +220,7 @@ public class DataSingletonRemoved {
 
     private int getColorFromSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt(SHAREDPREF_COLOURS, 0);
+        return sharedPreferences.getInt(SHAREDPREF_COLORS, 0);
     }
 
     /*public TimePeriod getTimePeriodFromSharedPreferences() {
@@ -251,7 +251,7 @@ public class DataSingletonRemoved {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor prefEditor = sharedPreferences.edit();
 
-        prefEditor.putInt(SHAREDPREF_COLOURS, stopColor);
+        prefEditor.putInt(SHAREDPREF_COLORS, stopColor);
         prefEditor.apply();
     }
 
@@ -269,7 +269,7 @@ public class DataSingletonRemoved {
     }
 
     private void resetColor() {
-        currentColour = 0;
+        currentColor = 0;
     }
 
     public void reset() {

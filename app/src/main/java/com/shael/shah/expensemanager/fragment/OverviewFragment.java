@@ -2,8 +2,11 @@ package com.shael.shah.expensemanager.fragment;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,11 +163,14 @@ public class OverviewFragment extends Fragment {
 
         Date afterDate = getDateRange();
         for (Expense e : expenses) {
-            if (e.getDate().compareTo(afterDate) >= 0) {
-                if (e.isIncome())
-                    income = income.add(e.getAmount());
-                else
-                    outcome = outcome.add(e.getAmount());
+            if (!e.isDelete()) {
+                if (e.getDate().compareTo(afterDate) >= 0) {
+                    if (e.isIncome()) {
+                        income = income.add(e.getAmount());
+                    } else {
+                        outcome = outcome.add(e.getAmount());
+                    }
+                }
             }
         }
 
@@ -173,8 +179,7 @@ public class OverviewFragment extends Fragment {
         expensesTextView.setText(getString(R.string.currency, outcome));
         netTextView.setText(getString(R.string.currency, net.abs()));
 
-        //noinspection deprecation
-        int color = net.signum() > 0 ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red);
+        int color = net.signum() > 0 ? ContextCompat.getColor(getActivity(), R.color.green) : ContextCompat.getColor(getActivity(), R.color.red);
         netTextView.setTextColor(color);
     }
 
