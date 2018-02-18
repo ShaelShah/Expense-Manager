@@ -16,6 +16,10 @@ public class Segment extends View {
     private float currentAngle;
     private float sweepAngle;
 
+    public Segment(Context context) {
+        super(context);
+    }
+
     public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth) {
         super(context, attrs);
 

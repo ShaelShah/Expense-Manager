@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="10dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="Date" />
+        android:text="@string/date" />
 
     <View
         android:layout_width="match_parent"
@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="Start"/>
+            android:labelFor="@+id/startDateEditText"
+            android:text="@string/start" />
 
         <EditText
             android:id="@+id/startDateEditText"
@@ -36,7 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:focusable="false"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:hint="@string/start_date"
+            android:inputType="datetime" />
 
     </LinearLayout>
 
@@ -44,15 +47,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif-smallcaps"
-            android:text="End"/>
+            android:labelFor="@+id/endDateEditText"
+            android:text="@string/end" />
 
         <EditText
             android:id="@+id/endDateEditText"
@@ -60,7 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:focusable="false"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:hint="@string/end_date"
+            android:inputType="datetime" />
 
     </LinearLayout>
 
@@ -68,7 +74,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fontFamily="sans-serif-smallcaps"
-    android:text="Category" />
+        android:text="@string/category" />
 
     <View
         android:layout_width="match_parent"
@@ -97,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="Location" />
+        android:text="@string/location" />
 
     <View
         android:layout_width="match_parent"

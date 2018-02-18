@@ -24,7 +24,7 @@ public class ChangeAppearance extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_appearance);
 
-        animationSpinner = (Spinner) findViewById(R.id.animationSpinner);
+        animationSpinner = findViewById(R.id.animationSpinner);
         createAnimationSpinnerRows();
         animationSpinner.setSelection(animationArrayAdapter.getPosition(getDisplayOptionFromSharedPreferences()));
 

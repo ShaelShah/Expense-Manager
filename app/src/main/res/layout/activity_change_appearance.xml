@@ -17,7 +17,7 @@
             android:fontFamily="sans-serif-smallcaps"
             android:paddingBottom="15dp"
             android:paddingTop="15dp"
-            android:text="Expense Animation" />
+            android:text="@string/expense_animation" />
 
         <Spinner
             android:id="@+id/animationSpinner"

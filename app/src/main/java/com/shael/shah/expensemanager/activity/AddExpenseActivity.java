@@ -3,7 +3,6 @@ package com.shael.shah.expensemanager.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -221,18 +220,19 @@ public class AddExpenseActivity extends Activity {
      *  plus a row for "add category..."
      */
     private void createCategoryRows() {
+        LayoutInflater inflater = LayoutInflater.from(this);
         LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        for (int i = 0; i < categories.size(); i++) {
-            //TODO: Look into View.inflate method (specifically the 3rd parameter)
-            View item = View.inflate(this, R.layout.category_select_row_layout, null);
+        for (Category c : categories) {
+            //View item = View.inflate(this, R.layout.category_select_row_layout, null);
+            View item = inflater.inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
 
-            View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(categories.get(i).getColor());
+            item.findViewById(R.id.colorView).setBackgroundColor(c.getColor());
+            //colorBox.setBackgroundColor(categories.get(i).getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
-            categoryRadioButton.setText(categories.get(i).getType());
+            categoryRadioButton.setText(c.getType());
             categoryRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -247,8 +247,9 @@ public class AddExpenseActivity extends Activity {
             scrollLinearLayout.addView(createSeparatorView());
         }
 
-        LinearLayout addCategoryTextView = (LinearLayout) View.inflate(this, R.layout.add_category_row_layout, null);
-        scrollLinearLayout.addView(addCategoryTextView);
+        //LinearLayout addCategoryTextView = (LinearLayout) View.inflate(this, R.layout.add_category_row_layout, null);
+        inflater.inflate(R.layout.add_category_row_layout, scrollLinearLayout, true);
+        //scrollLinearLayout.addView(addCategoryTextView);
     }
 
     /*
@@ -258,25 +259,19 @@ public class AddExpenseActivity extends Activity {
      *  Inflates a category_select_row_layout and inserts it above "add category..."
      */
     public void createAddCategoryDialog(View view) {
-        LayoutInflater inflater = LayoutInflater.from(AddExpenseActivity.this);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(AddExpenseActivity.this);
-        builder.setView(inflater.inflate(R.layout.add_category_dialog_layout, null));
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.add_category_dialog_layout);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int ID) {
+                AlertDialog categoryDialog = (AlertDialog) dialog;
 
-                Dialog categoryDialog = (Dialog) dialog;
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
-                String category = categoryNameEditText.getText().toString();
-                if (instance.addCategory(category)) {
+                if (instance.addCategory(categoryNameEditText.getText().toString())) {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
-                    View item = View.inflate(AddExpenseActivity.this, R.layout.category_select_row_layout, null);
 
-                    View colorBox = item.findViewById(R.id.colorView);
-                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColor());
+                    View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
+                    item.findViewById(R.id.colorView).setBackgroundColor(categories.get(categories.size() - 1).getColor());
 
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
@@ -294,9 +289,9 @@ public class AddExpenseActivity extends Activity {
                     scrollLinearLayout.addView(item, scrollLinearLayout.getChildCount() - 1);
                     scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
-                    Toast.makeText(AddExpenseActivity.this, "Category Added", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Category Added", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(AddExpenseActivity.this, "Category Already Exists", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Category Already Exists", Toast.LENGTH_LONG).show();
                 }
 
                 dialog.dismiss();

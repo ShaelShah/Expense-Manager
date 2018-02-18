@@ -7,38 +7,35 @@
     <View
         android:id="@+id/categoryColorView"
         android:layout_width="17dp"
-        android:layout_height="17dp"
-        android:background="@color/amber"/>
+        android:layout_height="17dp" />
 
     <TextView
         android:id="@+id/expenseDateTextView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:fontFamily="sans-serif-smallcaps"
+        android:paddingEnd="6dp"
         android:paddingStart="6dp"
         android:textAlignment="textStart"
-        android:textSize="14sp"
-        android:fontFamily="sans-serif-smallcaps"
-        android:text="JUN 08/17"/>
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/expenseLocationTextView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textAlignment="textStart"
-        android:textSize="14sp"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="Amazon"/>
+        android:textAlignment="textStart"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/expensesAmountTextView"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textAlignment="textEnd"
-        android:textSize="14sp"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="$44.67"/>
+        android:textAlignment="textEnd"
+        android:textSize="14sp" />
 
 </LinearLayout>

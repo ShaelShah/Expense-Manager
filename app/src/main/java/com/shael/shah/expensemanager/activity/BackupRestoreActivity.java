@@ -80,13 +80,13 @@ public class BackupRestoreActivity extends Activity {
             fileWriter.append("Incomes\n");
             for (Expense e : expenses) {
                 if (e.isIncome())
-                    fileWriter.append(e.toCSV() + "\n");
+                    fileWriter.append(e.toCSV()).append("\n");
             }
 
             fileWriter.append("Expenses\n");
             for (Expense e : expenses) {
                 if (!e.isIncome())
-                    fileWriter.append(e.toCSV() + "\n");
+                    fileWriter.append(e.toCSV()).append("\n");
             }
 
             fileWriter.flush();

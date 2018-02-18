@@ -24,7 +24,6 @@ public class SegmentsFragment extends Fragment {
 
     private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
 
-    private DataSingleton instance;
     private List<Expense> expenses;
     private List<Segment> segments;
     private FrameLayout segmentsFrameLayout;
@@ -32,8 +31,7 @@ public class SegmentsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        instance = DataSingleton.getInstance();
-        expenses = instance.getExpenses();
+        expenses = DataSingleton.getInstance().getExpenses();
     }
 
     @Override

@@ -1,17 +1,63 @@
 <resources>
+    <!-- App name -->
     <string name="app_name">Expense Manager</string>
-    <string name="title_activity_landing">Landing</string>
-    <string name="title_activity_add_expense">Add Expense</string>
-    <string name="title_activity_category_expenses">Category Expenses</string>
-    <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Landing Activity -->
-    <string name="currency">$%1$s</string>
-    <string name="today">Today</string>
-    <string name="weekly">Weekly</string>
-    <string name="all">All</string>
-
-    <!-- Strings related to navigation drawer -->
+    <!-- Navigation drawer related strings -->
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Date related strings -->
+    <string name="date">Date</string>
+    <string name="date_ranges">Date Ranges</string>
+    <string name="today">Today</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
+    <string name="all">All</string>
+
+    <!-- Add/Update Expense Activity related strings -->
+    <string name="currency">$%1$s</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="update">Update</string>
+
+    <string name="add_expense">Add Expense</string>
+    <string name="income">Income</string>
+    <string name="currencyHint">$$$</string>
+    <string name="category">Category</string>
+    <string name="additional_info">Additional Info</string>
+    <string name="location">Location</string>
+    <string name="note">Note</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="recurring_period">Recurring Period</string>
+    <string name="addCategory">Enter a Category Name</string>
+    <string name="addCategoryEllipses">Add Category…</string>
+
+    <!-- Display Expenses Activity related strings -->
+    <string name="filter">Filter</string>
+    <string name="sort_amount">Sort Amount</string>
+    <string name="sort_location">Sort Location</string>
+    <string name="start">Start</string>
+    <string name="start_date">Start Date</string>
+    <string name="end">End</string>
+    <string name="end_date">End Date</string>
+
+    <!-- Settings Activity related strings -->
+    <string name="backup_data">Backup Data</string>
+    <string name="restore_data">Restore Data</string>
+    <string name="expense_animation">Expense Animation</string>
+    <string name="general_settings">General Settings</string>
+    <string name="categories">Categories</string>
+    <string name="appearance">Appearance</string>
+    <string name="expenses_view_animation">Expenses View Animation</string>
+    <string name="backup_and_restore">Backup and Restore</string>
+    <string name="backup_restore_data">Backup/Restore Data</string>
+
+    <!-- Fragment related strings -->
+    <string name="settings">Settings</string>
+    <string name="history">History</string>
+    <string name="overview">Overview</string>
+
 </resources>

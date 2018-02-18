@@ -25,7 +25,7 @@ public class SettingsFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        TextView backupRestoreTextView = (TextView) view.findViewById(R.id.backupRestoreTextView);
+        TextView backupRestoreTextView = view.findViewById(R.id.backupRestoreTextView);
         backupRestoreTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        TextView appearanceTextView = (TextView) view.findViewById(R.id.appearanceTextView);
+        TextView appearanceTextView = view.findViewById(R.id.appearanceTextView);
         appearanceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,7 +41,7 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        TextView dateRangeTextView = (TextView) view.findViewById(R.id.dateRangeTextView);
+        TextView dateRangeTextView = view.findViewById(R.id.dateRangeTextView);
         dateRangeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +49,7 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        TextView categoriesTextView = (TextView) view.findViewById(R.id.categoryTextView);
+        TextView categoriesTextView = view.findViewById(R.id.categoryTextView);
         categoriesTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

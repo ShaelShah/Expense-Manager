@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
-        android:text="General Settings"
+        android:text="@string/general_settings"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -27,7 +27,7 @@
         android:fontFamily="sans-serif-smallcaps"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Date Ranges" />
+        android:text="@string/date_ranges" />
 
     <View
         android:layout_width="match_parent"
@@ -41,14 +41,14 @@
         android:fontFamily="sans-serif-smallcaps"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Categories" />
+        android:text="@string/categories" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
-        android:text="Appearance"
+        android:text="@string/appearance"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -64,14 +64,14 @@
         android:fontFamily="sans-serif-smallcaps"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Expenses View Animation" />
+        android:text="@string/expenses_view_animation" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
         android:paddingTop="30dp"
-        android:text="Backup and Restore"
+        android:text="@string/backup_and_restore"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -87,7 +87,7 @@
         android:fontFamily="sans-serif-smallcaps"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Backup/Restore Data" />
+        android:text="@string/backup_restore_data" />
 
     <View
         android:layout_width="match_parent"

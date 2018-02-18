@@ -8,7 +8,7 @@ public class BigDecimalConverter {
 
     @TypeConverter
     public static BigDecimal fromLong(Long value) {
-        return value == null ? null : new BigDecimal(value).divide(new BigDecimal(100));
+        return value == null ? null : new BigDecimal(value).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_UP);
     }
 
     @TypeConverter

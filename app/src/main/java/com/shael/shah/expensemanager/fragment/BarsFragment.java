@@ -45,7 +45,7 @@ public class BarsFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_bars, container, false);
 
-        mainCategoryScrollView = (ScrollView) view.findViewById(R.id.mainCategoryScrollView);
+        mainCategoryScrollView = view.findViewById(R.id.mainCategoryScrollView);
         populateMainCategoryRows();
 
         return view;
@@ -72,7 +72,7 @@ public class BarsFragment extends Fragment {
     private void populateMainCategoryRows() {
         List<Category> categories = DataSingleton.getInstance().getCategories();
         //TODO: This function can be better optimized, instead of looping through all expenses for each category, loop through the expenses once and assign temporary lists for each category
-        LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
+        LinearLayout scrollLinearLayout = mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
 
         if (scrollLinearLayout.getChildCount() > 0) {
             scrollLinearLayout.removeAllViews();
@@ -96,11 +96,11 @@ public class BarsFragment extends Fragment {
                 View colorBox = item.findViewById(R.id.mainColorView);
                 colorBox.setBackgroundColor(c.getColor());
 
-                TextView categoryRowTitle = (TextView) item.findViewById(R.id.categoryRowTitle);
+                TextView categoryRowTitle = item.findViewById(R.id.categoryRowTitle);
                 categoryRowTitle.setText(title);
                 categoryRowTitle.setTextColor(c.getColor());
 
-                TextView categoryRowAmount = (TextView) item.findViewById(R.id.categoryRowAmount);
+                TextView categoryRowAmount = item.findViewById(R.id.categoryRowAmount);
                 categoryRowAmount.setTextColor(c.getColor());
 
                 categoryRowAmount.setText(getString(R.string.currency, amount));
@@ -137,7 +137,7 @@ public class BarsFragment extends Fragment {
      *  net total spent, all scaled to the highest contributor set to 100%.
      */
     private void startAnimations() {
-        LinearLayout scrollLinearLayout = (LinearLayout) mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
+        LinearLayout scrollLinearLayout = mainCategoryScrollView.findViewById(R.id.mainScrollLinearLayout);
 
         List<View> colorBoxViews = new ArrayList<>();
         List<Float> ratioFloats = new ArrayList<>();
@@ -167,7 +167,7 @@ public class BarsFragment extends Fragment {
                     float max = Collections.max(ratioFloats);
 
                     for (int i = 0; i < colorBoxViews.size(); i++) {
-                        scaleView(colorBoxViews.get(i), 0f, ratioFloats.get(i) / max);
+                        scaleView(colorBoxViews.get(i), ratioFloats.get(i) / max);
                     }
                 }
             }
@@ -177,15 +177,15 @@ public class BarsFragment extends Fragment {
     /*
      *  Horizontal expansion of a view.
      */
-    private void scaleView(View v, float startScale, float endScale) {
-        Animation anim = new ScaleAnimation(startScale, endScale, 1f, 1f);
+    private void scaleView(View v, float endScale) {
+        Animation anim = new ScaleAnimation(0f, endScale, 1f, 1f);
         anim.setFillAfter(true);
         anim.setDuration(2000);
         v.startAnimation(anim);
     }
 
     public void updateExpenses(Date dateRange) {
-        this.expenses = expenses;
+        //this.expenses = expenses;
         populateMainCategoryRows();
     }
 }

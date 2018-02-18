@@ -3,7 +3,6 @@ package com.shael.shah.expensemanager.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -44,7 +43,7 @@ public class UpdateExpenseActivity extends Activity {
      * Private Variables
      *****************************************************************/
 
-    private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
+    private static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
 
     private DataSingleton instance;
 
@@ -57,7 +56,7 @@ public class UpdateExpenseActivity extends Activity {
     private Spinner recurringSpinner;
     private Spinner paymentSpinner;
 
-    private List<Expense> expenses;
+    //private List<Expense> expenses;
     private List<Category> categories;
     private List<RadioButton> categoryRadioButtons;
     private ArrayAdapter<String> paymentSpinnerAdapter;
@@ -92,7 +91,7 @@ public class UpdateExpenseActivity extends Activity {
         recurringSpinner = findViewById(R.id.recurringSpinner);
 
         instance = DataSingleton.getInstance();
-        expenses = instance.getExpenses();
+        //expenses = instance.getExpenses();
         categories = instance.getCategories();
         categoryRadioButtons = new ArrayList<>();
 
@@ -177,7 +176,8 @@ public class UpdateExpenseActivity extends Activity {
      *****************************************************************/
 
     public void delete(View view) {
-        Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
         Toast.makeText(UpdateExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
 
@@ -193,7 +193,8 @@ public class UpdateExpenseActivity extends Activity {
     }
 
     public void update(View view) {
-        Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
 
         if (saveExpense()) {
@@ -236,7 +237,9 @@ public class UpdateExpenseActivity extends Activity {
             }
         };
 
-        Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
+        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        Expense expense = instance.getExpense(expenseID);
+        //Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
         incomeCheckbox.setChecked(expense.isIncome());
         amountEditText.setText(getString(R.string.currency, expense.getAmount()));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
@@ -263,18 +266,19 @@ public class UpdateExpenseActivity extends Activity {
      *  plus a row for "add category..."
      */
     private void createCategoryRows() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
         LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        for (int i = 0; i < categories.size(); i++) {
-            //TODO: Look into View.inflate method (specifically the 3rd parameter)
-            View item = View.inflate(this, R.layout.category_select_row_layout, null);
+        for (Category c : categories) {
+            //View item = View.inflate(this, R.layout.category_select_row_layout, null);
+            View item = layoutInflater.inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
 
-            View colorBox = item.findViewById(R.id.colorView);
-            colorBox.setBackgroundColor(categories.get(i).getColor());
+            item.findViewById(R.id.colorView).setBackgroundColor(c.getColor());
+            //colorBox.setBackgroundColor(categories.get(i).getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
-            categoryRadioButton.setText(categories.get(i).getType());
+            categoryRadioButton.setText(c.getType());
             categoryRadioButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -289,8 +293,9 @@ public class UpdateExpenseActivity extends Activity {
             scrollLinearLayout.addView(createSeparatorView());
         }
 
-        LinearLayout addCategoryTextView = (LinearLayout) View.inflate(this, R.layout.add_category_row_layout, null);
-        scrollLinearLayout.addView(addCategoryTextView);
+        //LinearLayout addCategoryTextView = (LinearLayout) View.inflate(this, R.layout.add_category_row_layout, null);
+        layoutInflater.inflate(R.layout.add_category_row_layout, scrollLinearLayout, true);
+        //scrollLinearLayout.addView(addCategoryTextView);
     }
 
     /*
@@ -300,27 +305,19 @@ public class UpdateExpenseActivity extends Activity {
      *  Inflates a category_select_row_layout and inserts it above "add category..."
      */
     public void createAddCategoryDialog(View view) {
-        LayoutInflater inflater = LayoutInflater.from(UpdateExpenseActivity.this);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(UpdateExpenseActivity.this);
-        builder.setView(inflater.inflate(R.layout.add_category_dialog_layout, null));
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.add_category_dialog_layout);
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int ID) {
+                AlertDialog categoryDialog = (AlertDialog) dialog;
 
-                Dialog categoryDialog = (Dialog) dialog;
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
-                String category = categoryNameEditText.getText().toString();
-                if (instance.addCategory(category)) {
+                if (instance.addCategory(categoryNameEditText.getText().toString())) {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-                    //TODO: Look into View.inflate method (specifically the 3rd parameter)
-                    View item = View.inflate(UpdateExpenseActivity.this, R.layout.category_select_row_layout, null);
-
-                    View colorBox = item.findViewById(R.id.colorView);
-                    colorBox.setBackgroundColor(categories.get(categories.size() - 1).getColor());
+                    View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
+                    item.findViewById(R.id.colorView).setBackgroundColor(categories.get(categories.size() - 1).getColor());
 
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
@@ -338,9 +335,9 @@ public class UpdateExpenseActivity extends Activity {
                     scrollLinearLayout.addView(item, scrollLinearLayout.getChildCount() - 1);
                     scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
-                    Toast.makeText(UpdateExpenseActivity.this, "Category Added", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Category Added", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(UpdateExpenseActivity.this, "Category Already Exists", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Category Already Exists", Toast.LENGTH_LONG).show();
                 }
 
                 dialog.dismiss();

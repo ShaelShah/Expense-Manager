@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-smallcaps"
             android:paddingBottom="16dp"
-            android:text="Title"
             android:textAlignment="center"
             android:textSize="48sp" />
 
@@ -54,7 +53,6 @@
                 android:fontFamily="sans-serif-smallcaps"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:text="$234.67"
                 android:textAlignment="textStart"
                 android:textSize="30sp" />
 
@@ -66,7 +64,6 @@
                 android:fontFamily="sans-serif-smallcaps"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:text="$234.67"
                 android:textAlignment="textEnd"
                 android:textSize="30sp" />
 
@@ -94,5 +91,4 @@
         </ScrollView>
 
     </LinearLayout>
-
 </LinearLayout>

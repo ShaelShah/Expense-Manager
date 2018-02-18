@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.model.Expense;
+import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -32,7 +33,7 @@ public class DisplayExpensesActivity extends Activity {
 
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
-    private static final String EXTRA_EXPENSE_OBJECT = "com.shael.shah.expensemanager.EXTRA_EXPENSE_OBJECT";
+    private static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
 
     private List<Expense> filteredExpenses;
 
@@ -59,7 +60,9 @@ public class DisplayExpensesActivity extends Activity {
 
         Toolbar toolbar = findViewById(R.id.displayExpensesActivityToolbar);
         setActionBar(toolbar);
-        getActionBar().setTitle(null);
+
+        if (getActionBar() != null)
+            getActionBar().setTitle(null);
 
         DataSingleton instance = DataSingleton.getInstance();
         List<Expense> expenses = instance.getExpenses();
@@ -120,10 +123,7 @@ public class DisplayExpensesActivity extends Activity {
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
-                        if (amountSort)
-                            return o1.getAmount().compareTo(o2.getAmount());
-                        else
-                            return o2.getAmount().compareTo(o1.getAmount());
+                        return amountSort ? o1.getAmount().compareTo(o2.getAmount()) : o2.getAmount().compareTo(o1.getAmount());
                     }
                 });
 
@@ -135,10 +135,7 @@ public class DisplayExpensesActivity extends Activity {
                 Collections.sort(filteredExpenses, new Comparator<Expense>() {
                     @Override
                     public int compare(Expense o1, Expense o2) {
-                        if (locationSort)
-                            return o1.getLocation().compareTo(o2.getLocation());
-                        else
-                            return o2.getLocation().compareTo(o1.getLocation());
+                        return locationSort ? o1.getLocation().compareTo(o2.getLocation()) : o2.getLocation().compareTo(o1.getLocation());
                     }
                 });
 
@@ -149,36 +146,6 @@ public class DisplayExpensesActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private View inflateExpenseDisplayRow(final Expense expense) {
-        //TODO: Figure out what this third parameter is for
-        View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
-
-        View view = item.findViewById(R.id.categoryColorView);
-        //noinspection deprecation
-        int color = expense.getCategory() == null ? getResources().getColor(R.color.lightGreen) : expense.getCategory().getColor();
-        view.setBackgroundColor(color);
-
-        TextView dateTextView = item.findViewById(R.id.expenseDateTextView);
-        TextView locationTextView = item.findViewById(R.id.expenseLocationTextView);
-        TextView amountTextView = item.findViewById(R.id.expensesAmountTextView);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-        dateTextView.setText(sdf.format(expense.getDate()));
-        locationTextView.setText(expense.getLocation());
-        amountTextView.setText(getString(R.string.currency, expense.getAmount()));
-
-        item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DisplayExpensesActivity.this, UpdateExpenseActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_OBJECT, expense);
-                startActivity(intent);
-            }
-        });
-
-        return item;
     }
 
     /*****************************************************************
@@ -212,5 +179,35 @@ public class DisplayExpensesActivity extends Activity {
 
         if (amountExpensesTextView != null)
             amountExpensesTextView.setText(getString(R.string.currency, amountSpent));
+    }
+
+    private View inflateExpenseDisplayRow(Expense expense) {
+        //TODO: Figure out what this third parameter is for
+        View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
+
+        View view = item.findViewById(R.id.categoryColorView);
+        int color = expense.getCategory() == null ? ContextCompat.getColor(getApplicationContext(), R.color.green) : expense.getCategory().getColor();
+        view.setBackgroundColor(color);
+
+        TextView dateTextView = item.findViewById(R.id.expenseDateTextView);
+        TextView locationTextView = item.findViewById(R.id.expenseLocationTextView);
+        TextView amountTextView = item.findViewById(R.id.expensesAmountTextView);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+        dateTextView.setText(sdf.format(expense.getDate()));
+        locationTextView.setText(expense.getLocation());
+        amountTextView.setText(getString(R.string.currency, expense.getAmount()));
+
+        final int expenseID = expense.getExpenseID();
+        item.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DisplayExpensesActivity.this, UpdateExpenseActivity.class);
+                intent.putExtra(EXTRA_EXPENSE_ID, expenseID);
+                startActivity(intent);
+            }
+        });
+
+        return item;
     }
 }

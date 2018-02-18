@@ -13,7 +13,7 @@
         android:onClick="backupData"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Backup Data" />
+        android:text="@string/backup_data" />
 
     <View
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:onClick="restoreData"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:text="Restore Data" />
+        android:text="@string/restore_data" />
 
     <View
         android:layout_width="match_parent"

@@ -1,54 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dateRangeRadioGroup"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layoutDirection="rtl"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <RadioGroup
-        android:id="@+id/dateRangeRadioGroup"
+    <RadioButton
+        android:id="@+id/dailyRadioButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="16dp"
-        android:paddingLeft="16dp"
-        android:paddingBottom="16dp"
-        android:paddingRight="16dp"
-        android:layoutDirection="rtl">
+        android:layout_weight="1"
+        android:text="@string/daily" />
 
-        <RadioButton
-            android:id="@+id/dailyRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Daily" />
+    <RadioButton
+        android:id="@+id/weeklyRadioButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/weekly" />
 
-        <RadioButton
-            android:id="@+id/weeklyRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Weekly" />
+    <RadioButton
+        android:id="@+id/monthlyRadioButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:checked="true"
+        android:text="@string/monthly" />
 
-        <RadioButton
-            android:id="@+id/monthlyRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Monthly" />
+    <RadioButton
+        android:id="@+id/yearlyRadioButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/yearly" />
 
-        <RadioButton
-            android:id="@+id/yearlyRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Yearly" />
+    <RadioButton
+        android:id="@+id/allRadioButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/all" />
 
-        <RadioButton
-            android:id="@+id/allRadioButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="All" />
-
-    </RadioGroup>
-</LinearLayout>
+</RadioGroup>

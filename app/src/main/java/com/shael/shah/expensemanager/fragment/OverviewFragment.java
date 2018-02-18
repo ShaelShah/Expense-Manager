@@ -2,11 +2,10 @@ package com.shael.shah.expensemanager.fragment;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +14,9 @@ import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
+import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.utils.DataSingleton.TimePeriod;
-import com.shael.shah.expensemanager.model.Expense;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -43,7 +42,6 @@ public class OverviewFragment extends Fragment {
     private TextView netTextView;
     private TextView incomeTexView;
     private TextView expensesTextView;
-    private RadioGroup dateRangeRadioGroup;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -229,41 +227,38 @@ public class OverviewFragment extends Fragment {
         timePeriodTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater inflater = LayoutInflater.from(getActivity());
+                //View content = LayoutInflater.from(getActivity()).inflate(R.layout.date_range_dialog_layout, null);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setView(inflater.inflate(R.layout.date_range_dialog_layout, null));
-                final AlertDialog dialog = builder.create();
-                dialog.show();
-
-                dateRangeRadioGroup = dialog.findViewById(R.id.dateRangeRadioGroup);
-                dateRangeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                builder.setTitle("Select Date Range");
+                builder.setView(R.layout.date_range_dialog_layout);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                        switch (checkedId) {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        RadioGroup radioGroup = ((AlertDialog) dialogInterface).findViewById(R.id.dateRangeRadioGroup);
+                        switch (radioGroup.getCheckedRadioButtonId()) {
                             case R.id.dailyRadioButton:
-                                timePeriod = DataSingleton.TimePeriod.DAILY;
+                                timePeriod = TimePeriod.DAILY;
                                 timePeriodTextView.setText(R.string.today);
                                 break;
 
                             case R.id.weeklyRadioButton:
-                                timePeriod = DataSingleton.TimePeriod.WEEKLY;
+                                timePeriod = TimePeriod.WEEKLY;
                                 timePeriodTextView.setText(R.string.weekly);
                                 break;
 
                             case R.id.monthlyRadioButton:
-                                timePeriod = DataSingleton.TimePeriod.MONTHLY;
+                                timePeriod = TimePeriod.MONTHLY;
                                 timePeriodTextView.setText(new SimpleDateFormat("MMMM", Locale.CANADA).format(Calendar.getInstance().getTime()));
                                 break;
 
                             case R.id.yearlyRadioButton:
-                                timePeriod = DataSingleton.TimePeriod.YEARLY;
+                                timePeriod = TimePeriod.YEARLY;
                                 timePeriodTextView.setText(new SimpleDateFormat("YYYY", Locale.CANADA).format(Calendar.getInstance().getTime()));
                                 break;
 
                             default:
-                                timePeriod = DataSingleton.TimePeriod.ALL;
+                                timePeriod = TimePeriod.ALL;
                                 timePeriodTextView.setText(R.string.all);
                                 break;
                         }
@@ -279,9 +274,11 @@ public class OverviewFragment extends Fragment {
                         }
 
                         populateMoneyTextViews();
-                        dialog.dismiss();
                     }
                 });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

@@ -19,18 +19,9 @@ public interface ExpenseDao {
     @Insert
     long insert(Expense expense);
 
-    @Insert
-    long[] insert(List<Expense> expenses);
-
     @Update
     int update(Expense expense);
 
-    @Update
-    int update(List<Expense> expenses);
-
     @Delete
     int delete(Expense expense);
-
-    @Delete
-    int delete(List<Expense> expenses);
 }

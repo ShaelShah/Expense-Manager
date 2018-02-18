@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,8 +15,9 @@ import android.view.MenuItem;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.fragment.OverviewFragment;
+import com.shael.shah.expensemanager.utils.DataSingleton;
+import com.shael.shah.expensemanager.utils.DataSingleton.LandingFragment;
 
 public class LandingActivity extends Activity {
 
@@ -24,9 +26,7 @@ public class LandingActivity extends Activity {
      ******************************************************************/
 
     private DataSingleton instance;
-
-    private static String currentFragment = "";
-
+    private LandingFragment currentFragment;
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
 
@@ -57,33 +57,33 @@ public class LandingActivity extends Activity {
 
         //Helper functions
         setupDrawer();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setHomeButtonEnabled(true);
+        }
 
         //Action listeners
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
 
                 Fragment fragment = null;
                 switch (id) {
                     case R.id.overview:
-                        if (!currentFragment.equals("OVERVIEW")) {
+                        if (currentFragment != LandingFragment.OVERVIEW) {
                             fragment = new OverviewFragment();
-                            currentFragment = "OVERVIEW";
+                            currentFragment = LandingFragment.OVERVIEW;
                         }
                         break;
+
                     case R.id.history:
-                        if (!currentFragment.equals("HISTORY")) {
-                            //fragment = new HistoryFragment();
-                            //currentFragment = "HISTORY";
-                        }
                         break;
+
                     case R.id.settings:
-                        if (!currentFragment.equals("SETTINGS")) {
+                        if (currentFragment != LandingFragment.SETTINGS) {
                             //fragment = new SettingsFragment();
-                            //currentFragment = "SETTINGS";
+                            //currentFragment = LandingFragment.SETTINGS;
                         }
                         break;
                 }
@@ -161,6 +161,6 @@ public class LandingActivity extends Activity {
     private void setupDrawer() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
         drawerToggle.setDrawerIndicatorEnabled(true);
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
     }
 }

@@ -23,7 +23,7 @@ public class CategoryUpdate extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category_update_layout);
 
-        linearLayout = (LinearLayout) findViewById(R.id.categoryUpdateLinearLayout);
+        linearLayout = findViewById(R.id.categoryUpdateLinearLayout);
         categories = DataSingleton.getInstance().getCategories();
 
         createCategoryRows();

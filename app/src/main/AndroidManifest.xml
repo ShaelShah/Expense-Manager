@@ -14,19 +14,15 @@
         <activity android:name=".activity.LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AddExpenseActivity">
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:windowSoftInputMode="stateHidden"
-        </activity>
+        <activity android:name=".activity.AddExpenseActivity" />
         <activity android:name=".activity.DisplayExpensesActivity" />
         <activity android:name=".activity.BackupRestoreActivity" />
         <activity android:name=".activity.ChangeAppearance" />
         <activity android:name=".activity.CategoryUpdate" />
-        <activity android:name=".activity.UpdateExpenseActivity"></activity>
+        <activity android:name=".activity.UpdateExpenseActivity" />
     </application>
 
 </manifest>

@@ -24,12 +24,11 @@ public class DataSingleton {
     private static final String SHAREDPREF_DISPLAYOPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAYOPTION";
     private static final String SHAREDPREF_COLOR = "com.shael.shah.expensemanager.SHAREDPREF_COLORS";
 
-    private Context context;
-
     // Singleton instances
     @SuppressLint("StaticFieldLeak")
     private static DataSingleton instance;
     private static ApplicationDatabase database;
+    private Context context;
 
     // Objects
     private List<Expense> expenses;
@@ -40,17 +39,6 @@ public class DataSingleton {
     private String displayOption;
     private int currentColor;
     private int[] colors;
-
-    /*****************************************************************
-     * Constructors
-     ******************************************************************/
-
-    public static DataSingleton init(Context context) {
-        if (instance == null)
-            instance = new DataSingleton(context);
-
-        return instance;
-    }
 
     private DataSingleton(Context context) {
         this.context = context;
@@ -70,6 +58,17 @@ public class DataSingleton {
         createRecurringExpenses();
     }
 
+    /*****************************************************************
+     * Constructors
+     ******************************************************************/
+
+    public static DataSingleton init(Context context) {
+        if (instance == null)
+            instance = new DataSingleton(context);
+
+        return instance;
+    }
+
     public static DataSingleton getInstance() {
         if (instance != null)
             return instance;
@@ -79,7 +78,7 @@ public class DataSingleton {
 
     public static void destroyInstance() {
         instance = null;
-        database = null;
+        database.destroyInstance();
     }
 
     /*****************************************************************
@@ -111,6 +110,16 @@ public class DataSingleton {
 
     public List<Expense> getExpenses() {
         return expenses;
+    }
+
+    public Expense getExpense(int expenseID) {
+        for (Expense e : expenses) {
+            if (e.getExpenseID() == expenseID) {
+                return e;
+            }
+        }
+
+        return null;
     }
 
     public List<Category> getCategories() {
@@ -148,11 +157,6 @@ public class DataSingleton {
         expense.setDelete(true);
     }
 
-    public void updateExpense(Expense toDelete, Expense toAdd) {
-        deleteExpense(toDelete);
-        addExpense(toAdd);
-    }
-
     public boolean addCategory(String category) {
         if (checkCategory(category)) {
             Category.Builder builder = new Category.Builder(category, colors[currentColor++]);
@@ -175,8 +179,9 @@ public class DataSingleton {
             if (e.isUpdate())
                 database.expenseDao().update(e);
 
-            if (e.isDelete())
+            if (e.isDelete()) {
                 database.expenseDao().delete(e);
+            }
         }
 
         for (Category c : categories) {
@@ -247,6 +252,14 @@ public class DataSingleton {
         }
 
         expenses.addAll(newExpenses);
+    }
+
+    /******************************************************************
+     * Fragment Enum
+     ******************************************************************/
+
+    public enum LandingFragment {
+        OVERVIEW, SETTINGS
     }
 
     /******************************************************************
