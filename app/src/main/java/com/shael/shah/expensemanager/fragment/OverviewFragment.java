@@ -14,7 +14,10 @@ import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
+import com.shael.shah.expensemanager.activity.DisplayIncomesActivity;
+import com.shael.shah.expensemanager.activity.DisplayTransactionsActivity;
 import com.shael.shah.expensemanager.model.Expense;
+import com.shael.shah.expensemanager.model.Income;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.utils.DataSingleton.TimePeriod;
 
@@ -34,9 +37,12 @@ public class OverviewFragment extends Fragment {
     private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
     private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
 
+    private DataSingleton instance;
+
     private TimePeriod timePeriod;
     private String displayExpensesOption;
     private List<Expense> expenses;
+    private List<Income> incomes;
 
     private TextView timePeriodTextView;
     private TextView netTextView;
@@ -55,11 +61,7 @@ public class OverviewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        DataSingleton instance = DataSingleton.getInstance();
-        expenses = instance.getExpenses();
-        timePeriod = instance.getTimePeriod();
-        displayExpensesOption = instance.getDisplayOption();
+        setRetainInstance(true);
     }
 
     @Override
@@ -73,6 +75,19 @@ public class OverviewFragment extends Fragment {
         incomeTexView = view.findViewById(R.id.incomeTextView);
         expensesTextView = view.findViewById(R.id.expensesTextView);
 
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        instance = DataSingleton.getInstance();
+        expenses = instance.getExpenses();
+        incomes = instance.getIncomes();
+        timePeriod = instance.getTimePeriod();
+        displayExpensesOption = instance.getDisplayOption();
+
         setActionListeners();
         populateMoneyTextViews();
 
@@ -83,8 +98,12 @@ public class OverviewFragment extends Fragment {
             fragment.setArguments(bundle);
             getFragmentManager().beginTransaction().add(R.id.displayExpensesAnimationFrameLayout, fragment).commit();
         }
+    }
 
-        return view;
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        instance.setTimePeriod(timePeriod);
     }
 
     /*****************************************************************
@@ -163,11 +182,15 @@ public class OverviewFragment extends Fragment {
         for (Expense e : expenses) {
             if (!e.isDelete()) {
                 if (e.getDate().compareTo(afterDate) >= 0) {
-                    if (e.isIncome()) {
-                        income = income.add(e.getAmount());
-                    } else {
-                        outcome = outcome.add(e.getAmount());
-                    }
+                    outcome = outcome.add(e.getAmount());
+                }
+            }
+        }
+
+        for (Income i : incomes) {
+            if (!i.isDelete()) {
+                if (i.getDate().compareTo(afterDate) >= 0) {
+                    income = income.add(i.getAmount());
                 }
             }
         }
@@ -192,9 +215,8 @@ public class OverviewFragment extends Fragment {
         incomeTexView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DisplayExpensesActivity.class);
+                Intent intent = new Intent(getActivity(), DisplayIncomesActivity.class);
                 intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
-                intent.putExtra(EXTRA_EXPENSES_TITLE, "Incomes");
                 startActivity(intent);
             }
         });
@@ -204,7 +226,6 @@ public class OverviewFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DisplayExpensesActivity.class);
                 intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
-                intent.putExtra(EXTRA_EXPENSES_TITLE, "Expenses");
                 startActivity(intent);
             }
         });
@@ -212,9 +233,8 @@ public class OverviewFragment extends Fragment {
         netTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DisplayExpensesActivity.class);
+                Intent intent = new Intent(getActivity(), DisplayTransactionsActivity.class);
                 intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
-                intent.putExtra(EXTRA_EXPENSES_TITLE, "All Transactions");
                 startActivity(intent);
             }
         });

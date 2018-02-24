@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.model.Expense;
+import com.shael.shah.expensemanager.model.Income;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class DisplayExpensesActivity extends Activity {
+public class DisplayIncomesActivity extends Activity {
 
     /*****************************************************************
      * Private Variables
@@ -33,7 +34,7 @@ public class DisplayExpensesActivity extends Activity {
     private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
     private static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
 
-    private List<Expense> filteredExpenses;
+    private List<Income> filteredIncomes;
 
     private boolean amountSort = true;
     private boolean locationSort = true;
@@ -62,7 +63,7 @@ public class DisplayExpensesActivity extends Activity {
             getActionBar().setTitle(null);
 
         DataSingleton instance = DataSingleton.getInstance();
-        List<Expense> expenses = instance.getExpenses();
+        List<Income> incomes = instance.getIncomes();
 
         Intent intent = getIntent();
         Date date = new Date(intent.getLongExtra(EXTRA_EXPENSE_DATE, -1));
@@ -73,13 +74,13 @@ public class DisplayExpensesActivity extends Activity {
         TextView titleTextView = findViewById(R.id.titleTextView);
         titleTextView.setText(R.string.expenses);
 
-        filteredExpenses = new ArrayList<>();
-        for (Expense e : expenses)
-            if (!e.isDelete())
-                if (e.getDate().compareTo(date) >= 0)
-                    filteredExpenses.add(e);
+        filteredIncomes = new ArrayList<>();
+        for (Income i : incomes)
+            if (!i.isDelete())
+                if (i.getDate().compareTo(date) >= 0)
+                    filteredIncomes.add(i);
 
-        populateScrollView(filteredExpenses);
+        populateScrollView(filteredIncomes);
     }
 
     /*****************************************************************
@@ -107,27 +108,27 @@ public class DisplayExpensesActivity extends Activity {
                 return true;
 
             case R.id.sort_amount:
-                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                Collections.sort(filteredIncomes, new Comparator<Income>() {
                     @Override
-                    public int compare(Expense o1, Expense o2) {
+                    public int compare(Income o1, Income o2) {
                         return amountSort ? o1.getAmount().compareTo(o2.getAmount()) : o2.getAmount().compareTo(o1.getAmount());
                     }
                 });
 
                 amountSort = !amountSort;
-                populateScrollView(filteredExpenses);
+                populateScrollView(filteredIncomes);
                 return true;
 
             case R.id.sort_location:
-                Collections.sort(filteredExpenses, new Comparator<Expense>() {
+                Collections.sort(filteredIncomes, new Comparator<Income>() {
                     @Override
-                    public int compare(Expense o1, Expense o2) {
+                    public int compare(Income o1, Income o2) {
                         return locationSort ? o1.getLocation().compareTo(o2.getLocation()) : o2.getLocation().compareTo(o1.getLocation());
                     }
                 });
 
                 locationSort = !locationSort;
-                populateScrollView(filteredExpenses);
+                populateScrollView(filteredIncomes);
                 return true;
 
             default:
@@ -143,27 +144,27 @@ public class DisplayExpensesActivity extends Activity {
      *  Iterates through all expenses to check which expenses were requested to
      *  be displayed.
      */
-    private void populateScrollView(List<Expense> expensesToDisplay) {
+    private void populateScrollView(List<Income> incomesTodisplay) {
         LinearLayout scrollLinearLayout = transactionsScrollView.findViewById(R.id.scrollViewLinearLayout);
         if (scrollLinearLayout.getChildCount() > 0)
             scrollLinearLayout.removeAllViews();
 
         //Inflate a category_expense_row_layout for each expense
         BigDecimal amount = new BigDecimal(0);
-        for (Expense e : expensesToDisplay) {
-            amount = amount.add(e.getAmount());
-            scrollLinearLayout.addView(inflateExpenseDisplayRow(e));
+        for (Income i : incomesTodisplay) {
+            amount = amount.add(i.getAmount());
+            scrollLinearLayout.addView(inflateIncomeDisplayRow(i));
         }
 
         amountTextView.setText(getString(R.string.currency, amount));
     }
 
-    private View inflateExpenseDisplayRow(Expense expense) {
+    private View inflateIncomeDisplayRow(final Income income) {
         //TODO: Figure out what this third parameter is for
         View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
 
         View view = item.findViewById(R.id.categoryColorView);
-        int color = expense.getCategory().getColor();
+        int color = ContextCompat.getColor(getApplicationContext(), R.color.green);
         view.setBackgroundColor(color);
 
         TextView dateTextView = item.findViewById(R.id.expenseDateTextView);
@@ -171,16 +172,16 @@ public class DisplayExpensesActivity extends Activity {
         TextView amountTextView = item.findViewById(R.id.expensesAmountTextView);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-        dateTextView.setText(sdf.format(expense.getDate()));
-        locationTextView.setText(expense.getLocation());
-        amountTextView.setText(getString(R.string.currency, expense.getAmount()));
+        dateTextView.setText(sdf.format(income.getDate()));
+        locationTextView.setText(income.getLocation());
+        amountTextView.setText(getString(R.string.currency, income.getAmount()));
 
-        final int expenseID = expense.getExpenseID();
+        final int incomeID = income.getIncomeID();
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DisplayExpensesActivity.this, UpdateExpenseActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_ID, expenseID);
+                Intent intent = new Intent(DisplayIncomesActivity.this, UpdateIncomeActivity.class);
+                intent.putExtra(EXTRA_EXPENSE_ID, incomeID);
                 startActivity(intent);
             }
         });

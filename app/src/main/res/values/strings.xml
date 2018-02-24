@@ -59,5 +59,8 @@
     <string name="settings">Settings</string>
     <string name="history">History</string>
     <string name="overview">Overview</string>
+    <string name="add_income">Add Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="allTransactions">All Transactions</string>
 
 </resources>

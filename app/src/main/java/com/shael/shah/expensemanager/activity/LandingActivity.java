@@ -45,7 +45,7 @@ public class LandingActivity extends Activity {
         setContentView(R.layout.landing_activity);
 
         //TODO: Do this asynchronously
-        instance = DataSingleton.init(getApplicationContext());
+        instance = DataSingleton.init(this);
 
         //Setup toolbar
         Toolbar toolbar = findViewById(R.id.mainActivityToolbar);
@@ -98,7 +98,8 @@ public class LandingActivity extends Activity {
         });
 
         //Setup initial fragment
-        getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, new OverviewFragment()).commit();
+        if (savedInstanceState == null)
+            getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, new OverviewFragment()).commit();
     }
 
     @Override
@@ -118,14 +119,19 @@ public class LandingActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
 
         if (drawerToggle.onOptionsItemSelected(item))
             return true;
 
         switch (item.getItemId()) {
             case R.id.add_expense:
+                Intent addExpenseIntent = new Intent(this, AddExpenseActivity.class);
                 startActivity(addExpenseIntent);
+                return true;
+
+            case R.id.add_income:
+                Intent addIncomeIntent = new Intent(this, AddIncomeActivity.class);
+                startActivity(addIncomeIntent);
                 return true;
 
             default:

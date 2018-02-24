@@ -6,6 +6,12 @@
         android:id="@+id/add_expense"
         android:icon="@drawable/ic_money_off_black_24dp"
         android:title="@string/add_expense"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/add_income"
+        android:icon="@drawable/ic_attach_money_black_24dp"
+        android:title="@string/add_income"
+        app:showAsAction="always" />
 
 </menu>

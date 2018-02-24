@@ -1,7 +1,5 @@
 package com.shael.shah.expensemanager.model;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
@@ -14,8 +12,8 @@ import java.util.Objects;
 //import android.os.Parcelable;
 
 @Entity
-//public class Expense implements Parcelable {
-public class Expense extends Transaction implements Serializable {
+//public class Income implements Parcelable {
+public class Income extends Transaction implements Serializable {
 
     /*public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Expense createFromParcel(Parcel in) {
@@ -28,26 +26,14 @@ public class Expense extends Transaction implements Serializable {
     };*/
 
     @PrimaryKey(autoGenerate = true)
-    private int expenseID;
+    private int incomeID;
 
-    @Embedded
-    private Category category;
-
-    @ColumnInfo
-    private String paymentMethod;
-
-    public Expense(Date date, BigDecimal amount, Category category, String location, String note, String recurringPeriod, String paymentMethod) {
+    public Income(Date date, BigDecimal amount, String location, String note, String recurringPeriod) {
         super(date, amount, location, note, recurringPeriod);
-
-        this.category = category;
-        this.paymentMethod = paymentMethod;
     }
 
-    private Expense(Builder builder) {
+    private Income(Builder builder) {
         super(builder.date, builder.amount, builder.location, builder.note, builder.recurringPeriod);
-
-        category = builder.category;
-        paymentMethod = builder.paymentMethod;
         setInsert(true);
     }
 
@@ -62,34 +48,26 @@ public class Expense extends Transaction implements Serializable {
         this.paymentMethod = parcel.readString();
     }*/
 
-    public int getExpenseID() {
-        return expenseID;
+    public int getIncomeID() {
+        return incomeID;
     }
 
-    public void setExpenseID(int expenseID) {
-        this.expenseID = expenseID;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
+    public void setIncomeID(int incomeID) {
+        this.incomeID = incomeID;
     }
 
     public String toCSV() {
-        return getDate().toString() + "," + getAmount().toString() + "," + category.getType() + "," + getLocation() + "," + getNote() + "," + getRecurringPeriod() + "," + paymentMethod;
+        return getDate().toString() + "," + getAmount().toString() + "," + getLocation() + "," + getNote() + "," + getRecurringPeriod();
     }
 
     @Override
-    public boolean equals(Object exp) {
-        return this.getExpenseID() == ((Expense) exp).getExpenseID();
+    public boolean equals(Object inc) {
+        return this.getIncomeID() == ((Income) inc).getIncomeID();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDate(), getAmount(), category, getLocation(), getNote(), getRecurringPeriod(), paymentMethod);
+        return Objects.hash(getDate(), getAmount(), getLocation(), getNote(), getRecurringPeriod());
     }
 
     /*@Override
@@ -113,17 +91,14 @@ public class Expense extends Transaction implements Serializable {
 
         private final Date date;
         private final BigDecimal amount;
-        private final Category category;
         private final String location;
 
         private String note = "";
         private String recurringPeriod = "";
-        private String paymentMethod = "";
 
-        public Builder(Date date, BigDecimal amount, Category category, String location) {
+        public Builder(Date date, BigDecimal amount, String location) {
             this.date = date;
             this.amount = amount;
-            this.category = category;
             this.location = location;
         }
 
@@ -137,13 +112,8 @@ public class Expense extends Transaction implements Serializable {
             return this;
         }
 
-        public Builder paymentMethod(String paymentMethod) {
-            this.paymentMethod = paymentMethod;
-            return this;
-        }
-
-        public Expense build() {
-            return new Expense(this);
+        public Income build() {
+            return new Income(this);
         }
     }
 }

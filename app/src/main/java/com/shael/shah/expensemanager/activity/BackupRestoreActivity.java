@@ -79,14 +79,14 @@ public class BackupRestoreActivity extends Activity {
             fileWriter.write("Date,Amount,Category,Location,Note,Recurring,Income,Recurring Period,Payment Method\n");
             fileWriter.append("Incomes\n");
             for (Expense e : expenses) {
-                if (e.isIncome())
-                    fileWriter.append(e.toCSV()).append("\n");
+//                if (e.isIncome())
+//                    fileWriter.append(e.toCSV()).append("\n");
             }
 
             fileWriter.append("Expenses\n");
             for (Expense e : expenses) {
-                if (!e.isIncome())
-                    fileWriter.append(e.toCSV()).append("\n");
+//                if (!e.isIncome())
+//                    fileWriter.append(e.toCSV()).append("\n");
             }
 
             fileWriter.flush();
@@ -144,7 +144,7 @@ public class BackupRestoreActivity extends Activity {
 
                     Expense expense = new Expense.Builder(new Date(parts[0]), new BigDecimal(parts[1]), category, parts[3])
                             .note(parts[4])
-                            .income(Boolean.parseBoolean(parts[5]))
+//                            .income(Boolean.parseBoolean(parts[5]))
                             .recurringPeriod(parts[6])
                             .paymentMethod(parts[7])
                             .build();

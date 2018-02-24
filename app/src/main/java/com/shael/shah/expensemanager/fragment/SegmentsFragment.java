@@ -24,25 +24,25 @@ public class SegmentsFragment extends Fragment {
 
     private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
 
+    private DataSingleton instance;
+
     private List<Expense> expenses;
+    private List<Category> categories;
     private List<Segment> segments;
     private FrameLayout segmentsFrameLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        expenses = DataSingleton.getInstance().getExpenses();
+        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        Date date = (Date) getArguments().getSerializable(EXTRA_EXPENSE_DATE);
         View view = inflater.inflate(R.layout.fragment_segments, container, false);
-
         segmentsFrameLayout = view.findViewById(R.id.segmentsFrameLayout);
-        createCircleView(date);
 
         return view;
     }
@@ -50,6 +50,12 @@ public class SegmentsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        instance = DataSingleton.getInstance();
+        expenses = instance.getExpenses();
+        categories = instance.getCategories();
+        Date date = (Date) getArguments().getSerializable(EXTRA_EXPENSE_DATE);
+        createCircleView(date);
     }
 
     @Override
@@ -59,26 +65,21 @@ public class SegmentsFragment extends Fragment {
     }
 
     private void createCircleView(Date date) {
+        float total = 0;
         List<Expense> expensesToDisplay = new ArrayList<>();
         for (Expense e : expenses) {
-            if (e.getDate().compareTo(date) >= 0)
+            if (!e.isDelete() && e.getDate().compareTo(date) >= 0) {
                 expensesToDisplay.add(e);
+                total += e.getAmount().floatValue();
+            }
         }
 
         segmentsFrameLayout.removeAllViews();
         segments = new ArrayList<>();
 
-        List<Category> categories = DataSingleton.getInstance().getCategories();
-
         Segment budgetSegment = new Segment(getActivity(), null, 90, 360, Color.BLACK, 100, 110);
         segments.add(budgetSegment);
         segmentsFrameLayout.addView(budgetSegment);
-
-        float total = 0;
-        for (Expense e : expensesToDisplay) {
-            if (!e.isIncome() && !e.isDelete())
-                total += e.getAmount().floatValue();
-        }
 
         float prevAmount = 90;
         for (Category c : categories) {

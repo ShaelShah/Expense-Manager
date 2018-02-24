@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -47,7 +46,6 @@ public class UpdateExpenseActivity extends Activity {
 
     private DataSingleton instance;
 
-    private CheckBox incomeCheckbox;
     private EditText amountEditText;
     private EditText dateEditText;
     private EditText locationEditText;
@@ -83,7 +81,6 @@ public class UpdateExpenseActivity extends Activity {
         //Find views to work with during add expense activity
         categoryScrollView = findViewById(R.id.categoryScrollView);
         amountEditText = findViewById(R.id.amountEditText);
-        incomeCheckbox = findViewById(R.id.incomeCheckbox);
         dateEditText = findViewById(R.id.dateEditText);
         locationEditText = findViewById(R.id.locationEditText);
         noteEditText = findViewById(R.id.noteEditText);
@@ -114,7 +111,7 @@ public class UpdateExpenseActivity extends Activity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    private boolean saveExpense() {
+    private boolean saveTransaction() {
         BigDecimal amount;
         Date date;
         Category category = null;
@@ -157,17 +154,16 @@ public class UpdateExpenseActivity extends Activity {
             }
         }
 
-        if (category == null && !incomeCheckbox.isChecked()) {
+        if (category == null) {
             Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
             return false;
         }
 
         Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note);
-        builder.income(incomeCheckbox.isChecked());
         builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
         builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
-
         instance.addExpense(builder.build());
+
         return true;
     }
 
@@ -179,15 +175,16 @@ public class UpdateExpenseActivity extends Activity {
         int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
         Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
-        Toast.makeText(UpdateExpenseActivity.this, "Expense Deleted", Toast.LENGTH_LONG).show();
 
-        Intent intent = new Intent(UpdateExpenseActivity.this, LandingActivity.class);
+        Toast.makeText(this, "Transaction Deleted", Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
     public void cancel(View view) {
-        Intent intent = new Intent(UpdateExpenseActivity.this, LandingActivity.class);
+        Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -197,7 +194,7 @@ public class UpdateExpenseActivity extends Activity {
         Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
 
-        if (saveExpense()) {
+        if (saveTransaction()) {
             Intent intent = new Intent(UpdateExpenseActivity.this, LandingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -239,8 +236,6 @@ public class UpdateExpenseActivity extends Activity {
 
         int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
         Expense expense = instance.getExpense(expenseID);
-        //Expense expense = (Expense) getIntent().getSerializableExtra(EXTRA_EXPENSE_OBJECT);
-        incomeCheckbox.setChecked(expense.isIncome());
         amountEditText.setText(getString(R.string.currency, expense.getAmount()));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
         dateEditText.setText(sdf.format(expense.getDate()));
@@ -260,6 +255,7 @@ public class UpdateExpenseActivity extends Activity {
             }
         }
     }
+
 
     /*
      *  Iterates through all categories and inflates a category_select_row_layout for each

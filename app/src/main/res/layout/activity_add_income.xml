@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGrey"
     android:orientation="vertical"
-    tools:context="com.shael.shah.expensemanager.activity.UpdateExpenseActivity">
+    tools:context="com.shael.shah.expensemanager.activity.AddExpenseActivity">
 
-    <Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/updateExpenseToolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
@@ -39,30 +38,14 @@
                 android:background="@color/blueGrey" />
 
             <Button
-                android:id="@+id/buttonDelete"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/grey"
-                android:drawableEnd="@drawable/ic_delete_black_24dp"
-                android:onClick="delete"
-                android:text="@string/delete"
-                android:textAlignment="center" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="wrap_content"
-                android:background="@color/blueGrey"/>
-
-            <Button
-                android:id="@+id/buttonUpdate"
+                android:id="@+id/buttonSave"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@color/grey"
                 android:drawableEnd="@drawable/ic_check_black_24dp"
-                android:onClick="update"
-                android:text="@string/update"
+                android:onClick="save"
+                android:text="@string/save"
                 android:textAlignment="center" />
 
         </LinearLayout>
@@ -91,35 +74,6 @@
             android:paddingTop="10dp"
             android:textAlignment="viewEnd"
             android:textSize="40sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-smallcaps"
-            android:text="@string/category" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/blueGrey" />
-
-        <ScrollView
-            android:id="@+id/categoryScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp">
-
-            <LinearLayout
-                android:id="@+id/scrollLinearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="vertical" />
-
-        </ScrollView>
 
         <TextView
             android:layout_width="wrap_content"
@@ -213,32 +167,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/paymentLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:id="@+id/paymentLabelTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-smallcaps"
-                android:text="@string/payment_method" />
-
-            <Spinner
-                android:id="@+id/paymentSpinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textAlignment="center">
-            </Spinner>
-
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/recurringLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -259,8 +187,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:textAlignment="center">
-            </Spinner>
+                android:textAlignment="center"></Spinner>
 
         </LinearLayout>
     </LinearLayout>

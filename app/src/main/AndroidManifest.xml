@@ -18,11 +18,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.AddExpenseActivity" />
+        <activity android:name=".activity.AddIncomeActivity" />
         <activity android:name=".activity.DisplayExpensesActivity" />
+        <activity android:name=".activity.DisplayIncomesActivity" />
+        <activity android:name=".activity.DisplayTransactionsActivity" />
         <activity android:name=".activity.BackupRestoreActivity" />
         <activity android:name=".activity.ChangeAppearance" />
         <activity android:name=".activity.CategoryUpdate" />
         <activity android:name=".activity.UpdateExpenseActivity" />
+        <activity android:name=".activity.UpdateIncomeActivity" />
     </application>
 
 </manifest>

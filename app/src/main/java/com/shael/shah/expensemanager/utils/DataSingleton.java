@@ -8,6 +8,7 @@ import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.db.ApplicationDatabase;
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
+import com.shael.shah.expensemanager.model.Income;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ public class DataSingleton {
 
     // Objects
     private List<Expense> expenses;
+    private List<Income> incomes;
     private List<Category> categories;
 
     // Settings
@@ -48,6 +50,7 @@ public class DataSingleton {
 
         // Get objects from database
         expenses = getExpensesFromDatabase();
+        incomes = getIncomesFromDatabase();
         categories = getCategoriesFromDatabase();
 
         // Get settings from shared preferences
@@ -56,6 +59,7 @@ public class DataSingleton {
 
         // Initialization work
         createRecurringExpenses();
+        createRecurringIncomes();
     }
 
     /*****************************************************************
@@ -89,6 +93,10 @@ public class DataSingleton {
         return database.expenseDao().getAllExpenses();
     }
 
+    private List<Income> getIncomesFromDatabase() {
+        return database.incomeDao().getAllIncomes();
+    }
+
     private List<Category> getCategoriesFromDatabase() {
         return database.categoryDao().getAllCategories();
     }
@@ -112,10 +120,24 @@ public class DataSingleton {
         return expenses;
     }
 
+    public List<Income> getIncomes() {
+        return incomes;
+    }
+
     public Expense getExpense(int expenseID) {
         for (Expense e : expenses) {
             if (e.getExpenseID() == expenseID) {
                 return e;
+            }
+        }
+
+        return null;
+    }
+
+    public Income getIncome(int incomeID) {
+        for (Income i : incomes) {
+            if (i.getIncomeID() == incomeID) {
+                return i;
             }
         }
 
@@ -131,6 +153,10 @@ public class DataSingleton {
         return timePeriod;
     }
 
+    public void setTimePeriod(TimePeriod timePeriod) {
+        this.timePeriod = timePeriod;
+    }
+
     public String getDisplayOption() {
         return displayOption;
     }
@@ -141,6 +167,10 @@ public class DataSingleton {
 
     public void addExpense(Expense expense) {
         expenses.add(expense);
+    }
+
+    public void addIncome(Income income) {
+        incomes.add(income);
     }
 
     public void deleteExpense(Expense expense) {
@@ -155,6 +185,18 @@ public class DataSingleton {
         }
 
         expense.setDelete(true);
+    }
+
+    public void deleteIncome(Income income) {
+        if (income.isInsert()) {
+            income.setInsert(false);
+        }
+
+        if (income.isUpdate()) {
+            income.setUpdate(false);
+        }
+
+        income.setDelete(true);
     }
 
     public boolean addCategory(String category) {
@@ -179,9 +221,19 @@ public class DataSingleton {
             if (e.isUpdate())
                 database.expenseDao().update(e);
 
-            if (e.isDelete()) {
+            if (e.isDelete())
                 database.expenseDao().delete(e);
-            }
+        }
+
+        for (Income i : incomes) {
+            if (i.isInsert())
+                database.incomeDao().insert(i);
+
+            if (i.isUpdate())
+                database.incomeDao().update(i);
+
+            if (i.isDelete())
+                database.incomeDao().delete(i);
         }
 
         for (Category c : categories) {
@@ -241,7 +293,6 @@ public class DataSingleton {
                 if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
                     Expense newExpense = new Expense.Builder(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation())
                             .note(e.getNote())
-                            .income(e.isIncome())
                             .recurringPeriod(e.getRecurringPeriod())
                             .paymentMethod(e.getPaymentMethod())
                             .build();
@@ -252,6 +303,46 @@ public class DataSingleton {
         }
 
         expenses.addAll(newExpenses);
+    }
+
+    private void createRecurringIncomes() {
+        Calendar calendar = Calendar.getInstance();
+
+        List<Income> newIncomes = new ArrayList<>();
+        for (Income i : incomes) {
+            if (!i.getRecurringPeriod().equals("None")) {
+                calendar.setTime(i.getDate());
+
+                switch (i.getRecurringPeriod()) {
+                    case "Daily":
+                        calendar.add(Calendar.DATE, 1);
+                        break;
+                    case "Weekly":
+                        calendar.add(Calendar.DATE, 7);
+                        break;
+                    case "Bi-Weekly":
+                        calendar.add(Calendar.DATE, 14);
+                        break;
+                    case "Monthly":
+                        calendar.add(Calendar.MONTH, 1);
+                        break;
+                    case "Yearly":
+                        calendar.add(Calendar.YEAR, 1);
+                        break;
+                }
+
+                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
+                    Income newIncome = new Income.Builder(calendar.getTime(), i.getAmount(), i.getLocation())
+                            .note(i.getNote())
+                            .recurringPeriod(i.getRecurringPeriod())
+                            .build();
+                    i.setRecurringPeriod("None");
+                    newIncomes.add(newIncome);
+                }
+            }
+        }
+
+        incomes.addAll(newIncomes);
     }
 
     /******************************************************************

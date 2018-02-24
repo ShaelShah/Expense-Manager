@@ -8,13 +8,11 @@ import android.content.Context;
 
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
+import com.shael.shah.expensemanager.model.Income;
 
-@Database(entities = {Expense.class, Category.class}, version = 7)
+@Database(entities = {Expense.class, Income.class, Category.class}, version = 8)
 @TypeConverters({DateConverter.class, BigDecimalConverter.class})
 public abstract class ApplicationDatabase extends RoomDatabase {
-
-    public abstract ExpenseDao expenseDao();
-    public abstract CategoryDao categoryDao();
 
     private static ApplicationDatabase instance;
 
@@ -24,6 +22,12 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
         return instance;
     }
+
+    public abstract ExpenseDao expenseDao();
+
+    public abstract IncomeDao incomeDao();
+
+    public abstract CategoryDao categoryDao();
 
     public void destroyInstance() {
         instance = null;
