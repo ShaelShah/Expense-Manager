@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.activity;
+package com.shael.shah.expensemanager.activity.display;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,9 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.shael.shah.expensemanager.R;
+import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Income;
+import com.shael.shah.expensemanager.model.Transaction;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
@@ -25,16 +27,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class DisplayIncomesActivity extends Activity {
+public abstract class DisplayTransactionsActivity extends Activity {
 
-    /*****************************************************************
-     * Private Variables
-     *****************************************************************/
+    public static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
+    public static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
 
-    private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
-    private static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
-
-    private List<Income> filteredIncomes;
+    public DataSingleton instance;
+    private List<Transaction> filteredTransactions;
 
     private boolean amountSort = true;
     private boolean locationSort = true;
@@ -42,18 +41,9 @@ public class DisplayIncomesActivity extends Activity {
     private TextView amountTextView;
     private ScrollView transactionsScrollView;
 
-    /*****************************************************************
-     * Lifecycle Methods
-     *****************************************************************/
-
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all expenses.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         setContentView(R.layout.activity_display_transactions);
 
         Toolbar toolbar = findViewById(R.id.displayExpensesActivityToolbar);
@@ -62,26 +52,30 @@ public class DisplayIncomesActivity extends Activity {
         if (getActionBar() != null)
             getActionBar().setTitle(null);
 
-        DataSingleton instance = DataSingleton.getInstance();
-        List<Income> incomes = instance.getIncomes();
-
-        Intent intent = getIntent();
-        Date date = new Date(intent.getLongExtra(EXTRA_EXPENSE_DATE, -1));
-
-        //Find views to work with during this activity
         amountTextView = findViewById(R.id.amountTextView);
         transactionsScrollView = findViewById(R.id.transactionsScrollView);
         TextView titleTextView = findViewById(R.id.titleTextView);
-        titleTextView.setText(R.string.expenses);
+        titleTextView.setText(getTitleText());
 
-        filteredIncomes = new ArrayList<>();
-        for (Income i : incomes)
-            if (!i.isDelete())
-                if (i.getDate().compareTo(date) >= 0)
-                    filteredIncomes.add(i);
+        instance = DataSingleton.getInstance();
 
-        populateScrollView(filteredIncomes);
+        Intent intent = getIntent();
+        Date date = new Date(intent.getLongExtra(EXTRA_EXPENSE_DATE, -1));
+        filteredTransactions = new ArrayList<>();
+        for (Transaction t : getTransactions()) {
+            if (!t.isDelete() && t.getDate().compareTo(date) >= 0) {
+                filteredTransactions.add(t);
+            }
+        }
+
+        populateScrollView(filteredTransactions);
     }
+
+    protected abstract String getTitleText();
+
+    protected abstract List<Transaction> getTransactions();
+
+    protected abstract Intent getTransactionIntent(int transactionID, boolean income);
 
     /*****************************************************************
      * Menu Methods
@@ -108,27 +102,27 @@ public class DisplayIncomesActivity extends Activity {
                 return true;
 
             case R.id.sort_amount:
-                Collections.sort(filteredIncomes, new Comparator<Income>() {
+                Collections.sort(filteredTransactions, new Comparator<Transaction>() {
                     @Override
-                    public int compare(Income o1, Income o2) {
+                    public int compare(Transaction o1, Transaction o2) {
                         return amountSort ? o1.getAmount().compareTo(o2.getAmount()) : o2.getAmount().compareTo(o1.getAmount());
                     }
                 });
 
                 amountSort = !amountSort;
-                populateScrollView(filteredIncomes);
+                populateScrollView(filteredTransactions);
                 return true;
 
             case R.id.sort_location:
-                Collections.sort(filteredIncomes, new Comparator<Income>() {
+                Collections.sort(filteredTransactions, new Comparator<Transaction>() {
                     @Override
-                    public int compare(Income o1, Income o2) {
+                    public int compare(Transaction o1, Transaction o2) {
                         return locationSort ? o1.getLocation().compareTo(o2.getLocation()) : o2.getLocation().compareTo(o1.getLocation());
                     }
                 });
 
                 locationSort = !locationSort;
-                populateScrollView(filteredIncomes);
+                populateScrollView(filteredTransactions);
                 return true;
 
             default:
@@ -144,27 +138,27 @@ public class DisplayIncomesActivity extends Activity {
      *  Iterates through all expenses to check which expenses were requested to
      *  be displayed.
      */
-    private void populateScrollView(List<Income> incomesTodisplay) {
+    private void populateScrollView(List<Transaction> transactionsToDisplay) {
         LinearLayout scrollLinearLayout = transactionsScrollView.findViewById(R.id.scrollViewLinearLayout);
         if (scrollLinearLayout.getChildCount() > 0)
             scrollLinearLayout.removeAllViews();
 
         //Inflate a category_expense_row_layout for each expense
         BigDecimal amount = new BigDecimal(0);
-        for (Income i : incomesTodisplay) {
-            amount = amount.add(i.getAmount());
-            scrollLinearLayout.addView(inflateIncomeDisplayRow(i));
+        for (Transaction t : transactionsToDisplay) {
+            amount = amount.add(t.getAmount());
+            scrollLinearLayout.addView(inflateTransactionDisplayRow(t));
         }
 
         amountTextView.setText(getString(R.string.currency, amount));
     }
 
-    private View inflateIncomeDisplayRow(final Income income) {
+    private View inflateTransactionDisplayRow(Transaction transaction) {
         //TODO: Figure out what this third parameter is for
         View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
 
         View view = item.findViewById(R.id.categoryColorView);
-        int color = ContextCompat.getColor(getApplicationContext(), R.color.green);
+        int color = transaction instanceof Income ? ContextCompat.getColor(getApplicationContext(), R.color.green) : ((Expense) transaction).getCategory().getColor();
         view.setBackgroundColor(color);
 
         TextView dateTextView = item.findViewById(R.id.expenseDateTextView);
@@ -172,16 +166,15 @@ public class DisplayIncomesActivity extends Activity {
         TextView amountTextView = item.findViewById(R.id.expensesAmountTextView);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-        dateTextView.setText(sdf.format(income.getDate()));
-        locationTextView.setText(income.getLocation());
-        amountTextView.setText(getString(R.string.currency, income.getAmount()));
+        dateTextView.setText(sdf.format(transaction.getDate()));
+        locationTextView.setText(transaction.getLocation());
+        amountTextView.setText(getString(R.string.currency, transaction.getAmount()));
 
-        final int incomeID = income.getIncomeID();
+        int transactionID = transaction instanceof Income ? ((Income) transaction).getIncomeID() : ((Expense) transaction).getExpenseID();
+        final Intent intent = getTransactionIntent(transactionID, transaction instanceof Income);
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DisplayIncomesActivity.this, UpdateIncomeActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_ID, incomeID);
                 startActivity(intent);
             }
         });

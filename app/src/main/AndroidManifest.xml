@@ -17,16 +17,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AddExpenseActivity" />
-        <activity android:name=".activity.AddIncomeActivity" />
-        <activity android:name=".activity.DisplayExpensesActivity" />
-        <activity android:name=".activity.DisplayIncomesActivity" />
-        <activity android:name=".activity.DisplayTransactionsActivity" />
-        <activity android:name=".activity.BackupRestoreActivity" />
-        <activity android:name=".activity.ChangeAppearance" />
-        <activity android:name=".activity.CategoryUpdate" />
-        <activity android:name=".activity.UpdateExpenseActivity" />
-        <activity android:name=".activity.UpdateIncomeActivity" />
+        <activity android:name=".activity.add.AddExpenseActivity" />
+        <activity android:name=".activity.add.AddIncomeActivity" />
+        <activity android:name=".activity.display.DisplayExpensesActivity" />
+        <activity android:name=".activity.display.DisplayIncomesActivity" />
+        <activity android:name=".activity.display.DisplayAllTransactionsActivity" />
+        <activity android:name=".activity.settings.BackupRestoreActivity" />
+        <activity android:name=".activity.settings.ChangeAppearance" />
+        <activity android:name=".activity.settings.CategoryUpdate" />
+        <activity android:name=".activity.update.UpdateExpenseActivity" />
+        <activity android:name=".activity.update.UpdateIncomeActivity" />
     </application>
 
 </manifest>

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
     android:orientation="vertical"
-    tools:context=".activity.DisplayExpensesActivity">
+    tools:context=".activity.display.DisplayExpensesActivity">
 
     <Toolbar
         android:id="@+id/displayExpensesActivityToolbar"

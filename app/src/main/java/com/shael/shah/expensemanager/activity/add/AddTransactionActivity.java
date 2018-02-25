@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.activity;
+package com.shael.shah.expensemanager.activity.add;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -12,18 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.model.Category;
+import com.shael.shah.expensemanager.activity.LandingActivity;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 public abstract class AddTransactionActivity extends Activity {
@@ -38,12 +34,7 @@ public abstract class AddTransactionActivity extends Activity {
     public EditText dateEditText;
     public EditText locationEditText;
     public EditText noteEditText;
-    //private ScrollView categoryScrollView;
     public Spinner recurringSpinner;
-    //private Spinner paymentSpinner;
-
-    //private List<Category> categories;
-    //private List<RadioButton> categoryRadioButtons;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -60,23 +51,13 @@ public abstract class AddTransactionActivity extends Activity {
         setContentView(getLayoutResourceID());
 
         //Find views to work with during add expense activity
-        //categoryScrollView = findViewById(R.id.categoryScrollView);
         amountEditText = findViewById(R.id.amountEditText);
         dateEditText = findViewById(R.id.dateEditText);
         locationEditText = findViewById(R.id.locationEditText);
         noteEditText = findViewById(R.id.noteEditText);
-        //paymentSpinner = findViewById(R.id.paymentSpinner);
         recurringSpinner = findViewById(R.id.recurringSpinner);
 
         instance = DataSingleton.getInstance();
-        //categories = instance.getCategories();
-        //categoryRadioButtons = new ArrayList<>();
-
-        //Helper functions
-        //createCategoryRows();
-        createRecurringSpinnerRows();
-        //createPaymentSpinnerRows();
-        //populateInfoFields();
 
         //Disables keyboard from automatically popping up when this activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

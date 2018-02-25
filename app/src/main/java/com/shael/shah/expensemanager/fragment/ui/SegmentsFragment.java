@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.fragment;
+package com.shael.shah.expensemanager.fragment.ui;
 
 import android.app.Fragment;
 import android.graphics.Color;

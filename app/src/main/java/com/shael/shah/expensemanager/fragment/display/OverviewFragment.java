@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.fragment;
+package com.shael.shah.expensemanager.fragment.display;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -13,9 +13,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
-import com.shael.shah.expensemanager.activity.DisplayIncomesActivity;
-import com.shael.shah.expensemanager.activity.DisplayTransactionsActivity;
+import com.shael.shah.expensemanager.activity.display.DisplayAllTransactionsActivity;
+import com.shael.shah.expensemanager.activity.display.DisplayExpensesActivity;
+import com.shael.shah.expensemanager.activity.display.DisplayIncomesActivity;
+import com.shael.shah.expensemanager.fragment.ui.BarsFragment;
+import com.shael.shah.expensemanager.fragment.ui.SegmentsFragment;
 import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Income;
 import com.shael.shah.expensemanager.utils.DataSingleton;
@@ -233,7 +235,7 @@ public class OverviewFragment extends Fragment {
         netTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DisplayTransactionsActivity.class);
+                Intent intent = new Intent(getActivity(), DisplayAllTransactionsActivity.class);
                 intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
                 startActivity(intent);
             }

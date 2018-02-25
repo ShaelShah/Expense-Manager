@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.fragment;
+package com.shael.shah.expensemanager.fragment.ui;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.activity.DisplayExpensesActivity;
+import com.shael.shah.expensemanager.activity.display.DisplayExpensesActivity;
 import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.utils.DataSingleton;

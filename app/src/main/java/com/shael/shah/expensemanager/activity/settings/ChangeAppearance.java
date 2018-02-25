@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.activity;
+package com.shael.shah.expensemanager.activity.settings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

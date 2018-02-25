@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.fragment;
+package com.shael.shah.expensemanager.fragment.display;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.activity.BackupRestoreActivity;
-import com.shael.shah.expensemanager.activity.CategoryUpdate;
-import com.shael.shah.expensemanager.activity.ChangeAppearance;
+import com.shael.shah.expensemanager.activity.settings.BackupRestoreActivity;
+import com.shael.shah.expensemanager.activity.settings.CategoryUpdate;
+import com.shael.shah.expensemanager.activity.settings.ChangeAppearance;
 
 public class SettingsFragment extends Fragment {
 

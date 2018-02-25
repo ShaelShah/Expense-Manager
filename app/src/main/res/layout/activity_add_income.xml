@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/lightGrey"
     android:orientation="vertical"
-    tools:context="com.shael.shah.expensemanager.activity.AddExpenseActivity">
+    tools:context="com.shael.shah.expensemanager.activity.add.AddExpenseActivity">
 
     <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/updateExpenseToolbar"

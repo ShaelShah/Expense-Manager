@@ -1,4 +1,4 @@
-package com.shael.shah.expensemanager.activity;
+package com.shael.shah.expensemanager.activity.settings;
 
 import android.Manifest;
 import android.app.Activity;
