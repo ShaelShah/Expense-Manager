@@ -1,6 +1,5 @@
 package com.shael.shah.expensemanager.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -35,20 +34,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AddExpenseActivity extends Activity {
+public class AddExpenseActivity extends AddTransactionActivity {
 
     /*****************************************************************
      * Private Variables
      *****************************************************************/
 
-    private DataSingleton instance;
+//    private DataSingleton instance;
 
-    private EditText amountEditText;
-    private EditText dateEditText;
-    private EditText locationEditText;
-    private EditText noteEditText;
+//    private EditText amountEditText;
+//    private EditText dateEditText;
+//    private EditText locationEditText;
+//    private EditText noteEditText;
     private ScrollView categoryScrollView;
-    private Spinner recurringSpinner;
+//    private Spinner recurringSpinner;
     private Spinner paymentSpinner;
 
     private List<Category> categories;
@@ -66,30 +65,36 @@ public class AddExpenseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_expense);
+        //setContentView(R.layout.activity_add_expense);
 
         //Find views to work with during add expense activity
         categoryScrollView = findViewById(R.id.categoryScrollView);
-        amountEditText = findViewById(R.id.amountEditText);
-        dateEditText = findViewById(R.id.dateEditText);
-        locationEditText = findViewById(R.id.locationEditText);
-        noteEditText = findViewById(R.id.noteEditText);
+//        amountEditText = findViewById(R.id.amountEditText);
+//        dateEditText = findViewById(R.id.dateEditText);
+//        locationEditText = findViewById(R.id.locationEditText);
+//        noteEditText = findViewById(R.id.noteEditText);
         paymentSpinner = findViewById(R.id.paymentSpinner);
-        recurringSpinner = findViewById(R.id.recurringSpinner);
+//        recurringSpinner = findViewById(R.id.recurringSpinner);
 
-        instance = DataSingleton.getInstance();
+//        instance = DataSingleton.getInstance();
         categories = instance.getCategories();
         categoryRadioButtons = new ArrayList<>();
 
         //Helper functions
         createCategoryRows();
-        createRecurringSpinnerRows();
+//        createRecurringSpinnerRows();
         createPaymentSpinnerRows();
         populateInfoFields();
 
         //Disables keyboard from automatically popping up when this activity starts
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+    @Override
+    protected int getLayoutResourceID() {
+        return R.layout.activity_add_expense;
+    }
+
 
     /*****************************************************************
      * Functionality Methods
@@ -100,7 +105,8 @@ public class AddExpenseActivity extends Activity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    private boolean saveTransaction() {
+    @Override
+    protected boolean saveTransaction() {
         BigDecimal amount;
         Date date;
         Category category = null;
@@ -160,19 +166,19 @@ public class AddExpenseActivity extends Activity {
      * GUI Setup Methods
      *****************************************************************/
 
-    public void cancel(View view) {
+    /*public void cancel(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
+    }*/
 
-    public void save(View view) {
+    /*public void save(View view) {
         if (saveTransaction()) {
             Intent intent = new Intent(this, LandingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
-    }
+    }*/
 
     /*
      *  Helper function used to de-clutter onCreate method.
@@ -181,7 +187,8 @@ public class AddExpenseActivity extends Activity {
      *  an old expense. To support this, the intent that created this activity is checked for
      *  an extra and the GUI is set up appropriately.
      */
-    private void populateInfoFields() {
+    /*@Override
+    protected void populateInfoFields() {
         View.OnClickListener dateListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,7 +216,7 @@ public class AddExpenseActivity extends Activity {
 
         dateEditText.setText(R.string.today);
         dateEditText.setOnClickListener(dateListener);
-    }
+    }*/
 
     /*
      *  Iterates through all categories and inflates a category_select_row_layout for each
@@ -301,12 +308,12 @@ public class AddExpenseActivity extends Activity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createRecurringSpinnerRows() {
+    /*private void createRecurringSpinnerRows() {
         String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
         ArrayAdapter<String> recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
         recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recurringSpinner.setAdapter(recurringSpinnerAdapter);
-    }
+    }*/
 
     /*
      *  Helper function used to populate the recurring period spinner.
@@ -321,11 +328,11 @@ public class AddExpenseActivity extends Activity {
     /*
     *  Helper function to create separators used inbetween categories.
     */
-    private View createSeparatorView() {
+    /*private View createSeparatorView() {
         View line = new View(this);
         line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         line.setBackgroundColor(Color.LTGRAY);
 
         return line;
-    }
+    }*/
 }

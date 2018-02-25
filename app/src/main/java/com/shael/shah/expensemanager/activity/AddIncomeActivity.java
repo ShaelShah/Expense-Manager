@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.model.Income;
+import com.shael.shah.expensemanager.model.Transaction;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.math.BigDecimal;
@@ -24,19 +25,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddIncomeActivity extends Activity {
+public class AddIncomeActivity extends AddTransactionActivity {
 
     /*****************************************************************
      * Private Variables
      *****************************************************************/
 
-    private DataSingleton instance;
+//    private DataSingleton instance;
 
-    private EditText amountEditText;
-    private EditText dateEditText;
-    private EditText locationEditText;
-    private EditText noteEditText;
-    private Spinner recurringSpinner;
+//    private EditText amountEditText;
+//    private EditText dateEditText;
+//    private EditText locationEditText;
+//    private EditText noteEditText;
+//    private Spinner recurringSpinner;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -53,20 +54,25 @@ public class AddIncomeActivity extends Activity {
         setContentView(R.layout.activity_add_income);
 
         //Find views to work with during add expense activity
-        amountEditText = findViewById(R.id.amountEditText);
-        dateEditText = findViewById(R.id.dateEditText);
-        locationEditText = findViewById(R.id.locationEditText);
-        noteEditText = findViewById(R.id.noteEditText);
-        recurringSpinner = findViewById(R.id.recurringSpinner);
+//        amountEditText = findViewById(R.id.amountEditText);
+//        dateEditText = findViewById(R.id.dateEditText);
+//        locationEditText = findViewById(R.id.locationEditText);
+//        noteEditText = findViewById(R.id.noteEditText);
+//        recurringSpinner = findViewById(R.id.recurringSpinner);
 
-        instance = DataSingleton.getInstance();
+//        instance = DataSingleton.getInstance();
 
         //Helper functions
-        createRecurringSpinnerRows();
+//        createRecurringSpinnerRows();
         populateInfoFields();
 
         //Disables keyboard from automatically popping up when this activity starts
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    @Override
+    protected int getLayoutResourceID() {
+        return R.layout.activity_add_income;
     }
 
     /*****************************************************************
@@ -78,7 +84,8 @@ public class AddIncomeActivity extends Activity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    private boolean saveTransaction() {
+    @Override
+    protected boolean saveTransaction() {
         BigDecimal amount;
         Date date;
         NumberFormat format = NumberFormat.getCurrencyInstance();
@@ -118,19 +125,19 @@ public class AddIncomeActivity extends Activity {
      * GUI Setup Methods
      *****************************************************************/
 
-    public void cancel(View view) {
+    /*public void cancel(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
+    }*/
 
-    public void save(View view) {
+    /*public void save(View view) {
         if (saveTransaction()) {
             Intent intent = new Intent(this, LandingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
-    }
+    }*/
 
     /*
      *  Helper function used to de-clutter onCreate method.
@@ -139,7 +146,8 @@ public class AddIncomeActivity extends Activity {
      *  an old expense. To support this, the intent that created this activity is checked for
      *  an extra and the GUI is set up appropriately.
      */
-    private void populateInfoFields() {
+    /*@Override
+    protected void populateInfoFields() {
         View.OnClickListener dateListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,15 +175,15 @@ public class AddIncomeActivity extends Activity {
 
         dateEditText.setText(R.string.today);
         dateEditText.setOnClickListener(dateListener);
-    }
+    }*/
 
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createRecurringSpinnerRows() {
+    /*private void createRecurringSpinnerRows() {
         String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
         ArrayAdapter<String> recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
         recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recurringSpinner.setAdapter(recurringSpinnerAdapter);
-    }
+    }*/
 }
