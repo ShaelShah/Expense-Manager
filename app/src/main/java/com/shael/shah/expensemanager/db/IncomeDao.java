@@ -17,11 +17,11 @@ public interface IncomeDao {
     List<Income> getAllIncomes();
 
     @Insert
-    long insert(Income income);
+    void insert(Income income);
 
     @Update
-    int update(Income income);
+    void update(Income income);
 
     @Delete
-    int delete(Income income);
+    void delete(Income income);
 }

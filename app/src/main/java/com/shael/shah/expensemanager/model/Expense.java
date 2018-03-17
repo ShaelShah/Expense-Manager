@@ -5,27 +5,12 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-//import android.os.Parcel;
-//import android.os.Parcelable;
-
 @Entity
-//public class Expense implements Parcelable {
-public class Expense extends Transaction implements Serializable {
-
-    /*public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Expense createFromParcel(Parcel in) {
-            return new Expense(in);
-        }
-
-        public Expense[] newArray(int size) {
-            return new Expense[size];
-        }
-    };*/
+public class Expense extends Transaction {
 
     @PrimaryKey(autoGenerate = true)
     private int expenseID;
@@ -51,17 +36,6 @@ public class Expense extends Transaction implements Serializable {
         setInsert(true);
     }
 
-    /*private Expense(Parcel parcel) {
-        this.date = new Date(parcel.readLong());
-        this.amount = new BigDecimal(parcel.readString());
-        this.category = parcel.readParcelable(Category.class.getClassLoader());
-        this.location = parcel.readString();
-        this.note = parcel.readString();
-        this.income = parcel.readInt() != 0;
-        this.recurringPeriod = parcel.readString();
-        this.paymentMethod = parcel.readString();
-    }*/
-
     public int getExpenseID() {
         return expenseID;
     }
@@ -84,30 +58,13 @@ public class Expense extends Transaction implements Serializable {
 
     @Override
     public boolean equals(Object exp) {
-        return this.getExpenseID() == ((Expense) exp).getExpenseID();
+        return (this.getClass() == exp.getClass() && this.getExpenseID() == ((Expense) exp).getExpenseID());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getDate(), getAmount(), category, getLocation(), getNote(), getRecurringPeriod(), paymentMethod);
     }
-
-    /*@Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(date.getTime());
-        parcel.writeString(amount.toString());
-        parcel.writeParcelable(category, flags);
-        parcel.writeString(location);
-        parcel.writeString(note);
-        parcel.writeInt(income ? 1 : 0);
-        parcel.writeString(recurringPeriod);
-        parcel.writeString(paymentMethod);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }*/
 
     public static class Builder {
 

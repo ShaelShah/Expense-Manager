@@ -18,6 +18,7 @@ import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.add.AddExpenseActivity;
 import com.shael.shah.expensemanager.activity.add.AddIncomeActivity;
 import com.shael.shah.expensemanager.fragment.display.OverviewFragment;
+import com.shael.shah.expensemanager.fragment.display.SettingsFragment;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 import com.shael.shah.expensemanager.utils.DataSingleton.LandingFragment;
 
@@ -84,8 +85,8 @@ public class LandingActivity extends Activity {
 
                     case R.id.settings:
                         if (currentFragment != LandingFragment.SETTINGS) {
-                            //fragment = new SettingsFragment();
-                            //currentFragment = LandingFragment.SETTINGS;
+                            fragment = new SettingsFragment();
+                            currentFragment = LandingFragment.SETTINGS;
                         }
                         break;
                 }

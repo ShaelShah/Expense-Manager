@@ -2,9 +2,11 @@ package com.shael.shah.expensemanager.activity.add;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -61,10 +63,12 @@ public class AddExpenseActivity extends AddTransactionActivity {
 
         //Helper functions
         createCategoryRows();
-        createRecurringSpinnerRows();
         createPaymentSpinnerRows();
-        populateInfoFields();
     }
+
+    /*****************************************************************
+     * Abstract Methods
+     *****************************************************************/
 
     @Override
     protected int getLayoutResourceID() {
@@ -232,5 +236,17 @@ public class AddExpenseActivity extends AddTransactionActivity {
         ArrayAdapter<String> paymentSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paymentItems);
         paymentSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         paymentSpinner.setAdapter(paymentSpinnerAdapter);
+    }
+
+
+    /*
+     *  Helper function to create separators used in-between categories.
+     */
+    private View createSeparatorView() {
+        View line = new View(this);
+        line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+        line.setBackgroundColor(Color.LTGRAY);
+
+        return line;
     }
 }

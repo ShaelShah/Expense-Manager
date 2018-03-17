@@ -20,17 +20,9 @@ public class AddIncomeActivity extends AddTransactionActivity {
      * Lifecycle Methods
      *****************************************************************/
 
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all categories.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        createRecurringSpinnerRows();
-        populateInfoFields();
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
     }
 
     @Override

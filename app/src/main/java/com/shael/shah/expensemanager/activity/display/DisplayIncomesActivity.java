@@ -10,6 +10,16 @@ import java.util.List;
 
 public class DisplayIncomesActivity extends DisplayTransactionsActivity {
 
+    /*****************************************************************
+     * Private Variables
+     *****************************************************************/
+
+    private static final String EXTRA_TRANSACTION_ID = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_ID";
+
+    /*****************************************************************
+     * Abstract Methods
+     *****************************************************************/
+
     @Override
     protected String getTitleText() {
         return "Incomes";
@@ -23,7 +33,7 @@ public class DisplayIncomesActivity extends DisplayTransactionsActivity {
     @Override
     protected Intent getTransactionIntent(int transactionID, boolean income) {
         Intent intent = new Intent(this, UpdateIncomeActivity.class);
-        intent.putExtra(EXTRA_EXPENSE_ID, transactionID);
+        intent.putExtra(EXTRA_TRANSACTION_ID, transactionID);
 
         return intent;
     }

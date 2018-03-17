@@ -39,6 +39,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      * Private Variables
      *****************************************************************/
 
+    private static final String EXTRA_TRANSACTION_ID = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_ID";
+
     private ScrollView categoryScrollView;
     private Spinner paymentSpinner;
 
@@ -68,7 +70,6 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
 
         //Helper functions
         createCategoryRows();
-        createRecurringSpinnerRows();
         createPaymentSpinnerRows();
         populateInfoFields();
     }
@@ -87,8 +88,7 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    @Override
-    protected boolean saveTransaction() {
+    private boolean saveTransaction() {
         BigDecimal amount;
         Date date;
         Category category = null;
@@ -145,12 +145,11 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
     }
 
     /*****************************************************************
-     * GUI Setup Methods
+     * ActionListeners
      *****************************************************************/
 
-    @Override
     public void delete(View view) {
-        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
 
@@ -161,16 +160,14 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
         startActivity(intent);
     }
 
-    @Override
     public void cancel(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
-    @Override
     public void update(View view) {
-        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
         instance.deleteExpense(expense);
 
@@ -180,6 +177,10 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
             startActivity(intent);
         }
     }
+
+    /*****************************************************************
+     * GUI Setup Methods
+     *****************************************************************/
 
     /*
      *  Helper function used to de-clutter onCreate method.
@@ -215,7 +216,7 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
             }
         };
 
-        int expenseID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
         amountEditText.setText(getString(R.string.currency, expense.getAmount()));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
@@ -331,7 +332,7 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
     }
 
     /*
-    *  Helper function to create separators used inbetween categories.
+    *  Helper function to create separators used in-between categories.
     */
     private View createSeparatorView() {
         View line = new View(this);

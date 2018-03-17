@@ -23,8 +23,6 @@
         <activity android:name=".activity.display.DisplayIncomesActivity" />
         <activity android:name=".activity.display.DisplayAllTransactionsActivity" />
         <activity android:name=".activity.settings.BackupRestoreActivity" />
-        <activity android:name=".activity.settings.ChangeAppearance" />
-        <activity android:name=".activity.settings.CategoryUpdate" />
         <activity android:name=".activity.update.UpdateExpenseActivity" />
         <activity android:name=".activity.update.UpdateIncomeActivity" />
     </application>

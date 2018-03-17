@@ -3,27 +3,12 @@ package com.shael.shah.expensemanager.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-//import android.os.Parcel;
-//import android.os.Parcelable;
-
 @Entity
-//public class Income implements Parcelable {
-public class Income extends Transaction implements Serializable {
-
-    /*public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Expense createFromParcel(Parcel in) {
-            return new Expense(in);
-        }
-
-        public Expense[] newArray(int size) {
-            return new Expense[size];
-        }
-    };*/
+public class Income extends Transaction {
 
     @PrimaryKey(autoGenerate = true)
     private int incomeID;
@@ -36,17 +21,6 @@ public class Income extends Transaction implements Serializable {
         super(builder.date, builder.amount, builder.location, builder.note, builder.recurringPeriod);
         setInsert(true);
     }
-
-    /*private Expense(Parcel parcel) {
-        this.date = new Date(parcel.readLong());
-        this.amount = new BigDecimal(parcel.readString());
-        this.category = parcel.readParcelable(Category.class.getClassLoader());
-        this.location = parcel.readString();
-        this.note = parcel.readString();
-        this.income = parcel.readInt() != 0;
-        this.recurringPeriod = parcel.readString();
-        this.paymentMethod = parcel.readString();
-    }*/
 
     public int getIncomeID() {
         return incomeID;
@@ -62,30 +36,13 @@ public class Income extends Transaction implements Serializable {
 
     @Override
     public boolean equals(Object inc) {
-        return this.getIncomeID() == ((Income) inc).getIncomeID();
+        return (this.getClass() == inc.getClass() && this.getIncomeID() == ((Income) inc).getIncomeID());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getDate(), getAmount(), getLocation(), getNote(), getRecurringPeriod());
     }
-
-    /*@Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeLong(date.getTime());
-        parcel.writeString(amount.toString());
-        parcel.writeParcelable(category, flags);
-        parcel.writeString(location);
-        parcel.writeString(note);
-        parcel.writeInt(income ? 1 : 0);
-        parcel.writeString(recurringPeriod);
-        parcel.writeString(paymentMethod);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }*/
 
     public static class Builder {
 

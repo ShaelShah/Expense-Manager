@@ -17,11 +17,11 @@ public interface ExpenseDao {
     List<Expense> getAllExpenses();
 
     @Insert
-    long insert(Expense expense);
+    void insert(Expense expense);
 
     @Update
-    int update(Expense expense);
+    void update(Expense expense);
 
     @Delete
-    int delete(Expense expense);
+    void delete(Expense expense);
 }

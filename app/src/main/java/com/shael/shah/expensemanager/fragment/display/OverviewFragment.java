@@ -16,7 +16,6 @@ import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.display.DisplayAllTransactionsActivity;
 import com.shael.shah.expensemanager.activity.display.DisplayExpensesActivity;
 import com.shael.shah.expensemanager.activity.display.DisplayIncomesActivity;
-import com.shael.shah.expensemanager.fragment.ui.BarsFragment;
 import com.shael.shah.expensemanager.fragment.ui.SegmentsFragment;
 import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Income;
@@ -36,13 +35,11 @@ public class OverviewFragment extends Fragment {
      * Private Variables
      ******************************************************************/
 
-    private static final String EXTRA_EXPENSES_TITLE = "com.shael.shah.expensemanager.EXTRA_EXPENSES_TITLE";
-    private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
+    private static final String EXTRA_TRANSACTION_DATE = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_DATE";
 
     private DataSingleton instance;
 
     private TimePeriod timePeriod;
-    private String displayExpensesOption;
     private List<Expense> expenses;
     private List<Income> incomes;
 
@@ -88,15 +85,14 @@ public class OverviewFragment extends Fragment {
         expenses = instance.getExpenses();
         incomes = instance.getIncomes();
         timePeriod = instance.getTimePeriod();
-        displayExpensesOption = instance.getDisplayOption();
 
         setActionListeners();
         populateMoneyTextViews();
 
         if (savedInstanceState == null) {
-            Fragment fragment = displayExpensesOption.equalsIgnoreCase("CIRCLE") ? new SegmentsFragment() : new BarsFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(EXTRA_EXPENSE_DATE, getDateRange());
+            bundle.putSerializable(EXTRA_TRANSACTION_DATE, getDateRange());
+            Fragment fragment = new SegmentsFragment();
             fragment.setArguments(bundle);
             getFragmentManager().beginTransaction().add(R.id.displayExpensesAnimationFrameLayout, fragment).commit();
         }
@@ -218,7 +214,7 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DisplayIncomesActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
+                intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
             }
         });
@@ -227,7 +223,7 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DisplayExpensesActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
+                intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
             }
         });
@@ -236,7 +232,7 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), DisplayAllTransactionsActivity.class);
-                intent.putExtra(EXTRA_EXPENSE_DATE, getDateRange().getTime());
+                intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
             }
         });
@@ -249,8 +245,6 @@ public class OverviewFragment extends Fragment {
         timePeriodTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //View content = LayoutInflater.from(getActivity()).inflate(R.layout.date_range_dialog_layout, null);
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Select Date Range");
                 builder.setView(R.layout.date_range_dialog_layout);
@@ -285,15 +279,9 @@ public class OverviewFragment extends Fragment {
                                 break;
                         }
 
-                        if (displayExpensesOption.equalsIgnoreCase("CIRCLE")) {
-                            SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.displayExpensesAnimationFrameLayout);
-                            if (fragment != null)
-                                fragment.updateExpenses(getDateRange());
-                        } else {
-                            BarsFragment fragment = (BarsFragment) getFragmentManager().findFragmentById(R.id.displayExpensesAnimationFrameLayout);
-                            if (fragment != null)
-                                fragment.updateExpenses(getDateRange());
-                        }
+                        SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.displayExpensesAnimationFrameLayout);
+                        if (fragment != null)
+                            fragment.updateExpenses(getDateRange());
 
                         populateMoneyTextViews();
                     }

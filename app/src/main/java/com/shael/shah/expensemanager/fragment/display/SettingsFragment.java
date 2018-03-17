@@ -10,15 +10,8 @@ import android.widget.TextView;
 
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.activity.settings.BackupRestoreActivity;
-import com.shael.shah.expensemanager.activity.settings.CategoryUpdate;
-import com.shael.shah.expensemanager.activity.settings.ChangeAppearance;
 
 public class SettingsFragment extends Fragment {
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,50 +25,11 @@ public class SettingsFragment extends Fragment {
                 backupRestoreData();
             }
         });
-
-        TextView appearanceTextView = view.findViewById(R.id.appearanceTextView);
-        appearanceTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeAppearance();
-            }
-        });
-
-        TextView dateRangeTextView = view.findViewById(R.id.dateRangeTextView);
-        dateRangeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateRangeUpdate();
-            }
-        });
-
-        TextView categoriesTextView = view.findViewById(R.id.categoryTextView);
-        categoriesTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryUpdate();
-            }
-        });
         return view;
     }
 
     private void backupRestoreData() {
         Intent intent = new Intent(getActivity(), BackupRestoreActivity.class);
-        startActivity(intent);
-    }
-
-    private void changeAppearance() {
-        Intent intent = new Intent(getActivity(), ChangeAppearance.class);
-        startActivity(intent);
-    }
-
-    private void dateRangeUpdate() {
-//        Intent intent = new Intent(getActivity(), DateRangeUpdate.class);
-//        startActivity(intent);
-    }
-
-    private void categoryUpdate() {
-        Intent intent = new Intent(getActivity(), CategoryUpdate.class);
         startActivity(intent);
     }
 }

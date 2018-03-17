@@ -24,7 +24,6 @@
     <string name="update">Update</string>
 
     <string name="add_expense">Add Expense</string>
-    <string name="income">Income</string>
     <string name="currencyHint">$$$</string>
     <string name="category">Category</string>
     <string name="additional_info">Additional Info</string>
@@ -39,15 +38,10 @@
     <string name="filter">Filter</string>
     <string name="sort_amount">Sort Amount</string>
     <string name="sort_location">Sort Location</string>
-    <string name="start">Start</string>
-    <string name="start_date">Start Date</string>
-    <string name="end">End</string>
-    <string name="end_date">End Date</string>
 
     <!-- Settings Activity related strings -->
     <string name="backup_data">Backup Data</string>
     <string name="restore_data">Restore Data</string>
-    <string name="expense_animation">Expense Animation</string>
     <string name="general_settings">General Settings</string>
     <string name="categories">Categories</string>
     <string name="appearance">Appearance</string>
@@ -60,7 +54,5 @@
     <string name="history">History</string>
     <string name="overview">Overview</string>
     <string name="add_income">Add Income</string>
-    <string name="expenses">Expenses</string>
-    <string name="allTransactions">All Transactions</string>
 
 </resources>

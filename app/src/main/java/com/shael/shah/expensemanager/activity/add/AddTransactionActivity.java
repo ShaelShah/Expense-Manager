@@ -3,15 +3,12 @@ package com.shael.shah.expensemanager.activity.add;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.shael.shah.expensemanager.R;
@@ -28,13 +25,13 @@ public abstract class AddTransactionActivity extends Activity {
      * Private Variables
      *****************************************************************/
 
-    public DataSingleton instance;
+    protected DataSingleton instance;
 
-    public EditText amountEditText;
-    public EditText dateEditText;
-    public EditText locationEditText;
-    public EditText noteEditText;
-    public Spinner recurringSpinner;
+    protected EditText amountEditText;
+    protected EditText dateEditText;
+    protected EditText locationEditText;
+    protected EditText noteEditText;
+    protected Spinner recurringSpinner;
 
     /*****************************************************************
      * Lifecycle Methods
@@ -59,9 +56,24 @@ public abstract class AddTransactionActivity extends Activity {
 
         instance = DataSingleton.getInstance();
 
+        createRecurringSpinnerRows();
+        populateInfoFields();
+
         //Disables keyboard from automatically popping up when this activity starts
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+    /*****************************************************************
+     * Abstract Methods
+     *****************************************************************/
+
+    protected abstract int getLayoutResourceID();
+
+    protected abstract boolean saveTransaction();
+
+    /*****************************************************************
+     * ActionListeners
+     *****************************************************************/
 
     public void cancel(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
@@ -77,28 +89,11 @@ public abstract class AddTransactionActivity extends Activity {
         }
     }
 
-    /*
-     *  Helper function used to populate the recurring period spinner.
-     */
-    public void createRecurringSpinnerRows() {
-        String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
-        ArrayAdapter<String> recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
-        recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        recurringSpinner.setAdapter(recurringSpinnerAdapter);
-    }
+    /*****************************************************************
+     * GUI Setup Methods
+     *****************************************************************/
 
-    /*
-     *  Helper function to create separators used inbetween categories.
-     */
-    public View createSeparatorView() {
-        View line = new View(this);
-        line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        line.setBackgroundColor(Color.LTGRAY);
-
-        return line;
-    }
-
-    public void populateInfoFields() {
+    private void populateInfoFields() {
         View.OnClickListener dateListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,8 +123,15 @@ public abstract class AddTransactionActivity extends Activity {
         dateEditText.setOnClickListener(dateListener);
     }
 
-    protected abstract int getLayoutResourceID();
-    protected abstract boolean saveTransaction();
+    /*
+     *  Helper function used to populate the recurring period spinner.
+     */
+    private void createRecurringSpinnerRows() {
+        String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
+        ArrayAdapter<String> recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
+        recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        recurringSpinner.setAdapter(recurringSpinnerAdapter);
+    }
 }
 
 

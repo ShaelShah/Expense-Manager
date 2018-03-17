@@ -32,4 +32,10 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public void destroyInstance() {
         instance = null;
     }
+
+    /*private RoomDatabase.Callback onCreateScript = new RoomDatabase.Callback() {
+        public void onCreate(SupportSQLiteDatabase db) {
+            db.insert()
+        }
+    };*/
 }

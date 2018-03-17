@@ -35,7 +35,7 @@ public class Transaction implements Serializable {
     @Ignore
     private boolean delete = false;
 
-    public Transaction(Date date, BigDecimal amount, String location, String note, String recurringPeriod) {
+    Transaction(Date date, BigDecimal amount, String location, String note, String recurringPeriod) {
         this.date = date;
         this.amount = amount;
         this.location = location;

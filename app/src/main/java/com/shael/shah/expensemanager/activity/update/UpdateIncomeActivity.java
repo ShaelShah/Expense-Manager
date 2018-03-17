@@ -22,19 +22,18 @@ import java.util.Locale;
 public class UpdateIncomeActivity extends UpdateTransactionActivity {
 
     /*****************************************************************
+     * Private Variables
+     *****************************************************************/
+
+    private static final String EXTRA_TRANSACTION_ID = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_ID";
+
+    /*****************************************************************
      * Lifecycle Methods
      *****************************************************************/
 
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all categories.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        createRecurringSpinnerRows();
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         populateInfoFields();
     }
 
@@ -52,8 +51,7 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    @Override
-    protected boolean saveTransaction() {
+    private boolean saveTransaction() {
         BigDecimal amount;
         Date date;
         NumberFormat format = NumberFormat.getCurrencyInstance();
@@ -90,12 +88,11 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
     }
 
     /*****************************************************************
-     * GUI Setup Methods
+     * ActionListeners
      *****************************************************************/
 
-    @Override
     public void delete(View view) {
-        int incomeID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
         instance.deleteIncome(income);
 
@@ -106,16 +103,14 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
         startActivity(intent);
     }
 
-    @Override
     public void cancel(View view) {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
-    @Override
     public void update(View view) {
-        int incomeID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
         instance.deleteIncome(income);
 
@@ -125,6 +120,10 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
             startActivity(intent);
         }
     }
+
+    /*****************************************************************
+     * GUI Setup Methods
+     *****************************************************************/
 
     /*
      *  Helper function used to de-clutter onCreate method.
@@ -160,7 +159,7 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
             }
         };
 
-        int incomeID = getIntent().getIntExtra(EXTRA_EXPENSE_ID, -1);
+        int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
         amountEditText.setText(getString(R.string.currency, income.getAmount()));
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);

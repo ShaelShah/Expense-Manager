@@ -22,9 +22,7 @@ import java.util.List;
 
 public class SegmentsFragment extends Fragment {
 
-    private static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
-
-    private DataSingleton instance;
+    private static final String EXTRA_TRANSACTION_DATE = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_DATE";
 
     private List<Expense> expenses;
     private List<Category> categories;
@@ -51,10 +49,10 @@ public class SegmentsFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        instance = DataSingleton.getInstance();
+        DataSingleton instance = DataSingleton.getInstance();
         expenses = instance.getExpenses();
         categories = instance.getCategories();
-        Date date = (Date) getArguments().getSerializable(EXTRA_EXPENSE_DATE);
+        Date date = (Date) getArguments().getSerializable(EXTRA_TRANSACTION_DATE);
         createCircleView(date);
     }
 
@@ -117,11 +115,6 @@ public class SegmentsFragment extends Fragment {
 
         segmentsFrameLayout.startAnimation(animationSet);
     }
-
-    //public void updateExpenses(Bundle bundle) {
-    //    List<Expense> expenses = bundle.getParcelableArrayList(EXTRA_EXPENSE_LIST);
-    //    createCircleView(expenses);
-    //}
 
     public void updateExpenses(Date dateRange) {
         createCircleView(dateRange);

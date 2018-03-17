@@ -29,10 +29,13 @@ import java.util.Locale;
 
 public abstract class DisplayTransactionsActivity extends Activity {
 
-    public static final String EXTRA_EXPENSE_DATE = "com.shael.shah.expensemanager.EXTRA_EXPENSE_DATE";
-    public static final String EXTRA_EXPENSE_ID = "com.shael.shah.expensemanager.EXTRA_EXPENSE_ID";
+    /*****************************************************************
+     * Private Variables
+     *****************************************************************/
 
-    public DataSingleton instance;
+    private static final String EXTRA_TRANSACTION_DATE = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_DATE";
+
+    protected DataSingleton instance;
     private List<Transaction> filteredTransactions;
 
     private boolean amountSort = true;
@@ -40,6 +43,10 @@ public abstract class DisplayTransactionsActivity extends Activity {
 
     private TextView amountTextView;
     private ScrollView transactionsScrollView;
+
+    /*****************************************************************
+     * Lifecycle Methods
+     *****************************************************************/
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -60,7 +67,7 @@ public abstract class DisplayTransactionsActivity extends Activity {
         instance = DataSingleton.getInstance();
 
         Intent intent = getIntent();
-        Date date = new Date(intent.getLongExtra(EXTRA_EXPENSE_DATE, -1));
+        Date date = new Date(intent.getLongExtra(EXTRA_TRANSACTION_DATE, -1));
         filteredTransactions = new ArrayList<>();
         for (Transaction t : getTransactions()) {
             if (!t.isDelete() && t.getDate().compareTo(date) >= 0) {
@@ -71,10 +78,12 @@ public abstract class DisplayTransactionsActivity extends Activity {
         populateScrollView(filteredTransactions);
     }
 
+    /*****************************************************************
+     * Abstract Methods
+     *****************************************************************/
+
     protected abstract String getTitleText();
-
     protected abstract List<Transaction> getTransactions();
-
     protected abstract Intent getTransactionIntent(int transactionID, boolean income);
 
     /*****************************************************************
