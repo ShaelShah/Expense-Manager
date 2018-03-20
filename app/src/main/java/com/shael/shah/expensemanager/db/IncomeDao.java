@@ -19,9 +19,15 @@ public interface IncomeDao {
     @Insert
     void insert(Income income);
 
+    @Insert
+    void insertAll(List<Income> incomes);
+
     @Update
     void update(Income income);
 
     @Delete
     void delete(Income income);
+
+    @Delete
+    void deleteAll(List<Income> incomes);
 }

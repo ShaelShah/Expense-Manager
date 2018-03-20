@@ -164,7 +164,7 @@ public abstract class DisplayTransactionsActivity extends Activity {
 
     private View inflateTransactionDisplayRow(Transaction transaction) {
         //TODO: Figure out what this third parameter is for
-        View item = View.inflate(this, R.layout.display_expenses_row_layout, null);
+        View item = View.inflate(this, R.layout.display_expenses_view, null);
 
         View view = item.findViewById(R.id.categoryColorView);
         int color = transaction instanceof Income ? ContextCompat.getColor(getApplicationContext(), R.color.green) : ((Expense) transaction).getCategory().getColor();

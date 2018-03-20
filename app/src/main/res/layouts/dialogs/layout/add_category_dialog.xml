@@ -3,25 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingBottom="30dp"
-    android:paddingLeft="30dp"
-    android:paddingRight="30dp"
-    android:paddingTop="30dp">
+    android:padding="24dp">
 
     <TextView
-        android:id="@+id/addCategoryLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:labelFor="@+id/categoryNameEditText"
-        android:text="@string/addCategory"
-        android:textSize="20sp" />
+        android:text="@string/category_name" />
 
     <EditText
         android:id="@+id/categoryNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:inputType="text" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/categoryColorView"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/category_color" />
+
+    <View
+        android:id="@+id/categoryColorView"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/blue" />
 
 </LinearLayout>

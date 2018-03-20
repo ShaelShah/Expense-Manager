@@ -85,6 +85,19 @@ public class DataSingleton {
         database.destroyInstance();
     }
 
+    public void reset() {
+        database.incomeDao().deleteAll(incomes);
+        database.expenseDao().deleteAll(expenses);
+        database.categoryDao().deleteAll(categories);
+
+        incomes.clear();
+        expenses.clear();
+        categories.clear();
+        currentColor = 0;
+
+        updateSettings();
+    }
+
     /*****************************************************************
      * Database Access Methods
      ******************************************************************/
@@ -120,10 +133,6 @@ public class DataSingleton {
         return expenses;
     }
 
-    public List<Income> getIncomes() {
-        return incomes;
-    }
-
     public Expense getExpense(int expenseID) {
         for (Expense e : expenses) {
             if (e.getExpenseID() == expenseID) {
@@ -132,6 +141,10 @@ public class DataSingleton {
         }
 
         return null;
+    }
+
+    public List<Income> getIncomes() {
+        return incomes;
     }
 
     public Income getIncome(int incomeID) {
@@ -148,6 +161,16 @@ public class DataSingleton {
         return categories;
     }
 
+    public Category getCategory(int categoryID) {
+        for (Category c : categories) {
+            if (c.getCategoryID() == categoryID) {
+                return c;
+            }
+        }
+
+        return null;
+    }
+
     // Get settings for use in application
     public TimePeriod getTimePeriod() {
         return timePeriod;
@@ -161,86 +184,82 @@ public class DataSingleton {
         return displayOption;
     }
 
+    public int getCurrentColor() {
+        return colors[currentColor++];
+    }
+
     /******************************************************************
      * Object Interaction Methods
      ******************************************************************/
 
     public void addExpense(Expense expense) {
         expenses.add(expense);
+        database.expenseDao().insert(expense);
+    }
+
+    public void deleteExpense(Expense expense) {
+        expenses.remove(expense);
+        database.expenseDao().delete(expense);
+    }
+
+    public void deleteAllExpensesFromCategory(Category category) {
+        List<Expense> exDelete = new ArrayList<>();
+        for (Expense e : expenses) {
+            if (e.getCategory().equals(category)) {
+                exDelete.add(e);
+            }
+        }
+
+        for (Expense e : exDelete) {
+            deleteExpense(e);
+        }
     }
 
     public void addIncome(Income income) {
         incomes.add(income);
-    }
-
-    public void deleteExpense(Expense expense) {
-        if (expense.isInsert()) {
-            expense.setInsert(false);
-            return;
-        }
-
-        if (expense.isUpdate()) {
-            expense.setUpdate(false);
-            return;
-        }
-
-        expense.setDelete(true);
+        database.incomeDao().insert(income);
     }
 
     public void deleteIncome(Income income) {
-        if (income.isInsert()) {
-            income.setInsert(false);
-        }
-
-        if (income.isUpdate()) {
-            income.setUpdate(false);
-        }
-
-        income.setDelete(true);
+        incomes.remove(income);
+        database.incomeDao().delete(income);
     }
 
-    public boolean addCategory(String category) {
+    public Category addCategory(String category) {
+        return addCategory(category, colors[currentColor++]);
+    }
+
+    public Category addCategory(String category, int color) {
         if (checkCategory(category)) {
-            Category.Builder builder = new Category.Builder(category, colors[currentColor++]);
-            categories.add(builder.build());
+            Category.Builder builder = new Category.Builder(category, color);
+            Category cat = builder.build();
+            categories.add(cat);
+            database.categoryDao().insert(cat);
+            return cat;
+        }
+
+        return null;
+    }
+
+    public boolean updateCategory(Category category, String type, int color) {
+        if (!type.isEmpty() && checkCategory(type)) {
+            category.setType(type);
+            category.setColor(color);
+            database.categoryDao().update(category);
             return true;
         }
 
         return false;
     }
 
+    public void deleteCategory(Category category) {
+        categories.remove(category);
+        database.categoryDao().delete(category);
+    }
+
     /******************************************************************
      * Shutdown Update Methods
      ******************************************************************/
-
-    public void updateDatabase() {
-        for (Expense e : expenses) {
-            if (e.isInsert())
-                database.expenseDao().insert(e);
-
-            if (e.isUpdate())
-                database.expenseDao().update(e);
-
-            if (e.isDelete())
-                database.expenseDao().delete(e);
-        }
-
-        for (Income i : incomes) {
-            if (i.isInsert())
-                database.incomeDao().insert(i);
-
-            if (i.isUpdate())
-                database.incomeDao().update(i);
-
-            if (i.isDelete())
-                database.incomeDao().delete(i);
-        }
-
-        for (Category c : categories) {
-            if (c.isInsert())
-                database.categoryDao().insert(c);
-        }
-    }
 
     public void updateSettings() {
         SharedPreferences.Editor editor = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE).edit();
@@ -255,6 +274,9 @@ public class DataSingleton {
      ******************************************************************/
 
     private boolean checkCategory(String category) {
+        if (category.isEmpty())
+            return false;
+
         for (Category c : categories) {
             if (c.getType().equals(category)) {
                 return false;
@@ -303,6 +325,7 @@ public class DataSingleton {
         }
 
         expenses.addAll(newExpenses);
+        database.expenseDao().insertAll(newExpenses);
     }
 
     private void createRecurringIncomes() {
@@ -343,6 +366,7 @@ public class DataSingleton {
         }
 
         incomes.addAll(newIncomes);
+        database.incomeDao().insertAll(newIncomes);
     }
 
     /******************************************************************

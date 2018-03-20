@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.shael.shah.expensemanager.activity.add.AddExpenseActivity">
+
+    <Toolbar
+        android:id="@+id/updateExpenseToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="?colorPrimary"
+        android:contentInsetLeft="0dp"
+        android:contentInsetStart="0dp"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:popupTheme="@style/Theme.Design.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:divider="@drawable/divider"
+            android:dividerPadding="8dp"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+            <Button
+                android:id="@+id/buttonCancel"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_cancel_black_24dp"
+                android:drawableTint="?colorAccent"
+                android:onClick="cancel"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/buttonSave"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_check_black_24dp"
+                android:drawableTint="?colorAccent"
+                android:onClick="save"
+                android:paddingLeft="60dip"
+                android:paddingRight="60dip"
+                android:text="@string/save" />
+
+        </LinearLayout>
+    </Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <EditText
+            android:id="@+id/amountEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:fontFamily="sans-serif"
+            android:hint="@string/currencyHint"
+            android:inputType="numberDecimal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textAlignment="viewEnd"
+            android:textSize="40sp" />
+
+        <include layout="@layout/information_view" />
+
+    </LinearLayout>
+</LinearLayout>

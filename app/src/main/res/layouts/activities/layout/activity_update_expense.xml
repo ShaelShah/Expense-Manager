@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.shael.shah.expensemanager.activity.update.UpdateExpenseActivity">
+
+    <Toolbar
+        android:id="@+id/updateExpenseToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="?colorPrimary"
+        android:contentInsetLeft="0dp"
+        android:contentInsetStart="0dp"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:popupTheme="@style/Theme.Design.Light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:divider="@drawable/divider"
+            android:dividerPadding="8dp"
+            android:orientation="horizontal"
+            android:showDividers="middle">
+
+            <Button
+                android:id="@+id/buttonCancel"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_cancel_black_24dp"
+                android:drawableTint="?colorAccent"
+                android:onClick="cancel"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/buttonDelete"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_delete_black_24dp"
+                android:drawableTint="?colorAccent"
+                android:onClick="delete"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:text="@string/delete" />
+
+            <Button
+                android:id="@+id/buttonSave"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_check_black_24dp"
+                android:drawableTint="?colorAccent"
+                android:onClick="update"
+                android:paddingLeft="25dip"
+                android:paddingRight="25dip"
+                android:text="@string/save" />
+
+        </LinearLayout>
+    </Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <EditText
+            android:id="@+id/amountEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:fontFamily="sans-serif"
+            android:hint="@string/currencyHint"
+            android:inputType="numberDecimal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textAlignment="viewEnd"
+            android:textSize="40sp" />
+
+        <include layout="@layout/category_view" />
+
+        <include layout="@layout/information_view" />
+
+        <LinearLayout
+            android:id="@+id/paymentLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/paymentLabelTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/payment_method" />
+
+            <Spinner
+                android:id="@+id/paymentSpinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAlignment="center">
+            </Spinner>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

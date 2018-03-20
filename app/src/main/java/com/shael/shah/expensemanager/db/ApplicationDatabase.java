@@ -10,7 +10,7 @@ import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Income;
 
-@Database(entities = {Expense.class, Income.class, Category.class}, version = 8)
+@Database(entities = {Expense.class, Income.class, Category.class}, version = 9)
 @TypeConverters({DateConverter.class, BigDecimalConverter.class})
 public abstract class ApplicationDatabase extends RoomDatabase {
 
@@ -18,7 +18,10 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
     public static ApplicationDatabase getInstance(Context context) {
         if (instance == null)
-            instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, "expense-database").allowMainThreadQueries().fallbackToDestructiveMigration().build();
+            instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, "expense-database")
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
+                    .build();
 
         return instance;
     }
@@ -32,10 +35,4 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public void destroyInstance() {
         instance = null;
     }
-
-    /*private RoomDatabase.Callback onCreateScript = new RoomDatabase.Callback() {
-        public void onCreate(SupportSQLiteDatabase db) {
-            db.insert()
-        }
-    };*/
 }

@@ -4,15 +4,9 @@
     tools:ignore="AppCompatResource">
 
     <item
-        android:id="@+id/add_expense"
-        android:icon="@drawable/ic_money_off_black_24dp"
+        android:id="@+id/add_category"
+        android:icon="@drawable/ic_add_box_black_24dp"
         android:showAsAction="ifRoom"
         android:title="@string/add_expense" />
-
-    <item
-        android:id="@+id/add_income"
-        android:icon="@drawable/ic_attach_money_black_24dp"
-        android:showAsAction="ifRoom"
-        android:title="@string/add_income" />
 
 </menu>

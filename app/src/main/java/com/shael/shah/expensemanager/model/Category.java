@@ -4,11 +4,12 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-//import android.os.Parcel;
-//import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.Objects;
+
+//import android.os.Parcel;
+//import android.os.Parcelable;
 
 @Entity
 //public class Category implements Parcelable {
@@ -65,8 +66,16 @@ public class Category implements Serializable {
         return type;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public int getColor() {
         return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     public boolean isInsert() {

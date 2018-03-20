@@ -58,7 +58,26 @@ public class Expense extends Transaction {
 
     @Override
     public boolean equals(Object exp) {
-        return (this.getClass() == exp.getClass() && this.getExpenseID() == ((Expense) exp).getExpenseID());
+        if (this == exp)
+            return true;
+
+        if (this.getClass() != exp.getClass())
+            return false;
+
+        Expense expense = (Expense) exp;
+        if (this.getCategory() == null && expense.getCategory() != null)
+            return false;
+
+        if (this.getCategory() != null)
+            if (!this.getCategory().equals(expense.getCategory()))
+                return false;
+
+        return (this.getDate().compareTo(expense.getDate()) == 0
+                && this.getAmount().compareTo(expense.getAmount()) == 0
+                && this.getLocation().equals(expense.getLocation())
+                && this.getNote().equals(expense.getNote())
+                && this.getRecurringPeriod().equals(expense.getRecurringPeriod())
+                && this.getPaymentMethod().equals(expense.getPaymentMethod()));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.shael.shah.expensemanager.activity.add;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -155,7 +156,7 @@ public class AddExpenseActivity extends AddTransactionActivity {
         LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
         for (Category c : categories) {
-            View item = inflater.inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
+            View item = inflater.inflate(R.layout.category_select_view, scrollLinearLayout, false);
             item.findViewById(R.id.colorView).setBackgroundColor(c.getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
@@ -175,7 +176,7 @@ public class AddExpenseActivity extends AddTransactionActivity {
             scrollLinearLayout.addView(createSeparatorView());
         }
 
-        inflater.inflate(R.layout.add_category_row_layout, scrollLinearLayout, true);
+        inflater.inflate(R.layout.add_category_view, scrollLinearLayout, true);
     }
 
     /*
@@ -186,22 +187,33 @@ public class AddExpenseActivity extends AddTransactionActivity {
      */
     public void createAddCategoryDialog(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(R.layout.add_category_dialog_layout);
+        builder.setView(R.layout.add_category_dialog);
+        builder.setTitle(R.string.add_category);
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int ID) {
+                dialog.dismiss();
+            }
+        });
+
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int ID) {
                 AlertDialog categoryDialog = (AlertDialog) dialog;
 
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
-                if (instance.addCategory(categoryNameEditText.getText().toString())) {
+                int color = ((ColorDrawable) categoryDialog.findViewById(R.id.categoryColorView).getBackground()).getColor();
+                Category category = instance.addCategory(categoryNameEditText.getText().toString(), color);
+                if (category != null) {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-                    View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_row_layout, scrollLinearLayout, false);
-                    item.findViewById(R.id.colorView).setBackgroundColor(categories.get(categories.size() - 1).getColor());
+                    View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_view, scrollLinearLayout, false);
+                    item.findViewById(R.id.colorView).setBackgroundColor(category.getColor());
 
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
-                    categoryRadioButton.setText(categories.get(categories.size() - 1).getType());
+                    categoryRadioButton.setText(category.getType());
                     categoryRadioButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -226,6 +238,9 @@ public class AddExpenseActivity extends AddTransactionActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        View categoryColorView = dialog.findViewById(R.id.categoryColorView);
+        categoryColorView.setBackgroundColor(instance.getCurrentColor());
     }
 
     /*

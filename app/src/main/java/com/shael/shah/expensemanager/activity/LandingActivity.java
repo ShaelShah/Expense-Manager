@@ -45,7 +45,7 @@ public class LandingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.landing_activity);
+        setContentView(R.layout.activity_landing);
 
         //TODO: Do this asynchronously
         instance = DataSingleton.init(this);
@@ -108,7 +108,7 @@ public class LandingActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        instance.updateDatabase();
+        //instance.updateDatabase();
         instance.updateSettings();
         DataSingleton.destroyInstance();
     }

@@ -247,7 +247,7 @@ public class OverviewFragment extends Fragment {
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Select Date Range");
-                builder.setView(R.layout.date_range_dialog_layout);
+                builder.setView(R.layout.date_range_dialog);
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

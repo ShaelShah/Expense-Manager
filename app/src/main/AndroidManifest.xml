@@ -10,7 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light">
+        android:theme="@style/ActivityTheme">
         <activity android:name=".activity.LandingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +22,9 @@
         <activity android:name=".activity.display.DisplayExpensesActivity" />
         <activity android:name=".activity.display.DisplayIncomesActivity" />
         <activity android:name=".activity.display.DisplayAllTransactionsActivity" />
-        <activity android:name=".activity.settings.BackupRestoreActivity" />
         <activity android:name=".activity.update.UpdateExpenseActivity" />
         <activity android:name=".activity.update.UpdateIncomeActivity" />
+        <activity android:name=".activity.settings.category.EditCategoriesActivity" />
     </application>
 
 </manifest>

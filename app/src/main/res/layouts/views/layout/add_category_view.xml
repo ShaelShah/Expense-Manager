@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="createAddCategoryDialog"
-        android:text="@string/addCategoryEllipses"
+        android:text="@string/addCategory_ellipses"
         android:textAlignment="textEnd"
         android:textStyle="italic" />
 

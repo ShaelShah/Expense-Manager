@@ -36,7 +36,18 @@ public class Income extends Transaction {
 
     @Override
     public boolean equals(Object inc) {
-        return (this.getClass() == inc.getClass() && this.getIncomeID() == ((Income) inc).getIncomeID());
+        if (this == inc)
+            return true;
+
+        if (this.getClass() != inc.getClass())
+            return false;
+
+        Income income = (Income) inc;
+        return (this.getDate().compareTo(income.getDate()) == 0
+                && this.getAmount().compareTo(income.getAmount()) == 0
+                && this.getLocation().equals(income.getLocation())
+                && this.getNote().equals(income.getNote())
+                && this.getRecurringPeriod().equals(income.getRecurringPeriod()));
     }
 
     @Override

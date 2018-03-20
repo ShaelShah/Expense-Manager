@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="ActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blueGrey</item>
+        <item name="colorAccent">@color/lightGrey</item>
+
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>
