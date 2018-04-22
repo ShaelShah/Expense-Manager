@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
     android:orientation="vertical"
     tools:context=".activity.display.DisplayExpensesActivity">
 
@@ -55,6 +54,7 @@
             android:layout_height="2dp"
             android:background="@color/blueGrey" />
 
+        <!--
         <ScrollView
             android:id="@+id/transactionsScrollView"
             android:layout_width="match_parent"
@@ -70,6 +70,15 @@
                 android:orientation="vertical" />
 
         </ScrollView>
+        -->
+
+        <ListView
+            android:id="@+id/transactionsListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:animateLayoutChanges="true"
+            android:paddingTop="10dp" />
 
     </LinearLayout>
 </LinearLayout>

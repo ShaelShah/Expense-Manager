@@ -30,7 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AddExpenseActivity extends AddTransactionActivity {
+public class AddExpenseActivity extends AddTransactionActivity
+{
 
     /*****************************************************************
      * Private Variables
@@ -46,13 +47,9 @@ public class AddExpenseActivity extends AddTransactionActivity {
      * Lifecycle Methods
      *****************************************************************/
 
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all categories.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         //Find views to work with during add expense activity
@@ -72,10 +69,10 @@ public class AddExpenseActivity extends AddTransactionActivity {
      *****************************************************************/
 
     @Override
-    protected int getLayoutResourceID() {
+    protected int getLayoutResourceID()
+    {
         return R.layout.activity_add_expense;
     }
-
 
     /*****************************************************************
      * Functionality Methods
@@ -87,29 +84,35 @@ public class AddExpenseActivity extends AddTransactionActivity {
      *  Returns true on a successful save of the expense, false otherwise.
      */
     @Override
-    protected boolean saveTransaction() {
+    protected boolean saveTransaction()
+    {
         BigDecimal amount;
         Date date;
         Category category = null;
         NumberFormat format = NumberFormat.getCurrencyInstance();
 
-        try {
+        try
+        {
             String amountEntered = amountEditText.getText().toString();
             String formatted = format.format(Double.parseDouble(amountEntered)).replaceAll("[^\\d.]", "");
             amount = new BigDecimal(formatted);
             date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             Toast.makeText(this, "Invalid Amount Format", Toast.LENGTH_LONG).show();
             return false;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
             return false;
-        } catch (ParseException e) {
+        } catch (ParseException e)
+        {
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (locationEditText.getText().length() == 0) {
+        if (locationEditText.getText().length() == 0)
+        {
             Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -118,11 +121,15 @@ public class AddExpenseActivity extends AddTransactionActivity {
         String note = noteEditText.getText().toString();
 
         foundCategory:
-        for (RadioButton rb : categoryRadioButtons) {
-            if (rb.isChecked()) {
+        for (RadioButton rb : categoryRadioButtons)
+        {
+            if (rb.isChecked())
+            {
                 String categoryName = rb.getText().toString();
-                for (Category c : categories) {
-                    if (c.getType().equals(categoryName)) {
+                for (Category c : categories)
+                {
+                    if (c.getType().equals(categoryName))
+                    {
                         category = c;
                         break foundCategory;
                     }
@@ -130,17 +137,14 @@ public class AddExpenseActivity extends AddTransactionActivity {
             }
         }
 
-        if (category == null) {
+        if (category == null)
+        {
             Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note);
-        builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
-        builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
-        instance.addExpense(builder.build());
-
-        return true;
+        Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note).paymentMethod(paymentSpinner.getSelectedItem().toString()).recurringPeriod(recurringSpinner.getSelectedItem().toString());
+        return instance.addExpense(builder.build());
     }
 
     /*****************************************************************
@@ -151,21 +155,26 @@ public class AddExpenseActivity extends AddTransactionActivity {
      *  Iterates through all categories and inflates a category_select_row_layout for each
      *  plus a row for "add category..."
      */
-    private void createCategoryRows() {
+    private void createCategoryRows()
+    {
         LayoutInflater inflater = LayoutInflater.from(this);
         LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        for (Category c : categories) {
+        for (Category c : categories)
+        {
             View item = inflater.inflate(R.layout.category_select_view, scrollLinearLayout, false);
             item.findViewById(R.id.colorView).setBackgroundColor(c.getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
             categoryRadioButton.setText(c.getType());
-            categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+            categoryRadioButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
-                    for (RadioButton rb : categoryRadioButtons) {
+                public void onClick(View v)
+                {
+                    for (RadioButton rb : categoryRadioButtons)
+                    {
                         if (rb != v)
                             rb.setChecked(false);
                     }
@@ -185,27 +194,34 @@ public class AddExpenseActivity extends AddTransactionActivity {
      *  Creates a dialog (Alert Dialog) which allows the user to input a category name.
      *  Inflates a category_select_row_layout and inserts it above "add category..."
      */
-    public void createAddCategoryDialog(View view) {
+    public void createAddCategoryDialog(View view)
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.add_category_dialog);
         builder.setTitle(R.string.add_category);
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int ID) {
+            public void onClick(DialogInterface dialog, int ID)
+            {
                 dialog.dismiss();
             }
         });
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int ID) {
+            public void onClick(DialogInterface dialog, int ID)
+            {
                 AlertDialog categoryDialog = (AlertDialog) dialog;
 
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
                 int color = ((ColorDrawable) categoryDialog.findViewById(R.id.categoryColorView).getBackground()).getColor();
                 Category category = instance.addCategory(categoryNameEditText.getText().toString(), color);
-                if (category != null) {
+
+                if (category != null)
+                {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
                     View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_view, scrollLinearLayout, false);
@@ -214,12 +230,17 @@ public class AddExpenseActivity extends AddTransactionActivity {
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
                     categoryRadioButton.setText(category.getType());
-                    categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+                    categoryRadioButton.setOnClickListener(new View.OnClickListener()
+                    {
                         @Override
-                        public void onClick(View v) {
-                            for (RadioButton rb : categoryRadioButtons) {
+                        public void onClick(View v)
+                        {
+                            for (RadioButton rb : categoryRadioButtons)
+                            {
                                 if (rb != v)
+                                {
                                     rb.setChecked(false);
+                                }
                             }
                         }
                     });
@@ -228,7 +249,8 @@ public class AddExpenseActivity extends AddTransactionActivity {
                     scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
                     Toast.makeText(getApplicationContext(), "Category Added", Toast.LENGTH_LONG).show();
-                } else {
+                } else
+                {
                     Toast.makeText(getApplicationContext(), "Category Already Exists", Toast.LENGTH_LONG).show();
                 }
 
@@ -246,7 +268,8 @@ public class AddExpenseActivity extends AddTransactionActivity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createPaymentSpinnerRows() {
+    private void createPaymentSpinnerRows()
+    {
         String paymentItems[] = new String[]{"Credit", "Debit", "Cash"};
         ArrayAdapter<String> paymentSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paymentItems);
         paymentSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -257,7 +280,8 @@ public class AddExpenseActivity extends AddTransactionActivity {
     /*
      *  Helper function to create separators used in-between categories.
      */
-    private View createSeparatorView() {
+    private View createSeparatorView()
+    {
         View line = new View(this);
         line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         line.setBackgroundColor(Color.LTGRAY);

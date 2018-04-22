@@ -11,7 +11,8 @@ import android.widget.Toolbar;
 import com.shael.shah.expensemanager.R;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
-public abstract class UpdateTransactionActivity extends Activity {
+public abstract class UpdateTransactionActivity extends Activity
+{
 
     /*****************************************************************
      * Private Variables
@@ -30,13 +31,9 @@ public abstract class UpdateTransactionActivity extends Activity {
      * Lifecycle Methods
      *****************************************************************/
 
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all categories.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle)
+    {
         super.onCreate(bundle);
         setContentView(getLayoutResourceID());
 
@@ -71,7 +68,8 @@ public abstract class UpdateTransactionActivity extends Activity {
      * GUI Setup Methods
      *****************************************************************/
 
-    private void createRecurringSpinnerRows() {
+    private void createRecurringSpinnerRows()
+    {
         String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
         recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
         recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -8,7 +8,8 @@ import com.shael.shah.expensemanager.model.Transaction;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DisplayExpensesActivity extends DisplayTransactionsActivity {
+public class DisplayExpensesActivity extends DisplayTransactionsActivity
+{
 
     /*****************************************************************
      * Private Variables
@@ -21,17 +22,20 @@ public class DisplayExpensesActivity extends DisplayTransactionsActivity {
      *****************************************************************/
 
     @Override
-    protected String getTitleText() {
+    protected String getTitleText()
+    {
         return "Expenses";
     }
 
     @Override
-    protected List<Transaction> getTransactions() {
+    protected List<Transaction> getTransactions()
+    {
         return new ArrayList<Transaction>(instance.getExpenses());
     }
 
     @Override
-    protected Intent getTransactionIntent(int transactionID, boolean income) {
+    protected Intent getTransactionIntent(int transactionID, boolean income)
+    {
         Intent intent = new Intent(this, UpdateExpenseActivity.class);
         intent.putExtra(EXTRA_TRANSACTION_ID, transactionID);
 

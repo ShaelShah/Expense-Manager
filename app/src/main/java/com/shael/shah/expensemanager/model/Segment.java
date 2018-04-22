@@ -7,7 +7,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class Segment extends View {
+public class Segment extends View
+{
 
     private RectF rect;
     private Paint paint;
@@ -16,11 +17,13 @@ public class Segment extends View {
     private float currentAngle;
     private float sweepAngle;
 
-    public Segment(Context context) {
+    public Segment(Context context)
+    {
         super(context);
     }
 
-    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth) {
+    public Segment(Context context, AttributeSet attrs, float startAngle, float sweepAngle, int color, int alpha, int strokeWidth)
+    {
         super(context, attrs);
 
         //Create RectF
@@ -42,13 +45,15 @@ public class Segment extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas)
+    {
         super.onDraw(canvas);
         canvas.drawArc(rect, startAngle, currentAngle, false, paint);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
         final int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int height = getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         final int min = Math.min(width, height);
@@ -58,15 +63,18 @@ public class Segment extends View {
         rect.set(0 + highStroke / 2, 0 + highStroke / 2, min - highStroke / 2, min - highStroke / 2);
     }
 
-    public float getCurrentAngle() {
+    public float getCurrentAngle()
+    {
         return currentAngle;
     }
 
-    public void setCurrentAngle(float currentAngle) {
+    public void setCurrentAngle(float currentAngle)
+    {
         this.currentAngle = currentAngle;
     }
 
-    public float getSweepAngle() {
+    public float getSweepAngle()
+    {
         return sweepAngle;
     }
 }

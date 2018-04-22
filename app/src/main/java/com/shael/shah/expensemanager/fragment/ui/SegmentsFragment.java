@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SegmentsFragment extends Fragment {
+public class SegmentsFragment extends Fragment
+{
 
     private static final String EXTRA_TRANSACTION_DATE = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_DATE";
 
@@ -30,13 +31,15 @@ public class SegmentsFragment extends Fragment {
     private FrameLayout segmentsFrameLayout;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_segments, container, false);
@@ -46,7 +49,8 @@ public class SegmentsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
 
         DataSingleton instance = DataSingleton.getInstance();
@@ -57,16 +61,20 @@ public class SegmentsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
+    public void onStart()
+    {
         super.onStart();
         startAnimations();
     }
 
-    private void createCircleView(Date date) {
+    private void createCircleView(Date date)
+    {
         float total = 0;
         List<Expense> expensesToDisplay = new ArrayList<>();
-        for (Expense e : expenses) {
-            if (!e.isDelete() && e.getDate().compareTo(date) >= 0) {
+        for (Expense e : expenses)
+        {
+            if (e.getDate().compareTo(date) >= 0)
+            {
                 expensesToDisplay.add(e);
                 total += e.getAmount().floatValue();
             }
@@ -80,15 +88,18 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.addView(budgetSegment);
 
         float prevAmount = 90;
-        for (Category c : categories) {
+        for (Category c : categories)
+        {
 
             float catAmount = 0;
-            for (Expense e : expensesToDisplay) {
+            for (Expense e : expensesToDisplay)
+            {
                 if (e.getCategory() != null && e.getCategory().equals(c))
                     catAmount += e.getAmount().floatValue();
             }
 
-            if (catAmount != 0) {
+            if (catAmount != 0)
+            {
                 //Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 - prevAmount) + 90 - 2, c.getColor(), 255, 80);
                 Segment segment = new Segment(getActivity(), null, prevAmount + 2, (360 * (catAmount / total)) - 2, c.getColor(), 255, 80);
                 prevAmount += 360 * (catAmount / total);
@@ -101,10 +112,12 @@ public class SegmentsFragment extends Fragment {
         startAnimations();
     }
 
-    private void startAnimations() {
+    private void startAnimations()
+    {
         int startOffset = 0;
         AnimationSet animationSet = new AnimationSet(true);
-        for (Segment c : segments) {
+        for (Segment c : segments)
+        {
             SegmentAnimation animation = new SegmentAnimation(c);
             float duration = c.getSweepAngle() / 360;
             animation.setDuration((long) (duration * 1500));
@@ -116,7 +129,8 @@ public class SegmentsFragment extends Fragment {
         segmentsFrameLayout.startAnimation(animationSet);
     }
 
-    public void updateExpenses(Date dateRange) {
+    public void updateExpenses(Date dateRange)
+    {
         createCircleView(dateRange);
     }
 }

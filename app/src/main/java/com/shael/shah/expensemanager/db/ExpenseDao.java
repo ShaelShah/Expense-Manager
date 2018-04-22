@@ -11,23 +11,24 @@ import com.shael.shah.expensemanager.model.Expense;
 import java.util.List;
 
 @Dao
-public interface ExpenseDao {
+public interface ExpenseDao
+{
 
     @Query("SELECT * FROM expense")
     List<Expense> getAllExpenses();
 
     @Insert
-    void insert(Expense expense);
+    long insert(Expense expense);
 
     @Insert
-    void insertAll(List<Expense> expenses);
+    long[] insertAll(List<Expense> expenses);
 
     @Update
-    void update(Expense expense);
+    int update(Expense expense);
 
     @Delete
-    void delete(Expense expense);
+    int delete(Expense expense);
 
     @Delete
-    void deleteAll(List<Expense> expenses);
+    int deleteAll(List<Expense> expenses);
 }

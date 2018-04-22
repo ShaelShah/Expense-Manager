@@ -8,7 +8,6 @@
 
     <!-- Date related strings -->
     <string name="date">Date</string>
-    <string name="date_ranges">Date Ranges</string>
     <string name="today">Today</string>
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
@@ -21,7 +20,6 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
-    <string name="update">Update</string>
 
     <string name="add_expense">Add Expense</string>
     <string name="currencyHint">$$$</string>
@@ -43,12 +41,8 @@
     <!-- Settings Activity related strings -->
     <string name="backup_data">Backup Data</string>
     <string name="restore_data">Restore Data</string>
-    <string name="general_settings">General Settings</string>
     <string name="categories">Categories</string>
-    <string name="appearance">Appearance</string>
-    <string name="expenses_view_animation">Expenses View Animation</string>
     <string name="backup_and_restore">Backup and Restore</string>
-    <string name="backup_restore_data">Backup/Restore Data</string>
     <string name="reset">Reset</string>
     <string name="delete_all_data">Delete all Data</string>
 

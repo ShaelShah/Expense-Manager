@@ -10,18 +10,19 @@ import com.shael.shah.expensemanager.model.Category;
 import com.shael.shah.expensemanager.model.Expense;
 import com.shael.shah.expensemanager.model.Income;
 
-@Database(entities = {Expense.class, Income.class, Category.class}, version = 9)
+@Database(entities = {Expense.class, Income.class, Category.class}, version = 12)
 @TypeConverters({DateConverter.class, BigDecimalConverter.class})
-public abstract class ApplicationDatabase extends RoomDatabase {
+public abstract class ApplicationDatabase extends RoomDatabase
+{
 
     private static ApplicationDatabase instance;
 
-    public static ApplicationDatabase getInstance(Context context) {
+    public static ApplicationDatabase getInstance(Context context)
+    {
         if (instance == null)
-            instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, "expense-database")
-                    .allowMainThreadQueries()
-                    .fallbackToDestructiveMigration()
-                    .build();
+        {
+            instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, "expense-database").allowMainThreadQueries().fallbackToDestructiveMigration().build();
+        }
 
         return instance;
     }
@@ -32,7 +33,8 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
     public abstract CategoryDao categoryDao();
 
-    public void destroyInstance() {
+    public void destroyInstance()
+    {
         instance = null;
     }
 }

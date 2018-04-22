@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AppCompatResource">
 
     <item
         android:id="@+id/filter"
         android:icon="@drawable/ic_filter_list_black_24dp"
         android:title="@string/filter"
-        app:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/sort_amount"
         android:icon="@drawable/ic_sort_black_24dp"
         android:title="@string/sort_amount"
-        app:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/sort_location"
         android:icon="@drawable/ic_sort_by_alpha_black_24dp"
         android:title="@string/sort_location"
-        app:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom" />
 
 </menu>

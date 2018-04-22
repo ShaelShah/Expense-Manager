@@ -11,20 +11,21 @@ import com.shael.shah.expensemanager.model.Category;
 import java.util.List;
 
 @Dao
-public interface CategoryDao {
+public interface CategoryDao
+{
 
     @Query("SELECT * FROM category")
     List<Category> getAllCategories();
 
     @Insert
-    void insert(Category category);
+    long insert(Category category);
 
     @Update
-    void update(Category category);
+    int update(Category category);
 
     @Delete
-    void delete(Category category);
+    int delete(Category category);
 
     @Delete
-    void deleteAll(List<Category> categories);
+    int deleteAll(List<Category> categories);
 }

@@ -3,44 +3,61 @@ package com.shael.shah.expensemanager.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.shael.shah.expensemanager.utils.DataSingleton;
+
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 @Entity
-public class Income extends Transaction {
+public class Income extends Transaction
+{
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int incomeID;
 
-    public Income(Date date, BigDecimal amount, String location, String note, String recurringPeriod) {
+    public Income(Date date, BigDecimal amount, String location, String note, String recurringPeriod)
+    {
         super(date, amount, location, note, recurringPeriod);
     }
 
-    private Income(Builder builder) {
+    private Income(Builder builder)
+    {
         super(builder.date, builder.amount, builder.location, builder.note, builder.recurringPeriod);
-        setInsert(true);
+
+        this.incomeID = builder.incomeID;
     }
 
-    public int getIncomeID() {
+    public int getIncomeID()
+    {
         return incomeID;
     }
 
-    public void setIncomeID(int incomeID) {
+    public void setIncomeID(int incomeID)
+    {
         this.incomeID = incomeID;
     }
 
-    public String toCSV() {
-        return getDate().toString() + "," + getAmount().toString() + "," + getLocation() + "," + getNote() + "," + getRecurringPeriod();
+    public String toCSV()
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+        return sdf.format(getDate()) + "," + getAmount().toString() + "," + getLocation() + "," + getNote() + "," + getRecurringPeriod();
     }
 
     @Override
-    public boolean equals(Object inc) {
+    public boolean equals(Object inc)
+    {
         if (this == inc)
+        {
             return true;
+        }
 
         if (this.getClass() != inc.getClass())
+        {
             return false;
+        }
 
         Income income = (Income) inc;
         return (this.getDate().compareTo(income.getDate()) == 0
@@ -51,12 +68,15 @@ public class Income extends Transaction {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(getDate(), getAmount(), getLocation(), getNote(), getRecurringPeriod());
     }
 
-    public static class Builder {
+    public static class Builder
+    {
 
+        private final int incomeID;
         private final Date date;
         private final BigDecimal amount;
         private final String location;
@@ -64,23 +84,28 @@ public class Income extends Transaction {
         private String note = "";
         private String recurringPeriod = "";
 
-        public Builder(Date date, BigDecimal amount, String location) {
+        public Builder(Date date, BigDecimal amount, String location)
+        {
+            this.incomeID = DataSingleton.getInstance().getIncomeID();
             this.date = date;
             this.amount = amount;
             this.location = location;
         }
 
-        public Builder note(String note) {
+        public Builder note(String note)
+        {
             this.note = note;
             return this;
         }
 
-        public Builder recurringPeriod(String recurringPeriod) {
+        public Builder recurringPeriod(String recurringPeriod)
+        {
             this.recurringPeriod = recurringPeriod;
             return this;
         }
 
-        public Income build() {
+        public Income build()
+        {
             return new Income(this);
         }
     }

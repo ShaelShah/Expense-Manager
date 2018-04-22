@@ -1,6 +1,5 @@
 package com.shael.shah.expensemanager.activity.add;
 
-import android.os.Bundle;
 import android.widget.Toast;
 
 import com.shael.shah.expensemanager.R;
@@ -14,19 +13,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddIncomeActivity extends AddTransactionActivity {
+public class AddIncomeActivity extends AddTransactionActivity
+{
 
     /*****************************************************************
      * Lifecycle Methods
      *****************************************************************/
 
     @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-    }
-
-    @Override
-    protected int getLayoutResourceID() {
+    protected int getLayoutResourceID()
+    {
         return R.layout.activity_add_income;
     }
 
@@ -35,33 +31,39 @@ public class AddIncomeActivity extends AddTransactionActivity {
      *****************************************************************/
 
     /*
-     *  Converts user input to an Expense object.
+     *  Converts user input to an Income object.
      *
-     *  Returns true on a successful save of the expense, false otherwise.
+     *  Returns true on a successful save of the income, false otherwise.
      */
     @Override
-    protected boolean saveTransaction() {
+    protected boolean saveTransaction()
+    {
         BigDecimal amount;
         Date date;
         NumberFormat format = NumberFormat.getCurrencyInstance();
 
-        try {
+        try
+        {
             String amountEntered = amountEditText.getText().toString();
             String formatted = format.format(Double.parseDouble(amountEntered)).replaceAll("[^\\d.]", "");
             amount = new BigDecimal(formatted);
             date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             Toast.makeText(this, "Invalid Amount Format", Toast.LENGTH_LONG).show();
             return false;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
             return false;
-        } catch (ParseException e) {
+        } catch (ParseException e)
+        {
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (locationEditText.getText().length() == 0) {
+        if (locationEditText.getText().length() == 0)
+        {
             Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -71,8 +73,6 @@ public class AddIncomeActivity extends AddTransactionActivity {
 
         Income.Builder builder = new Income.Builder(date, amount, location).note(note);
         builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
-        instance.addIncome(builder.build());
-
-        return true;
+        return instance.addIncome(builder.build());
     }
 }

@@ -29,7 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class OverviewFragment extends Fragment {
+public class OverviewFragment extends Fragment
+{
 
     /*****************************************************************
      * Private Variables
@@ -38,6 +39,7 @@ public class OverviewFragment extends Fragment {
     private static final String EXTRA_TRANSACTION_DATE = "com.shael.shah.expensemanager.EXTRA_TRANSACTION_DATE";
 
     private DataSingleton instance;
+    private SegmentsFragment segmentFragment;
 
     private TimePeriod timePeriod;
     private List<Expense> expenses;
@@ -58,13 +60,15 @@ public class OverviewFragment extends Fragment {
      *  Also responsible for setting up of the initial GUI.
      */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
@@ -78,7 +82,8 @@ public class OverviewFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         super.onActivityCreated(savedInstanceState);
 
         instance = DataSingleton.getInstance();
@@ -89,17 +94,19 @@ public class OverviewFragment extends Fragment {
         setActionListeners();
         populateMoneyTextViews();
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null)
+        {
             Bundle bundle = new Bundle();
             bundle.putSerializable(EXTRA_TRANSACTION_DATE, getDateRange());
-            Fragment fragment = new SegmentsFragment();
-            fragment.setArguments(bundle);
-            getFragmentManager().beginTransaction().add(R.id.displayExpensesAnimationFrameLayout, fragment).commit();
+            segmentFragment = new SegmentsFragment();
+            segmentFragment.setArguments(bundle);
+            getFragmentManager().beginTransaction().add(R.id.displayExpensesAnimationFrameLayout, segmentFragment).commit();
         }
     }
 
     @Override
-    public void onDetach() {
+    public void onDetach()
+    {
         super.onDetach();
         instance.setTimePeriod(timePeriod);
     }
@@ -112,10 +119,12 @@ public class OverviewFragment extends Fragment {
      *  Iterates through all expenses and returns an List<Expense> of all expenses that fall
      *  within the current time period.
      */
-    private Date getDateRange() {
+    private Date getDateRange()
+    {
 
         Calendar calendar = Calendar.getInstance();
-        switch (timePeriod) {
+        switch (timePeriod)
+        {
             case DAILY:
                 calendar.set(Calendar.HOUR_OF_DAY, 0);
                 return calendar.getTime();
@@ -143,18 +152,26 @@ public class OverviewFragment extends Fragment {
      * GUI Setup Methods
      *****************************************************************/
 
+    public void updateDisplay()
+    {
+        populateMoneyTextViews();
+        segmentFragment.updateExpenses(getDateRange());
+    }
+
     /*
      *  Sets the timePeriodTextView to the current date range
      *  Iterates through all expenses passed in through the List<Expense> parameter
      *  to calculate how much was spent, how much was earned and the net total.
      *  Sets the views accordingly.
      */
-    private void populateMoneyTextViews() {
+    private void populateMoneyTextViews()
+    {
         BigDecimal income = new BigDecimal(0);
         BigDecimal outcome = new BigDecimal(0);
         BigDecimal net;
 
-        switch (timePeriod) {
+        switch (timePeriod)
+        {
             case DAILY:
                 timePeriodTextView.setText(R.string.today);
                 break;
@@ -177,19 +194,19 @@ public class OverviewFragment extends Fragment {
         }
 
         Date afterDate = getDateRange();
-        for (Expense e : expenses) {
-            if (!e.isDelete()) {
-                if (e.getDate().compareTo(afterDate) >= 0) {
-                    outcome = outcome.add(e.getAmount());
-                }
+        for (Expense e : expenses)
+        {
+            if (e.getDate().compareTo(afterDate) >= 0)
+            {
+                outcome = outcome.add(e.getAmount());
             }
         }
 
-        for (Income i : incomes) {
-            if (!i.isDelete()) {
-                if (i.getDate().compareTo(afterDate) >= 0) {
-                    income = income.add(i.getAmount());
-                }
+        for (Income i : incomes)
+        {
+            if (i.getDate().compareTo(afterDate) >= 0)
+            {
+                income = income.add(i.getAmount());
             }
         }
 
@@ -209,28 +226,35 @@ public class OverviewFragment extends Fragment {
     /*
      *  Sets up all action listeners to be used during this activity.
      */
-    private void setActionListeners() {
-        incomeTexView.setOnClickListener(new View.OnClickListener() {
+    private void setActionListeners()
+    {
+        incomeTexView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent(getActivity(), DisplayIncomesActivity.class);
                 intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
             }
         });
 
-        expensesTextView.setOnClickListener(new View.OnClickListener() {
+        expensesTextView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent(getActivity(), DisplayExpensesActivity.class);
                 intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
             }
         });
 
-        netTextView.setOnClickListener(new View.OnClickListener() {
+        netTextView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Intent intent = new Intent(getActivity(), DisplayAllTransactionsActivity.class);
                 intent.putExtra(EXTRA_TRANSACTION_DATE, getDateRange().getTime());
                 startActivity(intent);
@@ -242,17 +266,22 @@ public class OverviewFragment extends Fragment {
          *  Currently only works for the current day, week, month or year.
          *  Does not allow for custom date ranges.
          */
-        timePeriodTextView.setOnClickListener(new View.OnClickListener() {
+        timePeriodTextView.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Select Date Range");
                 builder.setView(R.layout.date_range_dialog);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
+                {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
                         RadioGroup radioGroup = ((AlertDialog) dialogInterface).findViewById(R.id.dateRangeRadioGroup);
-                        switch (radioGroup.getCheckedRadioButtonId()) {
+                        switch (radioGroup.getCheckedRadioButtonId())
+                        {
                             case R.id.dailyRadioButton:
                                 timePeriod = TimePeriod.DAILY;
                                 timePeriodTextView.setText(R.string.today);
@@ -279,9 +308,8 @@ public class OverviewFragment extends Fragment {
                                 break;
                         }
 
-                        SegmentsFragment fragment = (SegmentsFragment) getFragmentManager().findFragmentById(R.id.displayExpensesAnimationFrameLayout);
-                        if (fragment != null)
-                            fragment.updateExpenses(getDateRange());
+                        if (segmentFragment != null)
+                            segmentFragment.updateExpenses(getDateRange());
 
                         populateMoneyTextViews();
                     }

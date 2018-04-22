@@ -12,36 +12,43 @@ import com.shael.shah.expensemanager.model.Category;
 
 import java.util.List;
 
-public class CategoryAdapter extends BaseAdapter {
+public class CategoryAdapter extends BaseAdapter
+{
 
     private LayoutInflater inflater;
     private List<Category> dataSource;
 
-    public CategoryAdapter(Context context, List<Category> categories) {
+    public CategoryAdapter(Context context, List<Category> categories)
+    {
         this.dataSource = categories;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public int getCount() {
+    public int getCount()
+    {
         return dataSource.size();
     }
 
     @Override
-    public Object getItem(int position) {
+    public Object getItem(int position)
+    {
         return dataSource.get(position);
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId(int position)
+    {
         return position;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent)
+    {
         ViewHolder viewHolder;
 
-        if (convertView == null) {
+        if (convertView == null)
+        {
             viewHolder = new ViewHolder();
             convertView = inflater.inflate(R.layout.category_edit_view, parent, false);
 
@@ -49,7 +56,8 @@ public class CategoryAdapter extends BaseAdapter {
             viewHolder.typeTextView = convertView.findViewById(R.id.categoryTextView);
 
             convertView.setTag(viewHolder);
-        } else {
+        } else
+        {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
@@ -60,7 +68,8 @@ public class CategoryAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private static class ViewHolder {
+    private static class ViewHolder
+    {
         private View colorView;
         private TextView typeTextView;
     }

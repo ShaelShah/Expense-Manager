@@ -12,14 +12,14 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.shael.shah.expensemanager.R;
-import com.shael.shah.expensemanager.activity.LandingActivity;
 import com.shael.shah.expensemanager.utils.DataSingleton;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public abstract class AddTransactionActivity extends Activity {
+public abstract class AddTransactionActivity extends Activity
+{
 
     /*****************************************************************
      * Private Variables
@@ -37,13 +37,9 @@ public abstract class AddTransactionActivity extends Activity {
      * Lifecycle Methods
      *****************************************************************/
 
-    /*
-     *  Initial method called by the system during activity startup.
-     *  Responsible for getting a copy of all categories.
-     *  Also responsible for setting up of the initial GUI.
-     */
     @Override
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle)
+    {
         super.onCreate(bundle);
         setContentView(getLayoutResourceID());
 
@@ -75,17 +71,26 @@ public abstract class AddTransactionActivity extends Activity {
      * ActionListeners
      *****************************************************************/
 
-    public void cancel(View view) {
-        Intent intent = new Intent(this, LandingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+    public void cancel(View view)
+    {
+//        Intent intent = new Intent(this, LandingActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(intent);
+        Intent intent = new Intent();
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
     }
 
-    public void save(View view) {
-        if (saveTransaction()) {
-            Intent intent = new Intent(this, LandingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+    public void save(View view)
+    {
+        if (saveTransaction())
+        {
+//            Intent intent = new Intent(this, LandingActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(intent);
+            Intent intent = new Intent();
+            setResult(Activity.RESULT_OK, intent);
+            finish();
         }
     }
 
@@ -93,15 +98,20 @@ public abstract class AddTransactionActivity extends Activity {
      * GUI Setup Methods
      *****************************************************************/
 
-    private void populateInfoFields() {
-        View.OnClickListener dateListener = new View.OnClickListener() {
+    private void populateInfoFields()
+    {
+        View.OnClickListener dateListener = new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Calendar calendar = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(AddTransactionActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
+                        new DatePickerDialog.OnDateSetListener()
+                        {
 
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day)
+                            {
                                 Calendar calendar = Calendar.getInstance();
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
@@ -126,7 +136,8 @@ public abstract class AddTransactionActivity extends Activity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createRecurringSpinnerRows() {
+    private void createRecurringSpinnerRows()
+    {
         String recurringItems[] = new String[]{"None", "Daily", "Weekly", "Bi-Weekly", "Monthly", "Yearly"};
         ArrayAdapter<String> recurringSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, recurringItems);
         recurringSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

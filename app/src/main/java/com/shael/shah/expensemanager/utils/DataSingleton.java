@@ -14,12 +14,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DataSingleton {
+public class DataSingleton
+{
 
     /*****************************************************************
      * Private Variables
      ******************************************************************/
 
+    private static final String SHAREDPREF_EXPENSEID = "com.shael.shah.expensemanager.SHAREDPREF_EXPENSEID";
+    private static final String SHAREDPREF_INCOMEID = "com.shael.shah.expensemanager.SHAREDPREF_INCOMEID";
+    private static final String SHAREDPREF_CATEGORYID = "com.shael.shah.expensemanager.SHAREDPREF_CATEGORYID";
     private static final String SHAREDPREF_SETTINGS = "com.shael.shah.expensemanager.SHAREDPREF_SETTINGS";
     private static final String SHAREDPREF_TIMEPERIOD = "com.shael.shah.expensemanager.SHAREDPREF_TIMEPERIOD";
     private static final String SHAREDPREF_DISPLAYOPTION = "com.shael.shah.expensemanager.SHAREDPREF_DISPLAYOPTION";
@@ -30,6 +34,11 @@ public class DataSingleton {
     private static DataSingleton instance;
     private static ApplicationDatabase database;
     private Context context;
+
+    // IDs
+    private int expenseID;
+    private int incomeID;
+    private int categoryID;
 
     // Objects
     private List<Expense> expenses;
@@ -42,7 +51,8 @@ public class DataSingleton {
     private int currentColor;
     private int[] colors;
 
-    private DataSingleton(Context context) {
+    private DataSingleton(Context context)
+    {
         this.context = context;
 
         // Get database instance
@@ -66,51 +76,70 @@ public class DataSingleton {
      * Constructors
      ******************************************************************/
 
-    public static DataSingleton init(Context context) {
+    public static DataSingleton init(Context context)
+    {
         if (instance == null)
             instance = new DataSingleton(context);
 
         return instance;
     }
 
-    public static DataSingleton getInstance() {
+    public static DataSingleton getInstance()
+    {
         if (instance != null)
             return instance;
 
         throw new IllegalStateException("Database has not been initialized");
     }
 
-    public static void destroyInstance() {
+    public static void destroyInstance()
+    {
         instance = null;
         database.destroyInstance();
     }
 
-    public void reset() {
-        database.incomeDao().deleteAll(incomes);
-        database.expenseDao().deleteAll(expenses);
-        database.categoryDao().deleteAll(categories);
+    public void reset()
+    {
+        int incomeCount = incomes.size();
+        int expenseCount = expenses.size();
+        int categoryCount = categories.size();
+
+        int incomeDeleteStatus = database.incomeDao().deleteAll(incomes);
+        int expenseDeleteStatus = database.expenseDao().deleteAll(expenses);
+        int categoryDeleteStatus = database.categoryDao().deleteAll(categories);
 
         incomes.clear();
         expenses.clear();
         categories.clear();
+        expenseID = 0;
+        incomeID = 0;
+        categoryID = 0;
         currentColor = 0;
 
         updateSettings();
+
+        if (incomeDeleteStatus != incomeCount || expenseCount != expenseDeleteStatus || categoryCount != categoryDeleteStatus)
+        {
+            // TODO: proper error handling
+        }
     }
 
     /*****************************************************************
      * Database Access Methods
      ******************************************************************/
 
-    private List<Expense> getExpensesFromDatabase() {
+    private List<Expense> getExpensesFromDatabase()
+    {
         return database.expenseDao().getAllExpenses();
     }
 
-    private List<Income> getIncomesFromDatabase() {
+    private List<Income> getIncomesFromDatabase()
+    {
         return database.incomeDao().getAllIncomes();
     }
 
-    private List<Category> getCategoriesFromDatabase() {
+    private List<Category> getCategoriesFromDatabase()
+    {
         return database.categoryDao().getAllCategories();
     }
 
@@ -118,8 +147,12 @@ public class DataSingleton {
      * SharedPreferences Access Methods
      ******************************************************************/
 
-    private void getSettingsFromSharedPref() {
+    private void getSettingsFromSharedPref()
+    {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE);
+        expenseID = sharedPreferences.getInt(SHAREDPREF_EXPENSEID, 0);
+        incomeID = sharedPreferences.getInt(SHAREDPREF_INCOMEID, 0);
+        categoryID = sharedPreferences.getInt(SHAREDPREF_CATEGORYID, 0);
         timePeriod = TimePeriod.fromInteger(sharedPreferences.getInt(SHAREDPREF_TIMEPERIOD, 2));
         displayOption = sharedPreferences.getString(SHAREDPREF_DISPLAYOPTION, "CIRCLE");
         currentColor = sharedPreferences.getInt(SHAREDPREF_COLOR, 0);
@@ -129,13 +162,31 @@ public class DataSingleton {
      * Objects/Settings Access Methods
      ******************************************************************/
 
-    public List<Expense> getExpenses() {
+    // Get list of expenses
+    public List<Expense> getExpenses()
+    {
         return expenses;
     }
 
-    public Expense getExpense(int expenseID) {
-        for (Expense e : expenses) {
-            if (e.getExpenseID() == expenseID) {
+    // Get list of incomes
+    public List<Income> getIncomes()
+    {
+        return incomes;
+    }
+
+    // Get list of categories
+    public List<Category> getCategories()
+    {
+        return categories;
+    }
+
+    // Get expense with specific ID
+    public Expense getExpense(int expenseID)
+    {
+        for (Expense e : expenses)
+        {
+            if (e.getExpenseID() == expenseID)
+            {
                 return e;
             }
         }
@@ -143,13 +194,13 @@ public class DataSingleton {
         return null;
     }
 
-    public List<Income> getIncomes() {
-        return incomes;
-    }
-
-    public Income getIncome(int incomeID) {
-        for (Income i : incomes) {
-            if (i.getIncomeID() == incomeID) {
+    // Get income with specific ID
+    public Income getIncome(int incomeID)
+    {
+        for (Income i : incomes)
+        {
+            if (i.getIncomeID() == incomeID)
+            {
                 return i;
             }
         }
@@ -157,13 +208,13 @@ public class DataSingleton {
         return null;
     }
 
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public Category getCategory(int categoryID) {
-        for (Category c : categories) {
-            if (c.getCategoryID() == categoryID) {
+    // Get category with specific ID
+    public Category getCategory(int categoryID)
+    {
+        for (Category c : categories)
+        {
+            if (c.getCategoryID() == categoryID)
+            {
                 return c;
             }
         }
@@ -171,20 +222,42 @@ public class DataSingleton {
         return null;
     }
 
+    // Get expense ID and increment
+    public int getExpenseID()
+    {
+        return expenseID++;
+    }
+
+    // Get income ID and increment
+    public int getIncomeID()
+    {
+        return incomeID++;
+    }
+
+    // Get category ID and increment
+    public int getCategoryID()
+    {
+        return categoryID++;
+    }
+
     // Get settings for use in application
-    public TimePeriod getTimePeriod() {
+    public TimePeriod getTimePeriod()
+    {
         return timePeriod;
     }
 
-    public void setTimePeriod(TimePeriod timePeriod) {
+    public void setTimePeriod(TimePeriod timePeriod)
+    {
         this.timePeriod = timePeriod;
     }
 
-    public String getDisplayOption() {
+    public String getDisplayOption()
+    {
         return displayOption;
     }
 
-    public int getCurrentColor() {
+    public int getCurrentColor()
+    {
         return colors[currentColor++];
     }
 
@@ -192,57 +265,84 @@ public class DataSingleton {
      * Object Interaction Methods
      ******************************************************************/
 
-    public void addExpense(Expense expense) {
+    public boolean addExpense(Expense expense)
+    {
         expenses.add(expense);
-        database.expenseDao().insert(expense);
+        return database.expenseDao().insert(expense) > 0;
     }
 
-    public void deleteExpense(Expense expense) {
-        expenses.remove(expense);
-        database.expenseDao().delete(expense);
-    }
-
-    public void deleteAllExpensesFromCategory(Category category) {
-        List<Expense> exDelete = new ArrayList<>();
-        for (Expense e : expenses) {
-            if (e.getCategory().equals(category)) {
-                exDelete.add(e);
-            }
-        }
-
-        for (Expense e : exDelete) {
-            deleteExpense(e);
-        }
-    }
-
-    public void addIncome(Income income) {
+    public boolean addIncome(Income income)
+    {
         incomes.add(income);
-        database.incomeDao().insert(income);
+        return database.incomeDao().insert(income) > 0;
     }
 
-    public void deleteIncome(Income income) {
-        incomes.remove(income);
-        database.incomeDao().delete(income);
-    }
-
-    public Category addCategory(String category) {
+    public Category addCategory(String category)
+    {
         return addCategory(category, colors[currentColor++]);
     }
 
-    public Category addCategory(String category, int color) {
-        if (checkCategory(category)) {
-            Category.Builder builder = new Category.Builder(category, color);
-            Category cat = builder.build();
+    public Category addCategory(String category, int color)
+    {
+        if (checkCategory(category))
+        {
+            Category cat = new Category.Builder(category, color).build();
+
             categories.add(cat);
-            database.categoryDao().insert(cat);
-            return cat;
+            if (database.categoryDao().insert(cat) > 0)
+            {
+                return cat;
+            }
         }
 
         return null;
     }
 
-    public boolean updateCategory(Category category, String type, int color) {
-        if (!type.isEmpty() && checkCategory(type)) {
+    public boolean deleteExpense(Expense expense)
+    {
+        expenses.remove(expense);
+        return database.expenseDao().delete(expense) > 0;
+    }
+
+    public boolean deleteAllExpensesFromCategory(Category category)
+    {
+        List<Expense> exDelete = new ArrayList<>();
+        for (Expense e : expenses)
+        {
+            if (e.getCategory().equals(category))
+            {
+                exDelete.add(e);
+            }
+        }
+
+        boolean deleteStatus = true;
+        for (Expense e : exDelete)
+        {
+            if (!deleteExpense(e))
+            {
+                deleteStatus = false;
+            }
+        }
+
+        return deleteStatus;
+    }
+
+    public boolean deleteIncome(Income income)
+    {
+        incomes.remove(income);
+        return database.incomeDao().delete(income) > 0;
+    }
+
+    public boolean deleteCategory(Category category)
+    {
+        categories.remove(category);
+        return database.categoryDao().delete(category) > 0;
+    }
+
+    public boolean updateCategory(Category category, String type, int color)
+    {
+        if (checkCategory(type))
+        {
             category.setType(type);
             category.setColor(color);
             database.categoryDao().update(category);
@@ -252,17 +352,16 @@ public class DataSingleton {
         return false;
     }
 
-    public void deleteCategory(Category category) {
-        categories.remove(category);
-        database.categoryDao().delete(category);
-    }
-
     /******************************************************************
      * Shutdown Update Methods
      ******************************************************************/
 
-    public void updateSettings() {
+    public void updateSettings()
+    {
         SharedPreferences.Editor editor = context.getSharedPreferences(SHAREDPREF_SETTINGS, Context.MODE_PRIVATE).edit();
+        editor.putInt(SHAREDPREF_EXPENSEID, expenseID);
+        editor.putInt(SHAREDPREF_INCOMEID, incomeID);
+        editor.putInt(SHAREDPREF_CATEGORYID, categoryID);
         editor.putInt(SHAREDPREF_TIMEPERIOD, TimePeriod.toInteger(timePeriod));
         editor.putString(SHAREDPREF_DISPLAYOPTION, displayOption);
         editor.putInt(SHAREDPREF_COLOR, currentColor);
@@ -273,12 +372,15 @@ public class DataSingleton {
      * Private Helper Methods
      ******************************************************************/
 
-    private boolean checkCategory(String category) {
+    private boolean checkCategory(String category)
+    {
         if (category.isEmpty())
             return false;
 
-        for (Category c : categories) {
-            if (c.getType().equals(category)) {
+        for (Category c : categories)
+        {
+            if (c.getType().equals(category))
+            {
                 return false;
             }
         }
@@ -286,15 +388,19 @@ public class DataSingleton {
         return true;
     }
 
-    private void createRecurringExpenses() {
+    private void createRecurringExpenses()
+    {
         Calendar calendar = Calendar.getInstance();
 
         List<Expense> newExpenses = new ArrayList<>();
-        for (Expense e : expenses) {
-            if (!e.getRecurringPeriod().equals("None")) {
+        for (Expense e : expenses)
+        {
+            if (!e.getRecurringPeriod().equals("None"))
+            {
                 calendar.setTime(e.getDate());
 
-                switch (e.getRecurringPeriod()) {
+                switch (e.getRecurringPeriod())
+                {
                     case "Daily":
                         calendar.add(Calendar.DATE, 1);
                         break;
@@ -312,7 +418,8 @@ public class DataSingleton {
                         break;
                 }
 
-                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
+                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0)
+                {
                     Expense newExpense = new Expense.Builder(calendar.getTime(), e.getAmount(), e.getCategory(), e.getLocation())
                             .note(e.getNote())
                             .recurringPeriod(e.getRecurringPeriod())
@@ -328,15 +435,19 @@ public class DataSingleton {
         database.expenseDao().insertAll(newExpenses);
     }
 
-    private void createRecurringIncomes() {
+    private void createRecurringIncomes()
+    {
         Calendar calendar = Calendar.getInstance();
 
         List<Income> newIncomes = new ArrayList<>();
-        for (Income i : incomes) {
-            if (!i.getRecurringPeriod().equals("None")) {
+        for (Income i : incomes)
+        {
+            if (!i.getRecurringPeriod().equals("None"))
+            {
                 calendar.setTime(i.getDate());
 
-                switch (i.getRecurringPeriod()) {
+                switch (i.getRecurringPeriod())
+                {
                     case "Daily":
                         calendar.add(Calendar.DATE, 1);
                         break;
@@ -354,7 +465,8 @@ public class DataSingleton {
                         break;
                 }
 
-                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0) {
+                if (Calendar.getInstance().getTime().compareTo(calendar.getTime()) > 0)
+                {
                     Income newIncome = new Income.Builder(calendar.getTime(), i.getAmount(), i.getLocation())
                             .note(i.getNote())
                             .recurringPeriod(i.getRecurringPeriod())
@@ -373,7 +485,8 @@ public class DataSingleton {
      * Fragment Enum
      ******************************************************************/
 
-    public enum LandingFragment {
+    public enum LandingFragment
+    {
         OVERVIEW, SETTINGS
     }
 
@@ -381,15 +494,18 @@ public class DataSingleton {
      * TimePeriod Enum
      ******************************************************************/
 
-    public enum TimePeriod {
+    public enum TimePeriod
+    {
         DAILY,
         WEEKLY,
         MONTHLY,
         YEARLY,
         ALL;
 
-        public static TimePeriod fromInteger(int x) {
-            switch (x) {
+        public static TimePeriod fromInteger(int x)
+        {
+            switch (x)
+            {
                 case 0:
                     return DAILY;
                 case 1:
@@ -404,8 +520,10 @@ public class DataSingleton {
             return MONTHLY;
         }
 
-        public static int toInteger(TimePeriod timePeriod) {
-            switch (timePeriod) {
+        public static int toInteger(TimePeriod timePeriod)
+        {
+            switch (timePeriod)
+            {
                 case DAILY:
                     return 0;
                 case WEEKLY:

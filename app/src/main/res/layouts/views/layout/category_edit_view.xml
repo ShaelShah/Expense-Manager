@@ -9,8 +9,7 @@
     <View
         android:id="@+id/colorView"
         android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@color/lightBlue" />
+        android:layout_height="24dp" />
 
     <TextView
         android:id="@+id/categoryTextView"

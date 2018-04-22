@@ -34,7 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class UpdateExpenseActivity extends UpdateTransactionActivity {
+public class UpdateExpenseActivity extends UpdateTransactionActivity
+{
 
     /*****************************************************************
      * Private Variables
@@ -59,7 +60,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *  Also responsible for setting up of the initial GUI.
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         //Find views to work with during add expense activity
@@ -76,7 +78,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
     }
 
     @Override
-    protected int getLayoutResourceID() {
+    protected int getLayoutResourceID()
+    {
         return R.layout.activity_update_expense;
     }
 
@@ -89,29 +92,35 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    private boolean saveTransaction() {
+    private boolean saveTransaction()
+    {
         BigDecimal amount;
         Date date;
         Category category = null;
         NumberFormat format = NumberFormat.getCurrencyInstance();
 
-        try {
+        try
+        {
             Double amountEntered = Double.parseDouble(amountEditText.getText().toString().replaceAll("[^\\d.]", ""));
             String formatted = format.format(amountEntered).replaceAll("[^\\d.]", "");
             amount = new BigDecimal(formatted);
             date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             Toast.makeText(this, "Invalid Amount Format", Toast.LENGTH_LONG).show();
             return false;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
             return false;
-        } catch (ParseException e) {
+        } catch (ParseException e)
+        {
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (locationEditText.getText().length() == 0) {
+        if (locationEditText.getText().length() == 0)
+        {
             Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -120,11 +129,15 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
         String note = noteEditText.getText().toString();
 
         foundCategory:
-        for (RadioButton rb : categoryRadioButtons) {
-            if (rb.isChecked()) {
+        for (RadioButton rb : categoryRadioButtons)
+        {
+            if (rb.isChecked())
+            {
                 String categoryName = rb.getText().toString();
-                for (Category c : categories) {
-                    if (c.getType().equals(categoryName)) {
+                for (Category c : categories)
+                {
+                    if (c.getType().equals(categoryName))
+                    {
                         category = c;
                         break foundCategory;
                     }
@@ -132,7 +145,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
             }
         }
 
-        if (category == null) {
+        if (category == null)
+        {
             Toast.makeText(this, "Please Select a Category", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -140,42 +154,64 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
         Expense.Builder builder = new Expense.Builder(date, amount, category, location).note(note);
         builder.paymentMethod(paymentSpinner.getSelectedItem().toString());
         builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
-        instance.addExpense(builder.build());
-
-        return true;
+        return instance.addExpense(builder.build());
     }
 
     /*****************************************************************
      * ActionListeners
      *****************************************************************/
 
-    public void delete(View view) {
+    public void delete(View view)
+    {
         int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
-        instance.deleteExpense(expense);
 
-        Toast.makeText(this, "Transaction Deleted", Toast.LENGTH_LONG).show();
+        if (expense != null)
+        {
+            if (instance.deleteExpense(expense))
+            {
 
+                Toast.makeText(this, "Transaction Deleted", Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(this, LandingActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            } else
+            {
+                Toast.makeText(this, "Transaction could not be deleted", Toast.LENGTH_LONG).show();
+            }
+        } else
+        {
+            Toast.makeText(this, "Transaction could not be deleted", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void cancel(View view)
+    {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
-    public void cancel(View view) {
-        Intent intent = new Intent(this, LandingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
-    public void update(View view) {
+    public void update(View view)
+    {
         int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
-        instance.deleteExpense(expense);
+        if (expense != null)
+        {
+            if (instance.deleteExpense(expense))
+            {
 
-        if (saveTransaction()) {
-            Intent intent = new Intent(UpdateExpenseActivity.this, LandingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+                if (saveTransaction())
+                {
+                    Intent intent = new Intent(UpdateExpenseActivity.this, LandingActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+            } else
+            {
+                Toast.makeText(this, "Could not update transaction", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -191,15 +227,20 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *  an extra and the GUI is set up appropriately.
      */
     @Override
-    protected void populateInfoFields() {
-        View.OnClickListener dateListener = new View.OnClickListener() {
+    protected void populateInfoFields()
+    {
+        View.OnClickListener dateListener = new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Calendar calendar = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(UpdateExpenseActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
+                        new DatePickerDialog.OnDateSetListener()
+                        {
 
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day)
+                            {
                                 Calendar calendar = Calendar.getInstance();
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
@@ -219,21 +260,28 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
 
         int expenseID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Expense expense = instance.getExpense(expenseID);
-        amountEditText.setText(getString(R.string.currency, expense.getAmount()));
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-        dateEditText.setText(sdf.format(expense.getDate()));
-        locationEditText.setText(expense.getLocation());
-        noteEditText.setText(expense.getNote());
-        dateEditText.setOnClickListener(dateListener);
-        paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
-        recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
 
-        if (expense.getCategory() != null) {
-            String categoryTitle = expense.getCategory().getType();
-            for (RadioButton rb : categoryRadioButtons) {
-                if (rb.getText().toString().equals(categoryTitle)) {
-                    rb.setChecked(true);
-                    break;
+        if (expense != null)
+        {
+            amountEditText.setText(getString(R.string.currency, expense.getAmount()));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+            dateEditText.setText(sdf.format(expense.getDate()));
+            locationEditText.setText(expense.getLocation());
+            noteEditText.setText(expense.getNote());
+            dateEditText.setOnClickListener(dateListener);
+            paymentSpinner.setSelection(paymentSpinnerAdapter.getPosition(expense.getPaymentMethod()));
+            recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(expense.getRecurringPeriod()));
+
+            if (expense.getCategory() != null)
+            {
+                String categoryTitle = expense.getCategory().getType();
+                for (RadioButton rb : categoryRadioButtons)
+                {
+                    if (rb.getText().toString().equals(categoryTitle))
+                    {
+                        rb.setChecked(true);
+                        break;
+                    }
                 }
             }
         }
@@ -244,23 +292,30 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *  Iterates through all categories and inflates a category_select_row_layout for each
      *  plus a row for "add category..."
      */
-    private void createCategoryRows() {
+    private void createCategoryRows()
+    {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
-        for (Category c : categories) {
+        for (Category c : categories)
+        {
             View item = layoutInflater.inflate(R.layout.category_select_view, scrollLinearLayout, false);
             item.findViewById(R.id.colorView).setBackgroundColor(c.getColor());
 
             RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
             categoryRadioButtons.add(categoryRadioButton);
             categoryRadioButton.setText(c.getType());
-            categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+            categoryRadioButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
-                    for (RadioButton rb : categoryRadioButtons) {
+                public void onClick(View v)
+                {
+                    for (RadioButton rb : categoryRadioButtons)
+                    {
                         if (rb != v)
+                        {
                             rb.setChecked(false);
+                        }
                     }
                 }
             });
@@ -278,27 +333,34 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
      *  Creates a dialog (Alert Dialog) which allows the user to input a category name.
      *  Inflates a category_select_row_layout and inserts it above "add category..."
      */
-    public void createAddCategoryDialog(View view) {
+    public void createAddCategoryDialog(View view)
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(R.layout.add_category_dialog);
         builder.setTitle(R.string.add_category);
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int ID) {
+            public void onClick(DialogInterface dialog, int ID)
+            {
                 dialog.dismiss();
             }
         });
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int ID) {
+            public void onClick(DialogInterface dialog, int ID)
+            {
                 AlertDialog categoryDialog = (AlertDialog) dialog;
 
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
                 int color = ((ColorDrawable) categoryDialog.findViewById(R.id.categoryColorView).getBackground()).getColor();
                 Category category = instance.addCategory(categoryNameEditText.getText().toString(), color);
-                if (category != null) {
+
+                if (category != null)
+                {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
 
                     View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.category_select_view, scrollLinearLayout, false);
@@ -307,12 +369,17 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
                     RadioButton categoryRadioButton = item.findViewById(R.id.categoryRadioButton);
                     categoryRadioButtons.add(categoryRadioButton);
                     categoryRadioButton.setText(category.getType());
-                    categoryRadioButton.setOnClickListener(new View.OnClickListener() {
+                    categoryRadioButton.setOnClickListener(new View.OnClickListener()
+                    {
                         @Override
-                        public void onClick(View v) {
-                            for (RadioButton rb : categoryRadioButtons) {
+                        public void onClick(View v)
+                        {
+                            for (RadioButton rb : categoryRadioButtons)
+                            {
                                 if (rb != v)
+                                {
                                     rb.setChecked(false);
+                                }
                             }
                         }
                     });
@@ -321,7 +388,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
                     scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
                     Toast.makeText(getApplicationContext(), "Category Added", Toast.LENGTH_LONG).show();
-                } else {
+                } else
+                {
                     Toast.makeText(getApplicationContext(), "Category Already Exists", Toast.LENGTH_LONG).show();
                 }
 
@@ -339,7 +407,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
     /*
      *  Helper function used to populate the recurring period spinner.
      */
-    private void createPaymentSpinnerRows() {
+    private void createPaymentSpinnerRows()
+    {
         String paymentItems[] = new String[]{"Credit", "Debit", "Cash"};
         paymentSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, paymentItems);
         paymentSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -349,7 +418,8 @@ public class UpdateExpenseActivity extends UpdateTransactionActivity {
     /*
     *  Helper function to create separators used in-between categories.
     */
-    private View createSeparatorView() {
+    private View createSeparatorView()
+    {
         View line = new View(this);
         line.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         line.setBackgroundColor(Color.LTGRAY);

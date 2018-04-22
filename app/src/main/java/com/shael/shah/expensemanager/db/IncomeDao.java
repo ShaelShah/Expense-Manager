@@ -11,23 +11,24 @@ import com.shael.shah.expensemanager.model.Income;
 import java.util.List;
 
 @Dao
-public interface IncomeDao {
+public interface IncomeDao
+{
 
     @Query("SELECT * FROM income")
     List<Income> getAllIncomes();
 
     @Insert
-    void insert(Income income);
+    long insert(Income income);
 
     @Insert
-    void insertAll(List<Income> incomes);
+    long[] insertAll(List<Income> incomes);
 
     @Update
-    void update(Income income);
+    int update(Income income);
 
     @Delete
-    void delete(Income income);
+    int delete(Income income);
 
     @Delete
-    void deleteAll(List<Income> incomes);
+    int deleteAll(List<Income> incomes);
 }

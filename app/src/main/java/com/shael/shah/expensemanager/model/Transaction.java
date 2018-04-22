@@ -2,14 +2,13 @@ package com.shael.shah.expensemanager.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-public class Transaction implements Serializable {
+public class Transaction
+{
 
     @ColumnInfo
     private Date date;
@@ -26,16 +25,8 @@ public class Transaction implements Serializable {
     @ColumnInfo
     private String recurringPeriod;
 
-    @Ignore
-    private boolean insert = false;
-
-    @Ignore
-    private boolean update = false;
-
-    @Ignore
-    private boolean delete = false;
-
-    Transaction(Date date, BigDecimal amount, String location, String note, String recurringPeriod) {
+    Transaction(Date date, BigDecimal amount, String location, String note, String recurringPeriod)
+    {
         this.date = date;
         this.amount = amount;
         this.location = location;
@@ -43,51 +34,33 @@ public class Transaction implements Serializable {
         this.recurringPeriod = recurringPeriod;
     }
 
-    public Date getDate() {
+    public Date getDate()
+    {
         return date;
     }
 
-    public BigDecimal getAmount() {
+    public BigDecimal getAmount()
+    {
         return amount;
     }
 
-    public String getLocation() {
+    public String getLocation()
+    {
         return location;
     }
 
-    public String getNote() {
+    public String getNote()
+    {
         return note;
     }
 
-    public String getRecurringPeriod() {
+    public String getRecurringPeriod()
+    {
         return recurringPeriod;
     }
 
-    public void setRecurringPeriod(String recurringPeriod) {
+    public void setRecurringPeriod(String recurringPeriod)
+    {
         this.recurringPeriod = recurringPeriod;
-    }
-
-    public boolean isInsert() {
-        return insert;
-    }
-
-    public void setInsert(boolean insert) {
-        this.insert = insert;
-    }
-
-    public boolean isUpdate() {
-        return update;
-    }
-
-    public void setUpdate(boolean update) {
-        this.update = update;
-    }
-
-    public boolean isDelete() {
-        return delete;
-    }
-
-    public void setDelete(boolean delete) {
-        this.delete = delete;
     }
 }

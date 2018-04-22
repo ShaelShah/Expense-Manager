@@ -2,30 +2,17 @@ package com.shael.shah.expensemanager.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.io.Serializable;
+import com.shael.shah.expensemanager.utils.DataSingleton;
+
 import java.util.Objects;
 
-//import android.os.Parcel;
-//import android.os.Parcelable;
-
 @Entity
-//public class Category implements Parcelable {
-public class Category implements Serializable {
+public class Category
+{
 
-    /*public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public Category createFromParcel(Parcel in) {
-            return new Category(in);
-        }
-
-        public Category[] newArray(int size) {
-            return new Category[size];
-        }
-    };*/
-
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int categoryID;
 
     @ColumnInfo
@@ -34,56 +21,52 @@ public class Category implements Serializable {
     @ColumnInfo
     private int color;
 
-    @Ignore
-    private boolean insert;
-
-    public Category(String type, int color) {
+    public Category(String type, int color)
+    {
         this.type = type;
         this.color = color;
     }
 
-    private Category(Builder builder) {
+    private Category(Builder builder)
+    {
+        categoryID = builder.categoryID;
         type = builder.type;
         color = builder.color;
-
-        insert = true;
     }
 
-    /*private Category(Parcel parcel) {
-        this.type = parcel.readString();
-        this.color = parcel.readInt();
-    }*/
-
-    public int getCategoryID() {
+    public int getCategoryID()
+    {
         return categoryID;
     }
 
-    public void setCategoryID(int categoryID) {
+    public void setCategoryID(int categoryID)
+    {
         this.categoryID = categoryID;
     }
 
-    public String getType() {
+    public String getType()
+    {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(String type)
+    {
         this.type = type;
     }
 
-    public int getColor() {
+    public int getColor()
+    {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(int color)
+    {
         this.color = color;
     }
 
-    public boolean isInsert() {
-        return insert;
-    }
-
     @Override
-    public boolean equals(Object cat) {
+    public boolean equals(Object cat)
+    {
         if (this == cat)
             return true;
 
@@ -99,32 +82,27 @@ public class Category implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(type, color);
     }
 
-    /*@Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(type);
-        parcel.writeInt(color);
-    }
+    public static class Builder
+    {
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }*/
-
-    public static class Builder {
-
+        private final int categoryID;
         private final String type;
         private final int color;
 
-        public Builder(String type, int color) {
+        public Builder(String type, int color)
+        {
+            this.categoryID = DataSingleton.getInstance().getCategoryID();
             this.type = type;
             this.color = color;
         }
 
-        public Category build() {
+        public Category build()
+        {
             return new Category(this);
         }
     }

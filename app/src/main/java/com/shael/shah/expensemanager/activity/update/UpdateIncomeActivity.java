@@ -19,7 +19,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class UpdateIncomeActivity extends UpdateTransactionActivity {
+public class UpdateIncomeActivity extends UpdateTransactionActivity
+{
 
     /*****************************************************************
      * Private Variables
@@ -32,13 +33,15 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
      *****************************************************************/
 
     @Override
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle bundle)
+    {
         super.onCreate(bundle);
         populateInfoFields();
     }
 
     @Override
-    protected int getLayoutResourceID() {
+    protected int getLayoutResourceID()
+    {
         return R.layout.activity_update_income;
     }
 
@@ -51,28 +54,34 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
      *
      *  Returns true on a successful save of the expense, false otherwise.
      */
-    private boolean saveTransaction() {
+    private boolean saveTransaction()
+    {
         BigDecimal amount;
         Date date;
         NumberFormat format = NumberFormat.getCurrencyInstance();
 
-        try {
+        try
+        {
             Double amountEntered = Double.parseDouble(amountEditText.getText().toString().replaceAll("[^\\d.]", ""));
             String formatted = format.format(amountEntered).replaceAll("[^\\d.]", "");
             amount = new BigDecimal(formatted);
             date = dateEditText.getText().toString().equals("Today") ? Calendar.getInstance().getTime() : new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA).parse(dateEditText.getText().toString());
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException e)
+        {
             Toast.makeText(this, "Invalid Amount Format", Toast.LENGTH_LONG).show();
             return false;
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             Toast.makeText(this, "Invalid Amount Entered", Toast.LENGTH_LONG).show();
             return false;
-        } catch (ParseException e) {
+        } catch (ParseException e)
+        {
             Toast.makeText(this, "Invalid Date Entered", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        if (locationEditText.getText().length() == 0) {
+        if (locationEditText.getText().length() == 0)
+        {
             Toast.makeText(this, "Please Enter a Location", Toast.LENGTH_LONG).show();
             return false;
         }
@@ -82,42 +91,64 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
 
         Income.Builder builder = new Income.Builder(date, amount, location).note(note);
         builder.recurringPeriod(recurringSpinner.getSelectedItem().toString());
-        instance.addIncome(builder.build());
-
-        return true;
+        return instance.addIncome(builder.build());
     }
 
     /*****************************************************************
      * ActionListeners
      *****************************************************************/
 
-    public void delete(View view) {
+    public void delete(View view)
+    {
         int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
-        instance.deleteIncome(income);
+        if (income != null)
+        {
+            if (instance.deleteIncome(income))
+            {
 
-        Toast.makeText(this, "Transaction Deleted", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Transaction Deleted", Toast.LENGTH_LONG).show();
 
+                Intent intent = new Intent(this, LandingActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            } else
+            {
+                Toast.makeText(this, "Transaction could not be deleted", Toast.LENGTH_LONG).show();
+            }
+        } else
+        {
+            Toast.makeText(this, "Transaction could not be deleted", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void cancel(View view)
+    {
         Intent intent = new Intent(this, LandingActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
-    public void cancel(View view) {
-        Intent intent = new Intent(this, LandingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
-    public void update(View view) {
+    public void update(View view)
+    {
         int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
-        instance.deleteIncome(income);
 
-        if (saveTransaction()) {
-            Intent intent = new Intent(this, LandingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
+        if (income != null)
+        {
+            if (instance.deleteIncome(income))
+            {
+
+                if (saveTransaction())
+                {
+                    Intent intent = new Intent(this, LandingActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+            } else
+            {
+                Toast.makeText(this, "Could not update transaction", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -133,15 +164,20 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
      *  an extra and the GUI is set up appropriately.
      */
     @Override
-    public void populateInfoFields() {
-        View.OnClickListener dateListener = new View.OnClickListener() {
+    protected void populateInfoFields()
+    {
+        View.OnClickListener dateListener = new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 Calendar calendar = Calendar.getInstance();
                 DatePickerDialog datePickerDialog = new DatePickerDialog(UpdateIncomeActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
+                        new DatePickerDialog.OnDateSetListener()
+                        {
 
-                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day)
+                            {
                                 Calendar calendar = Calendar.getInstance();
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
 
@@ -161,12 +197,16 @@ public class UpdateIncomeActivity extends UpdateTransactionActivity {
 
         int incomeID = getIntent().getIntExtra(EXTRA_TRANSACTION_ID, -1);
         Income income = instance.getIncome(incomeID);
-        amountEditText.setText(getString(R.string.currency, income.getAmount()));
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
-        dateEditText.setText(sdf.format(income.getDate()));
-        locationEditText.setText(income.getLocation());
-        noteEditText.setText(income.getNote());
-        dateEditText.setOnClickListener(dateListener);
-        recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(income.getRecurringPeriod()));
+
+        if (income != null)
+        {
+            amountEditText.setText(getString(R.string.currency, income.getAmount()));
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.CANADA);
+            dateEditText.setText(sdf.format(income.getDate()));
+            locationEditText.setText(income.getLocation());
+            noteEditText.setText(income.getNote());
+            dateEditText.setOnClickListener(dateListener);
+            recurringSpinner.setSelection(recurringSpinnerAdapter.getPosition(income.getRecurringPeriod()));
+        }
     }
 }
