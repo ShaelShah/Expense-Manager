@@ -218,8 +218,8 @@ public class AddExpenseActivity extends AddTransactionActivity
 
                 EditText categoryNameEditText = categoryDialog.findViewById(R.id.categoryNameEditText);
                 int color = ((ColorDrawable) categoryDialog.findViewById(R.id.categoryColorView).getBackground()).getColor();
-                Category category = instance.addCategory(categoryNameEditText.getText().toString(), color);
 
+                Category category = instance.addCategory(categoryNameEditText.getText().toString(), color);
                 if (category != null)
                 {
                     LinearLayout scrollLinearLayout = categoryScrollView.findViewById(R.id.scrollLinearLayout);
@@ -249,7 +249,8 @@ public class AddExpenseActivity extends AddTransactionActivity
                     scrollLinearLayout.addView(createSeparatorView(), scrollLinearLayout.getChildCount() - 1);
 
                     Toast.makeText(getApplicationContext(), "Category Added", Toast.LENGTH_LONG).show();
-                } else
+                }
+                else
                 {
                     Toast.makeText(getApplicationContext(), "Category Already Exists", Toast.LENGTH_LONG).show();
                 }

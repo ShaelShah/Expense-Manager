@@ -38,8 +38,8 @@ public class LandingActivity extends Activity
      ******************************************************************/
 
     private DataSingleton instance;
-    private LandingFragment currentFragment;
-    private Fragment fragment;
+    private LandingFragment currentFragmentID;
+    private Fragment currentFragment;
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
 
@@ -88,10 +88,10 @@ public class LandingActivity extends Activity
                 switch (id)
                 {
                     case R.id.overview:
-                        if (currentFragment != LandingFragment.OVERVIEW)
+                        if (currentFragmentID != LandingFragment.OVERVIEW)
                         {
-                            fragment = new OverviewFragment();
-                            currentFragment = LandingFragment.OVERVIEW;
+                            currentFragment = new OverviewFragment();
+                            currentFragmentID = LandingFragment.OVERVIEW;
                         }
                         break;
 
@@ -99,16 +99,16 @@ public class LandingActivity extends Activity
                         break;
 
                     case R.id.settings:
-                        if (currentFragment != LandingFragment.SETTINGS)
+                        if (currentFragmentID != LandingFragment.SETTINGS)
                         {
-                            fragment = new SettingsFragment();
-                            currentFragment = LandingFragment.SETTINGS;
+                            currentFragment = new SettingsFragment();
+                            currentFragmentID = LandingFragment.SETTINGS;
                         }
                         break;
                 }
 
-                if (fragment != null)
-                    getFragmentManager().beginTransaction().replace(R.id.fragmentFrameLayout, fragment).commit();
+                if (currentFragment != null)
+                    getFragmentManager().beginTransaction().replace(R.id.fragmentFrameLayout, currentFragment).commit();
 
                 DrawerLayout drawer = findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(Gravity.START);
@@ -119,9 +119,9 @@ public class LandingActivity extends Activity
         //Setup initial fragment
         if (savedInstanceState == null)
         {
-            currentFragment = LandingFragment.OVERVIEW;
-            fragment = new OverviewFragment();
-            getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, fragment).commit();
+            currentFragmentID = LandingFragment.OVERVIEW;
+            currentFragment = new OverviewFragment();
+            getFragmentManager().beginTransaction().add(R.id.fragmentFrameLayout, currentFragment).commit();
         }
     }
 
@@ -140,11 +140,11 @@ public class LandingActivity extends Activity
         {
             if (resultCode == Activity.RESULT_OK)
             {
-                if (currentFragment == LandingFragment.OVERVIEW)
+                if (currentFragmentID == LandingFragment.OVERVIEW)
                 {
-                    ((OverviewFragment) fragment).updateDisplay();
+                    ((OverviewFragment) currentFragment).updateDisplay();
 
-                    final Snackbar snackbar = Snackbar.make(findViewById(R.id.landingRoot), "Transaction Added", Snackbar.LENGTH_LONG);
+                    final Snackbar snackbar = Snackbar.make(findViewById(R.id.fragmentOverviewRoot), "Transaction Added", Snackbar.LENGTH_LONG);
                     snackbar.setAction("Dismiss", new View.OnClickListener()
                     {
                         @Override

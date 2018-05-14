@@ -268,13 +268,13 @@ public class DataSingleton
     public boolean addExpense(Expense expense)
     {
         expenses.add(expense);
-        return database.expenseDao().insert(expense) > 0;
+        return database.expenseDao().insert(expense) >= 0;
     }
 
     public boolean addIncome(Income income)
     {
         incomes.add(income);
-        return database.incomeDao().insert(income) > 0;
+        return database.incomeDao().insert(income) >= 0;
     }
 
     public Category addCategory(String category)
@@ -289,7 +289,7 @@ public class DataSingleton
             Category cat = new Category.Builder(category, color).build();
 
             categories.add(cat);
-            if (database.categoryDao().insert(cat) > 0)
+            if (database.categoryDao().insert(cat) >= 0)
             {
                 return cat;
             }

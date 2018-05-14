@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -97,7 +98,9 @@ public class SettingsFragment extends Fragment
             if (resultData != null)
             {
                 Uri uri = resultData.getData();
-                CSVToExpenses(uri);
+                if (uri != null) {
+                    CSVToExpenses(uri);
+                }
             }
         }
     }
@@ -146,11 +149,20 @@ public class SettingsFragment extends Fragment
         } catch (IOException e)
         {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Could not backup to CSV", Toast.LENGTH_LONG).show();
+            if (getView() != null)
+            {
+                Snackbar snackbar = Snackbar.make(getView(), "Backup could not be completed", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
             return;
         }
 
-        Toast.makeText(getActivity(), "Backup completed", Toast.LENGTH_LONG).show();
+        if (getView() != null)
+        {
+            Snackbar snackbar = Snackbar.make(getView(), "Backup completed", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 
     private void restoreData()
@@ -248,11 +260,20 @@ public class SettingsFragment extends Fragment
         } catch (IOException e)
         {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Could not restore from CSV", Toast.LENGTH_LONG).show();
+            if (getView() != null)
+            {
+                Snackbar snackbar = Snackbar.make(getView(), "Could not restore from CSV", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
             return;
         }
 
-        Toast.makeText(getActivity(), "Restored from CSV", Toast.LENGTH_LONG).show();
+        if (getView() != null)
+        {
+            Snackbar snackbar = Snackbar.make(getView(), "Restore completed", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
     }
 
     private void editCategories()
@@ -285,6 +306,12 @@ public class SettingsFragment extends Fragment
                 instance.reset();
 
                 dialog.dismiss();
+
+                if (getView() != null)
+                {
+                    Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.settingsFragmentRoot), "Reset completed", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
             }
         });
 
